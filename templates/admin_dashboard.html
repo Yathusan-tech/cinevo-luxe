@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body { background: #0b0d14; color: #fff; font-family: sans-serif; padding: 40px; }
+        a { color: #6366f1; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border-bottom: 1px solid #222; text-align: left; }
+        button { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Admin Dashboard</h2>
+    <p><a href="{{ url_for('add_movie') }}">+ Add New Movie</a> | <a href="{{ url_for('admin_logout') }}">Logout</a></p>
+    <table>
+        <tr><th>Name</th><th>Genre</th><th>Rating</th><th>Actions</th></tr>
+        {% for movie in movies %}
+        <tr>
+            <td>{{ movie.name }}</td>
+            <td>{{ movie.genre }}</td>
+            <td>{{ movie.rating }}</td>
+            <td>
+                <form action="{{ url_for('delete_movie', movie_id=loop.index0) }}" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

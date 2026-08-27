@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Checkout | Cinevo Luxe Cinema</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --gold-grad-hover: linear-gradient(135deg, #f7e099 0%, #c99d31 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; text-decoration: none; }
+        .brand-name span { color: var(--gold-primary); }
+
+        .checkout-wrapper {
+            max-width: 960px;
+            margin: 40px auto;
+            width: 90%;
+            flex: 1;
+        }
+
+        .checkout-header {
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--border-container);
+            padding-bottom: 16px;
+        }
+        .checkout-header h1 { font-size: 28px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 4px; }
+        .checkout-header p { font-size: 13px; color: var(--text-sub); }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .customer-card, .billing-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .card-heading {
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #fff;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 12px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-container);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .form-input:focus { border-color: var(--gold-primary); box-shadow: 0 0 10px rgba(229,193,88,0.2); }
+
+        .billing-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
+        .billing-item strong { color: #fff; }
+        .billing-item.highlight { color: var(--gold-primary); font-weight: 700; }
+        .billing-divider { border-top: 1px dashed var(--border-container); margin: 16px 0; }
+        .billing-item.total-payable {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0;
+        }
+        .billing-item.total-payable span:last-child { color: var(--gold-primary); font-size: 22px; }
+
+        .btn-confirm-pay {
+            width: 100%;
+            background: var(--gold-grad);
+            color: #07090e;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            margin-top: 24px;
+            box-shadow: 0 4px 18px rgba(184, 142, 40, 0.3);
+            transition: all 0.25s ease;
+        }
+        .btn-confirm-pay:hover { background: var(--gold-grad-hover); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(244, 223, 155, 0.4); }
+
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        @media (max-width: 900px) {
+            .top-nav { padding: 0 24px; }
+            .checkout-wrapper { width: 94%; margin: 24px auto; }
+            .checkout-grid { grid-template-columns: 1fr; gap: 20px; }
+            .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 16px; height: 64px; }
+            .checkout-wrapper { width: 100%; padding: 0 14px; margin: 18px auto; }
+            .checkout-header h1 { font-size: 20px; }
+            .customer-card, .billing-card { padding: 18px 14px; border-radius: 12px; }
+            .form-input { padding: 10px 14px; font-size: 13px; }
+            .btn-confirm-pay { padding: 12px; font-size: 13px; }
+            .site-footer { padding: 28px 16px; }
+        }
+        @media (max-width: 360px) {
+            .top-nav { padding: 0 12px; height: 60px; }
+            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .checkout-header h1 { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <a href="{{ url_for('home') }}" class="brand-name">
+        CINEVO <span>LUXE</span>
+    </a>
+    {% if showtime %}
+    <a href="{{ url_for('seat_selection', showtime_id=showtime.id) }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">&larr; Change Seats</a>
+    {% else %}
+    <a href="{{ url_for('home') }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">&larr; Continue Shopping</a>
+    {% endif %}
+</nav>
+
+<main class="checkout-wrapper">
+    <div class="checkout-header">
+        <h1>Booking & Billing Details</h1>
+        <p>Complete your customer details to generate your executive boarding pass.</p>
+    </div>
+
+    <div class="checkout-grid">
+
+        <!-- Customer Form -->
+        <div class="customer-card">
+            <div class="card-heading">Passenger / Guest Information</div>
+            <form action="{{ url_for('checkout') }}" method="POST" id="checkoutForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="showtime_id" value="{{ showtime.id if showtime else '' }}">
+                <input type="hidden" name="seats" value="{{ seats_string }}">
+                <input type="hidden" name="food_items" id="food_items_input" value="{{ food_items_raw | e }}">
+                <textarea name="food_items_backup" id="food_items_backup" style="display:none;">{{ food_items_raw }}</textarea>
+
+                <div class="form-group">
+                    <label class="form-label" for="customer_name">Full Name *</label>
+                    <input type="text" id="customer_name" name="customer_name" class="form-input" placeholder="e.g. Lord Alexander Wright" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address (for e-Ticket) *</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="e.g. alexander@executive.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="phone">Contact Number (10 Digits) *</label>
+                    <input type="tel" id="phone" name="phone" class="form-input" placeholder="e.g. 9884012345" pattern="\d{10}" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required title="Please enter exactly 10 digits">
+                </div>
+
+                {% if showtime %}
+                <input type="hidden" name="apply_promo_code" id="apply_promo_code_input" value="">
+
+                <div style="margin-top: 30px; margin-bottom: 20px; border-top: 1px solid var(--border-container); padding-top: 20px;">
+                    <div class="card-heading" style="border: none; padding: 0; margin-bottom: 15px; font-size: 14px;">Offers & Coupons</div>
+                    <div style="background: rgba(255,255,255,0.02); padding: 16px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        {% set has_valid_offers = (is_first_booking and "FIRST100" in claimed_offers) or ("WEEKDAY20" in claimed_offers) or ("LUXE-BLACK" in claimed_offers) or ("CHEF-PAIR" in claimed_offers) %}
+                        {% if not has_valid_offers %}
+                            <div style="font-size: 13px; color: var(--text-sub);">There are no available offers for this booking.</div>
+                        {% else %}
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                {% if is_first_booking and "FIRST100" in claimed_offers %}
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--border-gold); padding: 12px; border-radius: 8px;">
+                                        <div>
+                                            <div style="font-weight: 700; color: #fff; margin-bottom: 4px; font-size: 13px;">WELCOME100 (FIRST100)</div>
+                                            <div style="font-size: 12px; color: var(--text-sub);">₹100 OFF on your first Cinevo booking</div>
+                                        </div>
+                                        {% if applied_promo == 'FIRST100' %}
+                                            <span style="font-size: 12px; color: var(--gold-primary); font-weight: 700;">Applied</span>
+                                        {% else %}
+                                            <button type="button" class="btn-gold" style="padding: 6px 14px; font-size: 11px;" onclick="document.getElementById('apply_promo_code_input').value='FIRST100'; document.getElementById('checkoutForm').submit();">Apply</button>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                {% if "WEEKDAY20" in claimed_offers %}
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--border-gold); padding: 12px; border-radius: 8px;">
+                                        <div>
+                                            <div style="font-weight: 700; color: #fff; margin-bottom: 4px; font-size: 13px;">WEEKDAY20</div>
+                                            <div style="font-size: 12px; color: var(--text-sub);">20% OFF food on weekday evening showtimes</div>
+                                        </div>
+                                        {% if applied_promo == 'WEEKDAY20' %}
+                                            <span style="font-size: 12px; color: var(--gold-primary); font-weight: 700;">Applied</span>
+                                        {% else %}
+                                            <button type="button" class="btn-gold" style="padding: 6px 14px; font-size: 11px;" onclick="document.getElementById('apply_promo_code_input').value='WEEKDAY20'; document.getElementById('checkoutForm').submit();">Apply</button>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                {% if "LUXE-BLACK" in claimed_offers %}
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--border-gold); padding: 12px; border-radius: 8px;">
+                                        <div>
+                                            <div style="font-weight: 700; color: #fff; margin-bottom: 4px; font-size: 13px;">LUXE-BLACK</div>
+                                            <div style="font-size: 12px; color: var(--text-sub);">Exclusive Black Tier Offer</div>
+                                        </div>
+                                        {% if applied_promo == 'LUXE-BLACK' %}
+                                            <span style="font-size: 12px; color: var(--gold-primary); font-weight: 700;">Applied</span>
+                                        {% else %}
+                                            <button type="button" class="btn-gold" style="padding: 6px 14px; font-size: 11px;" onclick="document.getElementById('apply_promo_code_input').value='LUXE-BLACK'; document.getElementById('checkoutForm').submit();">Apply</button>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                {% if "CHEF-PAIR" in claimed_offers %}
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border: 1px dashed var(--border-gold); padding: 12px; border-radius: 8px;">
+                                        <div>
+                                            <div style="font-weight: 700; color: #fff; margin-bottom: 4px; font-size: 13px;">CHEF-PAIR</div>
+                                            <div style="font-size: 12px; color: var(--text-sub);">Chef's Table Suite Pairing</div>
+                                        </div>
+                                        {% if applied_promo == 'CHEF-PAIR' %}
+                                            <span style="font-size: 12px; color: var(--gold-primary); font-weight: 700;">Applied</span>
+                                        {% else %}
+                                            <button type="button" class="btn-gold" style="padding: 6px 14px; font-size: 11px;" onclick="document.getElementById('apply_promo_code_input').value='CHEF-PAIR'; document.getElementById('checkoutForm').submit();">Apply</button>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div style="margin-top: 30px; margin-bottom: 20px; border-top: 1px solid var(--border-container); padding-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <div class="card-heading" style="border: none; padding: 0; margin-bottom: 0; font-size: 14px; color: var(--gold-primary); text-transform: uppercase; letter-spacing: 0.5px;">
+                            UPI PAYMENT
+                        </div>
+
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.02); padding: 18px; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 14px;">
+                        <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap;">
+                            <div style="background: #fff; padding: 10px; border-radius: 10px; flex-shrink: 0; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                                <!-- UPI Payment QR Generator -->
+                                <img id="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi%3A%2F%2Fpay%3Fpa%3Dcinevoluxe%40upi%26pn%3DCINEVO%2520LUXE%26am%3D{{ final_amount }}%26cu%3DINR%26tn%3DCINEVO%2520LUXE%2520Reservation" alt="UPI Payment QR Code" style="width: 110px; height: 110px; display: block; margin: 0 auto;">
+                                <div style="font-size: 9px; font-weight: 800; color: #111; margin-top: 4px; letter-spacing: 0.5px;">SCAN TO PAY</div>
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <div style="font-size: 11px; text-transform: uppercase; color: var(--gold-primary); font-weight: 700; margin-bottom: 2px;">Payment Method: UPI</div>
+                                <div id="qr-amount-text" style="font-weight: 800; color: #fff; margin-bottom: 4px; font-size: 18px;">Total Due: ?{{ final_amount }}</div>
+                                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px;">
+                                    UPI ID: <span style="color: #fff; font-family: monospace; font-weight: 600;">cinevoluxe@upi</span>
+                                </div>
+                                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">Google Pay</span>
+                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">PhonePe</span>
+                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">Paytm</span>
+                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">Any UPI App</span>
+                                </div>
+                                <div style="font-size: 11px; color: #a1a1aa; font-style: italic;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="font-size: 11px; color: var(--text-sub); line-height: 1.5; margin-top: 10px;">
+                    🔒 All seat allocations and transactions are verified server-side with atomic reservation locks.
+                </div>
+
+                <button type="submit" class="btn-confirm-pay" id="payButton" onclick="return validatePhone()">
+                    Complete Payment & Confirm Reservation &rarr;
+                </button>
+                <script>
+                    function validatePhone() {
+                        const phoneInput = document.getElementById('phone');
+                        if (phoneInput.value.length !== 10 || !/^\d{10}$/.test(phoneInput.value)) {
+                            alert('Please enter a valid 10-digit mobile number.');
+                            phoneInput.focus();
+                            return false;
+                        }
+                        return true;
+                    }
+                </script>
+            </form>
+        </div>
+
+        <!-- Billing Summary -->
+        <div class="billing-card">
+            <div class="card-heading">Executive Order Summary</div>
+
+            <div class="billing-item">
+                <span>Movie</span>
+                <strong>{{ showtime.movie.title }}</strong>
+            </div>
+
+            <div class="billing-item">
+                <span>Cinema Venue</span>
+                <span>{{ showtime.cinema.name }}</span>
+            </div>
+
+            <div class="billing-item">
+                <span>Date & Time</span>
+                <span>{{ showtime.date.strftime('%d %b %Y') }} &bull; {{ showtime.time }}</span>
+            </div>
+
+            <div class="billing-item highlight">
+                <span>Allocated Seats ({{ seats|length }})</span>
+                <span>{{ seats_string }}</span>
+            </div>
+
+            <div class="billing-divider"></div>
+
+            <div class="billing-item">
+                <span>Ticket Price ({{ seats|length }}x ₹{{ showtime.base_ticket_price | int }})</span>
+                <span>₹{{ ticket_amount | int }}</span>
+            </div>
+
+            {% if food_total > 0 %}
+            <div class="billing-divider" style="margin: 8px 0; border-top: 1px solid var(--border-subtle);"></div>
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--gold-primary); font-weight: 700; margin-bottom: 8px;">Gourmet Menu Add-ons</div>
+            {% for name, details in food_dict.items() %}
+                {% if details.quantity > 0 %}
+                <div class="billing-item" style="margin-bottom: 6px;">
+                    <span style="padding-left: 8px; color: var(--text-sub);">{{ name }} (x{{ details.quantity }})</span>
+                    <span>₹{{ (details.price * details.quantity) | int }}</span>
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="billing-item" style="margin-bottom: 12px; margin-top: 6px;">
+                <span>Food Total</span>
+                <span>₹{{ food_total | int }}</span>
+            </div>
+            <div class="billing-divider" style="margin: 8px 0; border-top: 1px solid var(--border-subtle);"></div>
+            {% endif %}
+
+            {% if showtime %}
+            <div class="billing-item">
+                <span>Lounge Convenience Fee</span>
+                <span>₹{{ convenience_fee | int }}</span>
+            </div>
+
+            <div class="billing-item">
+                <span>GST & Entertainment Taxes (18%)</span>
+                <span>₹{{ taxes }}</span>
+            </div>
+
+            {% if discount > 0 %}
+            <div class="billing-item" style="color: var(--gold-primary); font-weight: 700;">
+                <span>Offer Applied ({{ applied_promo }})</span>
+                <span>- ₹{{ discount | int }}</span>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <div class="billing-divider"></div>
+
+            <div class="billing-item total-payable">
+                <span>Total Payable</span>
+                <span>₹{{ final_amount }}</span>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div>
+        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+    </div>
+    <div>
+        <a href="{{ url_for('home') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none;">Home</a>
+    </div>
+</footer>
+
+</body>
+</html>

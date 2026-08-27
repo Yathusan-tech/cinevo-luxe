@@ -1,0 +1,46 @@
+[
+    {
+        "id": 1,
+        "title": "Inception",
+        "genre": "Sci-Fi / Action",
+        "format": "IMAX",
+        "duration": "148 min",
+        "rating": "PG-13",
+        "price": 12.50,
+        "poster": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
+        "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea."
+    },
+    {
+        "id": 2,
+        "title": "Interstellar",
+        "genre": "Sci-Fi / Adventure",
+        "format": "IMAX",
+        "duration": "169 min",
+        "rating": "PG-13",
+        "price": 14.00,
+        "poster": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500",
+        "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
+    },
+    {
+        "id": 3,
+        "title": "The Dark Knight",
+        "genre": "Action / Crime",
+        "format": "Premiere",
+        "duration": "152 min",
+        "rating": "PG-13",
+        "price": 13.00,
+        "poster": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500",
+        "description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests."
+    },
+    {
+        "id": 4,
+        "title": "Avatar: The Way of Water",
+        "genre": "Sci-Fi / Fantasy",
+        "format": "VIP",
+        "duration": "192 min",
+        "rating": "PG-13",
+        "price": 15.00,
+        "poster": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500",
+        "description": "Jake Sully lives with his newfound family formed on the extrasolar moon Pandora."
+    }
+]

@@ -1,0 +1,44 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}Manage Cinemas{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Partner Luxury Cinemas</h1>
+</div>
+
+<!-- Partner Cinemas Module -->
+<div class="section-box">
+    <div class="section-title">Active Venues & Projection Systems</div>
+    <div class="data-table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Venue Name</th>
+                    <th>Location / Address</th>
+                    <th>Screen Name</th>
+                    <th>Formats & Acoustics</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cinema in cinemas %}
+                <tr>
+                    <td><strong style="color: #fff;">{{ cinema.name }}</strong></td>
+                    <td>{{ cinema.location }}<br><span style="font-size: 11px; color: var(--text-sub);">{{ cinema.address }}</span></td>
+                    <td>{{ cinema.screen_name }}</td>
+                    <td>{{ cinema.screen_type }}</td>
+                    <td><span style="color: #4ade80; font-weight: 700; font-size: 11px;">{{ cinema.status }}</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-sub); padding: 30px;">
+                        No partner venues recorded in database.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

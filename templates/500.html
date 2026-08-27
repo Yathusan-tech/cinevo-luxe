@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Server Error | Cinevo Luxe Cinema</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --gold-primary: #e5c158;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .error-box { max-width: 500px; }
+        .error-code { font-size: 80px; font-weight: 800; color: var(--gold-primary); line-height: 1; margin-bottom: 12px; }
+        .error-title { font-size: 24px; font-weight: 800; margin-bottom: 12px; color: #fff; text-transform: uppercase; }
+        .error-desc { font-size: 14px; color: var(--text-sub); margin-bottom: 30px; line-height: 1.6; }
+        @media (max-width: 480px) {
+            .error-code { font-size: 60px; }
+            .error-title { font-size: 20px; }
+            .btn-gold { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <div class="error-code">500</div>
+        <div class="error-title">Projection Interruption</div>
+        <p class="error-desc">We encountered an unexpected error while processing your request. Please try again or return to the main lobby.</p>
+        <a href="{{ url_for('home') }}" class="btn-gold" style="padding: 12px 28px;">Return to Main Lobby</a>
+    </div>
+</body>
+</html>

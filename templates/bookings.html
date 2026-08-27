@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Bookings | MovieBook</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(
+                    circle at top,
+                    #17172a 0%,
+                    #09090f 55%,
+                    #050508 100%
+                );
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        nav {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            background: rgba(10, 10, 18, 0.95);
+            border-bottom: 1px solid #26263a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .logo span {
+            color: #5b7cfa;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #9999aa;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .nav-links a:hover,
+        .nav-links .active {
+            color: white;
+        }
+
+        /* ================= MAIN ================= */
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 45px 0 70px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .eyebrow {
+            color: #7187ff;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .page-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #77778a;
+            font-size: 13px;
+        }
+
+        /* ================= SEARCH ================= */
+
+        .search-card {
+            background: #11111a;
+            border: 1px solid #29293d;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666678;
+        }
+
+        #bookingSearch {
+            width: 100%;
+            height: 45px;
+            padding: 0 15px 0 42px;
+            background: #0b0b13;
+            border: 1px solid #303044;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-size: 12px;
+        }
+
+        #bookingSearch:focus {
+            border-color: #5b7cfa;
+            box-shadow:
+                0 0 0 3px
+                rgba(91, 124, 250, 0.08);
+        }
+
+        #bookingSearch::placeholder {
+            color: #555568;
+        }
+
+        /* ================= SUMMARY ================= */
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: #11111a;
+            border: 1px solid #29293d;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .summary-label {
+            color: #707080;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .confirmed-value {
+            color: #45d982;
+        }
+
+        .ticket-value {
+            color: #7187ff;
+        }
+
+        /* ================= RESULT ================= */
+
+        .results-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            color: #77778a;
+            font-size: 11px;
+        }
+
+        .results-bar strong {
+            color: white;
+        }
+
+        /* ================= BOOKING CARD ================= */
+
+        .booking-card {
+            background: #11111a;
+            border: 1px solid #29293d;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            transition: 0.2s;
+        }
+
+        .booking-card:hover {
+            border-color: #45456a;
+            transform: translateY(-2px);
+        }
+
+        .booking-header {
+            padding: 20px 23px;
+            background: #181824;
+            border-bottom: 1px solid #29293d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .movie-name {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .booking-id {
+            color: #7187ff;
+            background: rgba(91, 124, 250, 0.08);
+            border: 1px solid #303961;
+            padding: 7px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .booking-body {
+            padding: 23px;
+        }
+
+        /* ================= DETAILS ================= */
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .detail {
+            background: #0c0c14;
+            border: 1px solid #252538;
+            border-radius: 9px;
+            padding: 14px;
+        }
+
+        .label {
+            color: #666678;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 7px;
+        }
+
+        .value {
+            font-size: 13px;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        .seats {
+            color: #7187ff;
+        }
+
+        .total {
+            color: #45d982;
+            font-size: 16px;
+        }
+
+        /* ================= DATE ================= */
+
+        .booking-time {
+            margin-top: 17px;
+            padding: 15px;
+            background: rgba(91, 124, 250, 0.06);
+            border: 1px solid #30355c;
+            border-radius: 9px;
+        }
+
+        .booking-time-label {
+            color: #666678;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .booking-time-value {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* ================= CUSTOMER ================= */
+
+        .customer {
+            margin-top: 20px;
+            padding-top: 19px;
+            border-top: 1px solid #29293d;
+        }
+
+        .customer h3 {
+            font-size: 13px;
+            margin-bottom: 11px;
+        }
+
+        .customer p {
+            color: #888899;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .customer strong {
+            color: #ddddE7;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid #29293d;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .button {
+            height: 38px;
+            padding: 0 15px;
+            border-radius: 7px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .view-button {
+            background: #4e6ef2;
+            color: white;
+        }
+
+        .view-button:hover {
+            background: #5b7cfa;
+        }
+
+        .cancel-button {
+            background: #27151a;
+            color: #ff7373;
+            border: 1px solid #56252b;
+        }
+
+        .cancel-button:hover {
+            background: #3a1a20;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty {
+            text-align: center;
+            padding: 70px 20px;
+            background: #11111a;
+            border: 1px solid #29293d;
+            border-radius: 15px;
+        }
+
+        .empty-icon {
+            font-size: 50px;
+            margin-bottom: 18px;
+        }
+
+        .empty h2 {
+            font-size: 21px;
+            margin-bottom: 9px;
+        }
+
+        .empty p {
+            color: #77778a;
+            font-size: 12px;
+            margin-bottom: 23px;
+        }
+
+        .browse-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 42px;
+            padding: 0 20px;
+            border-radius: 7px;
+            background: #4e6ef2;
+            color: white;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .browse-button:hover {
+            background: #5b7cfa;
+        }
+
+        /* ================= NO SEARCH RESULTS ================= */
+
+        .no-search {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+            background: #11111a;
+            border: 1px solid #29293d;
+            border-radius: 14px;
+        }
+
+        .no-search h2 {
+            margin-bottom: 8px;
+        }
+
+        .no-search p {
+            color: #77778a;
+            font-size: 12px;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            border-top: 1px solid #20202f;
+            padding: 27px 7%;
+            display: flex;
+            justify-content: space-between;
+            color: #5e5e70;
+            font-size: 10px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .details-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .actions {
+                justify-content: stretch;
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            nav {
+                padding: 0 5%;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .nav-links a:first-child {
+                display: none;
+            }
+
+            .container {
+                width: 94%;
+                padding-top: 30px;
+            }
+
+            .page-header h1 {
+                font-size: 29px;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav>
+
+        <div class="logo">
+            Movie<span>Book</span>
+        </div>
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('home') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('movies') }}">
+                Movies
+            </a>
+
+            <a
+                href="{{ url_for('my_bookings') }}"
+                class="active"
+            >
+                My Bookings
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="container">
+
+
+        <section class="page-header">
+
+            <div class="eyebrow">
+                MovieBook Account
+            </div>
+
+            <h1>
+                🎟️ My Bookings
+            </h1>
+
+            <p>
+                View, search and manage your movie tickets.
+            </p>
+
+        </section>
+
+
+        {% if bookings %}
+
+
+        <!-- ================= SUMMARY ================= -->
+
+        <section class="summary">
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Bookings
+                </div>
+
+                <div class="summary-value">
+                    {{ bookings | length }}
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Confirmed Bookings
+                </div>
+
+                <div class="summary-value confirmed-value">
+
+                    {% set confirmed_count = 0 %}
+
+                    {% for booking in bookings %}
+
+                        {% if booking.get("status", "Confirmed") == "Confirmed" %}
+
+                            {% set confirmed_count = confirmed_count + 1 %}
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {{ bookings | selectattr("status", "equalto", "Confirmed") | list | length }}
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-label">
+                    Total Tickets
+                </div>
+
+                <div class="summary-value ticket-value">
+
+                    {% set total_tickets = namespace(value=0) %}
+
+                    {% for booking in bookings %}
+
+                        {% set total_tickets.value = total_tickets.value + booking.get("ticket_count", booking.get("seats", []) | length) %}
+
+                    {% endfor %}
+
+                    {{ total_tickets.value }}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SEARCH ================= -->
+
+        <section class="search-card">
+
+            <div class="search-wrapper">
+
+                <span class="search-icon">
+                    🔍
+                </span>
+
+                <input
+                    type="text"
+                    id="bookingSearch"
+                    placeholder="Search by booking ID, movie name or customer name..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= RESULTS ================= -->
+
+        <div class="results-bar">
+
+            <span id="resultText">
+                Showing
+                <strong>{{ bookings | length }}</strong>
+                booking(s)
+            </span>
+
+        </div>
+
+
+        <!-- ================= BOOKINGS ================= -->
+
+        <section id="bookingList">
+
+
+            {% for booking in bookings %}
+
+            <article
+                class="booking-card"
+                data-search="
+                    {{ booking.get('booking_id', '') | lower }}
+                    {{ booking.get('movie_name', '') | lower }}
+                    {{ booking.get('name', '') | lower }}
+                    {{ booking.get('email', '') | lower }}
+                "
+            >
+
+
+                <!-- HEADER -->
+
+                <div class="booking-header">
+
+                    <div class="movie-name">
+
+                        🎬
+                        {{ booking.get(
+                            "movie_name",
+                            "Movie"
+                        ) }}
+
+                    </div>
+
+                    <div class="booking-id">
+
+                        {{ booking.get(
+                            "booking_id",
+                            "N/A"
+                        ) }}
+
+                    </div>
+
+                </div>
+
+
+                <!-- BODY -->
+
+                <div class="booking-body">
+
+
+                    <!-- DETAILS -->
+
+                    <div class="details-grid">
+
+
+                        <div class="detail">
+
+                            <div class="label">
+                                Showtime
+                            </div>
+
+                            <div class="value">
+                                🕐
+                                {{ booking.get(
+                                    "showtime",
+                                    "N/A"
+                                ) }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <div class="label">
+                                Seats
+                            </div>
+
+                            <div class="value seats">
+
+                                💺
+                                {{ booking.get(
+                                    "seats",
+                                    []
+                                ) | join(", ") }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <div class="label">
+                                Tickets
+                            </div>
+
+                            <div class="value">
+
+                                {{ booking.get(
+                                    "ticket_count",
+                                    booking.get(
+                                        "seats",
+                                        []
+                                    ) | length
+                                ) }}
+
+                                Ticket(s)
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <div class="label">
+                                Total Amount
+                            </div>
+
+                            <div class="value total">
+
+                                ₹{{ booking.get(
+                                    "total_price",
+                                    0
+                                ) }}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="booking-time">
+
+                        <div class="booking-time-label">
+                            Booking Date & Time
+                        </div>
+
+                        <div class="booking-time-value">
+
+                            {% if booking.get(
+                                "booking_datetime"
+                            ) %}
+
+                                📅
+                                {{ booking.get(
+                                    "booking_datetime"
+                                ) }}
+
+                            {% elif booking.get(
+                                "booking_date"
+                            ) %}
+
+                                📅
+                                {{ booking.get(
+                                    "booking_date"
+                                ) }}
+
+                                {% if booking.get(
+                                    "booking_time"
+                                ) %}
+
+                                    ,
+                                    {{ booking.get(
+                                        "booking_time"
+                                    ) }}
+
+                                {% endif %}
+
+                            {% else %}
+
+                                Not available
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CUSTOMER -->
+
+                    <div class="customer">
+
+                        <h3>
+                            👤 Customer Information
+                        </h3>
+
+                        <p>
+
+                            <strong>Name:</strong>
+                            {{ booking.get(
+                                "name",
+                                "N/A"
+                            ) }}
+
+                            &nbsp; | &nbsp;
+
+                            <strong>Phone:</strong>
+                            {{ booking.get(
+                                "phone",
+                                "N/A"
+                            ) }}
+
+                            &nbsp; | &nbsp;
+
+                            <strong>Email:</strong>
+                            {{ booking.get(
+                                "email",
+                                "N/A"
+                            ) }}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="actions">
+
+
+                        <!-- VIEW -->
+
+                        <a
+                            href="{{ url_for('my_bookings') }}"
+                            class="button view-button"
+                            onclick="window.print(); return false;"
+                        >
+
+                            🖨️ Print Ticket
+
+                        </a>
+
+
+                        <!-- CANCEL -->
+
+                        <form
+                            action="{{ url_for(
+                                'cancel_booking',
+                                booking_id=booking.get(
+                                    'booking_id'
+                                )
+                            ) }}"
+                            method="POST"
+                            onsubmit="
+                                return confirm(
+                                    'Are you sure you want to cancel this booking?'
+                                );
+                            "
+                        >
+
+                            <button
+                                type="submit"
+                                class="button cancel-button"
+                            >
+
+                                ❌ Cancel Booking
+
+                            </button>
+
+                        </form>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </article>
+
+            {% endfor %}
+
+
+        </section>
+
+
+        <!-- NO SEARCH -->
+
+        <section
+            class="no-search"
+            id="noSearch"
+        >
+
+            <h2>
+                🔍 No Booking Found
+            </h2>
+
+            <p>
+                Try searching with another booking ID,
+                movie name or customer name.
+            </p>
+
+        </section>
+
+
+        {% else %}
+
+
+        <!-- ================= EMPTY ================= -->
+
+        <section class="empty">
+
+            <div class="empty-icon">
+                🎟️
+            </div>
+
+            <h2>
+                No Bookings Yet
+            </h2>
+
+            <p>
+                You haven't booked any movie tickets yet.
+            </p>
+
+            <a
+                href="{{ url_for('movies') }}"
+                class="browse-button"
+            >
+
+                🎬 Browse Movies
+
+            </a>
+
+        </section>
+
+
+        {% endif %}
+
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div>
+            © 2026 MovieBook
+        </div>
+
+        <div>
+            Professional Movie Ticket Booking System
+        </div>
+
+    </footer>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        const searchInput =
+            document.getElementById(
+                "bookingSearch"
+            );
+
+        const bookingCards =
+            Array.from(
+                document.querySelectorAll(
+                    ".booking-card"
+                )
+            );
+
+        const noSearch =
+            document.getElementById(
+                "noSearch"
+            );
+
+        const resultText =
+            document.getElementById(
+                "resultText"
+            );
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                function () {
+
+                    const query =
+                        searchInput.value
+                            .trim()
+                            .toLowerCase();
+
+                    let visible = 0;
+
+
+                    bookingCards.forEach(
+                        function(card) {
+
+                            const text =
+                                card.dataset.search
+                                    .toLowerCase();
+
+                            if (
+                                !query ||
+                                text.includes(query)
+                            ) {
+
+                                card.style.display =
+                                    "";
+
+                                visible++;
+
+                            } else {
+
+                                card.style.display =
+                                    "none";
+
+                            }
+
+                        }
+                    );
+
+
+                    if (resultText) {
+
+                        resultText.innerHTML =
+                            "Showing <strong>"
+                            +
+                            visible
+                            +
+                            "</strong> booking(s)";
+
+                    }
+
+
+                    if (noSearch) {
+
+                        if (
+                            visible === 0 &&
+                            query
+                        ) {
+
+                            noSearch.style.display =
+                                "block";
+
+                        } else {
+
+                            noSearch.style.display =
+                                "none";
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Showtimes | Cinevo Luxe Cinema</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-name span { color: var(--gold-primary); }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
+        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
+        .page-header { margin-bottom: 30px; }
+        .page-header h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+        .page-header p { font-size: 14px; color: var(--text-sub); }
+
+        /* Date Navigation Bar */
+        .date-nav-bar {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 16px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-container);
+        }
+        .date-tab-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 10px;
+            padding: 12px 20px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-sub);
+            min-width: 100px;
+            transition: all 0.2s ease;
+        }
+        .date-tab-card:hover { border-color: rgba(255, 255, 255, 0.25); color: #fff; }
+        .date-tab-card.active {
+            background: var(--gold-grad);
+            color: #07090e;
+            border-color: transparent;
+            font-weight: 800;
+        }
+        .date-tab-card .day-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .date-tab-card .day-num { font-size: 18px; font-weight: 800; margin-top: 2px; }
+
+        /* Showtimes List */
+        .showtimes-container { display: flex; flex-direction: column; gap: 24px; }
+        .showtime-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 14px;
+            padding: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            transition: border-color 0.2s ease;
+        }
+        .showtime-card:hover { border-color: rgba(229, 193, 88, 0.4); }
+        .movie-thumb { width: 90px; height: 130px; border-radius: 8px; object-fit: cover; background: #000; flex-shrink: 0; }
+        .showtime-details { flex: 1; }
+        .movie-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .cinema-info { font-size: 13px; color: var(--gold-primary); font-weight: 600; margin-bottom: 8px; }
+        .tech-meta { font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+
+        .time-action-pill {
+            background: var(--gold-grad);
+            color: #07090e;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .time-action-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(229, 193, 88, 0.4); }
+
+        /* Footer */
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        @media (max-width: 900px) {
+            .top-nav { padding: 0 24px; }
+            .nav-menu { display: none; }
+            .container { padding: 30px 24px; }
+            .showtime-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .showtime-card > div:last-child { width: 100%; display: flex; justify-content: space-between; align-items: center; text-align: left; border-top: 1px solid var(--border-subtle); padding-top: 12px; }
+            .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 16px; height: 64px; }
+            .nav-right > a.btn-gold { display: none; }
+            .container { padding: 24px 16px; }
+            .page-header h1 { font-size: 22px; }
+            .date-tab-card { min-width: 70px; padding: 8px 10px; }
+            .date-tab-card .day-num { font-size: 15px; }
+            .showtime-card { padding: 16px; }
+            .movie-thumb { width: 70px; height: 100px; }
+            .site-footer { padding: 28px 16px; }
+        }
+        @media (max-width: 360px) {
+            .top-nav { padding: 0 12px; height: 60px; }
+            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .time-action-pill { padding: 8px 14px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <div class="nav-left">
+        <a href="{{ url_for('home') }}" class="brand-logo">
+            <span class="brand-name">CINEVO <span>LUXE</span></span>
+        </a>
+        <div class="nav-menu">
+            <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+            <a href="{{ url_for('movies') }}" class="nav-item">Explore Movies</a>
+            <a href="{{ url_for('showtimings') }}" class="nav-item active">Showtimes</a>
+            <a href="{{ url_for('cinemas') }}" class="nav-item">Cinemas</a>
+            <a href="{{ url_for('offers') }}" class="nav-item">Offers</a>
+        </div>
+    </div>
+    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+        <a href="{{ url_for('my_bookings') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">My Bookings</a>
+        <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
+    </div>
+</nav>
+
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-drawer-overlay" id="cinevoDrawerOverlay" onclick="toggleCinevoNav()"></div>
+<div class="mobile-nav-drawer" id="cinevoNavDrawer">
+    <div class="mobile-drawer-header">
+        <span class="brand-name" style="font-size: 18px;">CINEVO <span>LUXE</span></span>
+        <button class="mobile-drawer-close" onclick="toggleCinevoNav()">✕</button>
+    </div>
+    <div class="mobile-drawer-links">
+        <a href="{{ url_for('home') }}" class="mobile-drawer-link">Home <span>&rarr;</span></a>
+        <a href="{{ url_for('movies') }}" class="mobile-drawer-link">Explore Movies <span>&rarr;</span></a>
+        <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link active">Showtimes <span>&rarr;</span></a>
+        <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link">Cinemas <span>&rarr;</span></a>
+        <a href="{{ url_for('offers') }}" class="mobile-drawer-link">Offers <span>&rarr;</span></a>
+        <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
+    </div>
+</div>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Executive Screening Schedule</h1>
+        <p>Select your preferred screening time across our luxury partner venues.</p>
+    </div>
+
+    <!-- Date Tabs Navigation -->
+    <div class="date-nav-bar">
+        {% for tab_date in date_tabs %}
+            {% set is_active = (tab_date == selected_date) %}
+            <a href="{{ url_for('showtimings', date=tab_date.strftime('%Y-%m-%d')) }}" class="date-tab-card {% if is_active %}active{% endif %}">
+                <div class="day-name">{{ tab_date.strftime('%a') }}</div>
+                <div class="day-num">{{ tab_date.strftime('%d %b') }}</div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Showtimes List -->
+    <div class="showtimes-container">
+        {% if showtimes %}
+            {% for st in showtimes %}
+                <div class="showtime-card">
+                    <img src="{{ st.movie.poster }}" alt="{{ st.movie.title }}" class="movie-thumb">
+                    <div class="showtime-details">
+                        <div class="movie-title">{{ st.movie.title }}</div>
+                        <div class="cinema-info">📍 {{ st.cinema.name }} &bull; {{ st.cinema.screen_name }}</div>
+                        <div class="tech-meta">{{ st.movie.genre }} &bull; {{ st.movie.format }} &bull; {{ st.movie.duration }}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 11px; color: var(--text-sub); margin-bottom: 6px;">From ₹{{ st.base_ticket_price | int }} / seat</div>
+                        <a href="{{ url_for('seat_selection', showtime_id=st.id) }}" class="time-action-pill">
+                            <span>{{ st.time }}</span>
+                            <span>&rarr;</span>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 70px 20px; background: var(--bg-surface); border-radius: 14px; border: 1px solid var(--border-container);">
+                <h3 style="color: #fff; margin-bottom: 8px;">No Showtimes Scheduled for this Date</h3>
+                <p style="color: var(--text-sub); margin-bottom: 20px;">Please pick another date from the tab bar above.</p>
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div>
+        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+    </div>
+    <div>
+        <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+        <a href="{{ url_for('movies') }}" class="nav-item">Movies</a>
+    </div>
+</footer>
+
+<script>
+function toggleCinevoNav() {
+    var drawer = document.getElementById('cinevoNavDrawer');
+    var overlay = document.getElementById('cinevoDrawerOverlay');
+    if (drawer && overlay) {
+        var isOpen = drawer.classList.contains('open');
+        if (isOpen) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        } else {
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+        }
+    }
+}
+</script>
+</body>
+</html>

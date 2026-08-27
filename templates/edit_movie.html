@@ -1,0 +1,231 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}Edit Movie{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header">
+    <h1>Edit Movie</h1>
+</div>
+
+<div class="section-box">
+
+    <div class="section-title">
+        Edit Movie Details
+    </div>
+
+    <form
+        action="{{ url_for('staff_edit_movie', movie_id=movie.id) }}"
+        method="POST"
+    >
+
+        <!-- Row 1 -->
+
+        <div class="form-row">
+
+            <input
+                type="text"
+                name="title"
+                class="form-control"
+                value="{{ movie.title }}"
+                placeholder="Movie Title"
+                required
+            >
+
+            <input
+                type="text"
+                name="genre"
+                class="form-control"
+                value="{{ movie.genre }}"
+                placeholder="Genre"
+                required
+            >
+
+            <input
+                type="text"
+                name="format"
+                class="form-control"
+                value="{{ movie.format }}"
+                placeholder="Format"
+                required
+            >
+
+            <input
+                type="text"
+                name="rating"
+                class="form-control"
+                value="{{ movie.rating }}"
+                placeholder="Rating"
+                required
+            >
+
+        </div>
+
+
+        <!-- Row 2 -->
+
+        <div class="form-row">
+
+            <input
+                type="text"
+                name="age_rating"
+                class="form-control"
+                value="{{ movie.age_rating }}"
+                placeholder="Age Rating"
+                required
+            >
+
+            <input
+                type="text"
+                name="duration"
+                class="form-control"
+                value="{{ movie.duration }}"
+                placeholder="Duration"
+                required
+            >
+
+            <input
+                type="url"
+                name="poster"
+                class="form-control"
+                value="{{ movie.poster }}"
+                placeholder="Poster URL"
+                required
+            >
+
+            <select
+                name="category"
+                class="form-control"
+            >
+
+                <option
+                    value="now_showing"
+                    {% if movie.category == "now_showing" %}selected{% endif %}
+                >
+                    Now Showing
+                </option>
+
+                <option
+                    value="premiere"
+                    {% if movie.category == "premiere" %}selected{% endif %}
+                >
+                    Premiere Screening
+                </option>
+
+                <option
+                    value="imax"
+                    {% if movie.category == "imax" %}selected{% endif %}
+                >
+                    IMAX Experience
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- Row 3 -->
+
+        <div class="form-row">
+
+            <input
+                type="text"
+                name="description"
+                class="form-control"
+                value="{{ movie.description }}"
+                placeholder="Movie Description"
+                style="grid-column: span 3;"
+                required
+            >
+
+        </div>
+
+
+        <!-- Trailer -->
+
+        <div class="form-row">
+
+            <input
+                type="url"
+                name="trailer_url"
+                class="form-control"
+                value="{{ movie.trailer_url or '' }}"
+                placeholder="YouTube Trailer URL"
+            >
+
+            <input
+                type="text"
+                name="language"
+                class="form-control"
+                value="{{ movie.language or '' }}"
+                placeholder="Language"
+            >
+
+            <input
+                type="text"
+                name="director"
+                class="form-control"
+                value="{{ movie.director or '' }}"
+                placeholder="Director"
+            >
+
+        </div>
+
+
+        <!-- Cast -->
+
+        <div class="form-row">
+
+            <input
+                type="text"
+                name="cast"
+                class="form-control"
+                value="{{ movie.cast or '' }}"
+                placeholder="Cast"
+                style="grid-column: span 3;"
+            >
+
+        </div>
+
+
+        <!-- Buttons -->
+
+        <div
+            style="
+                display: flex;
+                gap: 12px;
+                margin-top: 20px;
+            "
+        >
+
+            <button
+                type="submit"
+                class="btn-gold"
+                style="
+                    padding: 12px 25px;
+                    border: none;
+                    cursor: pointer;
+                "
+            >
+                Save Changes
+            </button>
+
+            <a
+                href="{{ url_for('staff_movies') }}"
+                class="btn-delete"
+                style="
+                    display: inline-block;
+                    text-decoration: none;
+                    padding: 12px 25px;
+                "
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

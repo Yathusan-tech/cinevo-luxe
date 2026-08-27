@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinevo Luxe - Executive Cinema Experience</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar-cinevo">
+        <a href="{{ url_for('home') }}" class="navbar-brand">CINEVO<span>LUXE</span></a>
+        <div class="nav-links">
+            <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a>
+            <a href="{{ url_for('movies') }}" class="{% if request.endpoint == 'movies' %}active{% endif %}">Explore Movies</a>
+            <a href="{{ url_for('showtimings') }}" class="{% if request.endpoint == 'showtimings' %}active{% endif %}">Showtimes</a>
+            <a href="{{ url_for('cinemas') }}" class="{% if request.endpoint == 'cinemas' %}active{% endif %}">Cinemas</a>
+            <a href="{{ url_for('offers') }}" class="{% if request.endpoint == 'offers' %}active{% endif %}">Offers</a>
+            <a href="{{ url_for('my_bookings') }}" class="{% if request.endpoint == 'my_bookings' %}active{% endif %}">My Bookings</a>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Professional Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="navbar-brand" style="font-size: 1.4rem;">CINEVO<span>LUXE</span></div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Executive Cinema Experience &bull; Recliner Suites &bull; IMAX &bull; Dolby Cinema</p>
+            <p>&copy; 2026 Cinevo Luxe Cinemas. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

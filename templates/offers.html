@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Privilege Offers | Cinevo Luxe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-name span { color: var(--gold-primary); }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
+        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
+        .page-header { margin-bottom: 36px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; }
+        .page-header h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+        .page-header p { font-size: 14px; color: var(--text-sub); }
+
+        .offers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 28px; }
+        .offer-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .offer-card:hover { transform: translateY(-4px); border-color: var(--gold-primary); }
+        .offer-badge {
+            display: inline-block;
+            background: rgba(229, 193, 88, 0.12);
+            border: 1px solid rgba(229, 193, 88, 0.3);
+            color: var(--gold-primary);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+        .offer-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+        .offer-desc { font-size: 13px; color: var(--text-sub); line-height: 1.6; margin-bottom: 24px; }
+        .code-box {
+            background: var(--bg-card);
+            border: 1px dashed var(--border-gold);
+            padding: 10px 16px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gold-primary);
+        }
+
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        @media (max-width: 900px) {
+            .top-nav { padding: 0 24px; }
+            .nav-menu { display: none; }
+            .container { padding: 30px 24px; }
+            .offers-grid { grid-template-columns: 1fr; gap: 20px; }
+            .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 16px; height: 64px; }
+            .nav-right > a.btn-gold { display: none; }
+            .container { padding: 24px 16px; }
+            .page-header h1 { font-size: 22px; }
+            .offer-card { padding: 20px 16px; border-radius: 12px; }
+            .code-box { flex-direction: row; justify-content: space-between; align-items: center; }
+            .site-footer { padding: 28px 16px; }
+        }
+        @media (max-width: 360px) {
+            .top-nav { padding: 0 12px; height: 60px; }
+            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .offer-title { font-size: 18px; }
+            .code-box { flex-direction: column; align-items: stretch; gap: 10px; }
+            .code-box form { width: 100%; }
+            .code-box button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <div class="nav-left">
+        <a href="{{ url_for('home') }}" class="brand-logo">
+            <span class="brand-name">CINEVO <span>LUXE</span></span>
+        </a>
+        <div class="nav-menu">
+            <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+            <a href="{{ url_for('movies') }}" class="nav-item">Explore Movies</a>
+            <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+            <a href="{{ url_for('cinemas') }}" class="nav-item">Cinemas</a>
+            <a href="{{ url_for('offers') }}" class="nav-item active">Offers</a>
+        </div>
+    </div>
+    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+        <a href="{{ url_for('my_bookings') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">My Bookings</a>
+        <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
+    </div>
+</nav>
+
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-drawer-overlay" id="cinevoDrawerOverlay" onclick="toggleCinevoNav()"></div>
+<div class="mobile-nav-drawer" id="cinevoNavDrawer">
+    <div class="mobile-drawer-header">
+        <span class="brand-name" style="font-size: 18px;">CINEVO <span>LUXE</span></span>
+        <button class="mobile-drawer-close" onclick="toggleCinevoNav()">✕</button>
+    </div>
+    <div class="mobile-drawer-links">
+        <a href="{{ url_for('home') }}" class="mobile-drawer-link">Home <span>&rarr;</span></a>
+        <a href="{{ url_for('movies') }}" class="mobile-drawer-link">Explore Movies <span>&rarr;</span></a>
+        <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link">Showtimes <span>&rarr;</span></a>
+        <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link">Cinemas <span>&rarr;</span></a>
+        <a href="{{ url_for('offers') }}" class="mobile-drawer-link active">Offers <span>&rarr;</span></a>
+        <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
+    </div>
+</div>
+
+<main class="container">
+    <div class="page-header">
+        <h1>VIP Lounge & Privilege Offers</h1>
+        <p>Exclusive privileges, cardholder benefits, and luxury dining pairings.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 14px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                    <span style="font-size: 16px;">⚠️</span>
+                    <div>{{ message }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="offers-grid">
+        <div class="offer-card">
+            <span class="offer-badge">Welcome Bonus</span>
+            <div class="offer-title">🎁 First User Discount</div>
+            <div class="offer-desc">
+                First time at Cinevo Luxe? Enjoy an exclusive ₹100 flat discount on your very first booking with us.
+            </div>
+            <div class="code-box">
+                <span>Promo: FIRST100</span>
+                <form action="{{ url_for('apply_offer', promo_code='FIRST100') }}" method="POST" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-gold" style="padding: 6px 14px; font-size: 11px; border: none; cursor: pointer;">Book Now</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="offer-card">
+            <span class="offer-badge">Black Tier Exclusive</span>
+            <div class="offer-title">👑 Executive Recliner Upgrade</div>
+            <div class="offer-desc">
+                Receive complimentary lounge access, welcome artisanal mocktails, and priority seat selection when booking with Black or Titanium tier cards.
+            </div>
+            <div class="code-box">
+                <span>Promo: LUXE-BLACK</span>
+                <form action="{{ url_for('apply_offer', promo_code='LUXE-BLACK') }}" method="POST" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-gold" style="padding: 6px 14px; font-size: 11px; border: none; cursor: pointer;">Book Now</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="offer-card">
+            <span class="offer-badge">Gourmet Dining</span>
+            <div class="offer-title">🍷 Chef's Table Suite Pairing</div>
+            <div class="offer-desc">
+                Book a private screening suite for two and receive a complimentary 3-course gourmet dining menu prepared by our master in-house culinary team.
+            </div>
+            <div class="code-box">
+                <span>Promo: CHEF-PAIR</span>
+                <form action="{{ url_for('apply_offer', promo_code='CHEF-PAIR') }}" method="POST" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-gold" style="padding: 6px 14px; font-size: 11px; border: none; cursor: pointer;">Book Now</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="offer-card">
+            <span class="offer-badge">Weekday Indulgence</span>
+            <div class="offer-title">🍿 20% Dining Credit</div>
+            <div class="offer-desc">
+                Enjoy 20% off all gourmet lounge appetizers, signature sliders, and truffle popcorn on weekday evening showtimes across all Cinevo Luxe screens.
+            </div>
+            <div class="code-box">
+                <span>Promo: WEEKDAY20</span>
+                <form action="{{ url_for('apply_offer', promo_code='WEEKDAY20') }}" method="POST" style="display: inline; margin: 0;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-gold" style="padding: 6px 14px; font-size: 11px; border: none; cursor: pointer;">Book Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div>
+        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+    </div>
+    <div>
+        <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+        <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+    </div>
+</footer>
+
+<script>
+function toggleCinevoNav() {
+    var drawer = document.getElementById('cinevoNavDrawer');
+    var overlay = document.getElementById('cinevoDrawerOverlay');
+    if (drawer && overlay) {
+        var isOpen = drawer.classList.contains('open');
+        if (isOpen) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        } else {
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+        }
+    }
+}
+</script>
+</body>
+</html>

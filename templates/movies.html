@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Movies | Cinevo Luxe Executive Cinema</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root { --bg-body: #07090e; --bg-surface: #0f131c; --bg-card: #151a26; --border-subtle: rgba(255, 255, 255, 0.07); --border-container: rgba(255, 255, 255, 0.1); --border-gold: rgba(212, 175, 55, 0.35); --gold-primary: #e5c158; --gold-light: #f4df9b; --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%); --gold-grad-hover: linear-gradient(135deg, #f7e099 0%, #c99d31 100%); --text-main: #f8fafc; --text-sub: #94a3b8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+        .top-nav { background: rgba(7, 9, 14, 0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-container); height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 54px; position: sticky; top: 0; z-index: 100; }
+        .nav-left { display: flex; align-items: center; gap: 36px; }
+        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-name span { color: var(--gold-primary); }
+        .brand-tagline { font-size: 8px; color: var(--text-sub); letter-spacing: 2px; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
+        .nav-menu { display: flex; align-items: center; gap: 4px; }
+        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
+        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
+        .catalog-container { max-width: 1400px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
+        .catalog-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; flex-wrap: wrap; gap: 20px; }
+        .catalog-title h1 { font-size: 32px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; color: #ffffff; margin-bottom: 6px; }
+        .catalog-title p { font-size: 14px; color: var(--text-sub); }
+        .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .filter-tab { padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; color: var(--text-sub); background: var(--bg-surface); border: 1px solid var(--border-container); transition: all 0.2s ease; }
+        .filter-tab:hover { color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+        .filter-tab.active { background: var(--gold-grad); color: #07090e; border-color: transparent; }
+        .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+        .movie-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-container); overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+        .movie-card:hover { transform: translateY(-5px); border-color: rgba(229, 193, 88, 0.4); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7); }
+        .poster-box { width: 100%; aspect-ratio: 2 / 3; overflow: hidden; position: relative; background: #000; }
+        .poster-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
+        .movie-card:hover .poster-box img { transform: scale(1.04); }
+        .poster-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 9, 14, 0) 40%, rgba(7, 9, 14, 0.85) 100%); opacity: 0; display: flex; align-items: flex-end; padding: 16px; transition: opacity 0.25s ease; }
+        .movie-card:hover .poster-overlay { opacity: 1; }
+        .card-book-action { width: 100%; background: var(--gold-grad); color: #07090e; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px; border-radius: 6px; text-align: center; }
+        .card-badge { position: absolute; top: 8px; right: 8px; background: rgba(7, 9, 14, 0.88); backdrop-filter: blur(4px); border: 1px solid rgba(229, 193, 88, 0.35); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: var(--gold-primary); z-index: 2; }
+        .card-details { padding: 14px 16px 18px; }
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; line-height: 1.35; color: #ffffff; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-subtitle { font-size: 12px; color: var(--text-sub); font-weight: 500; margin-bottom: 6px; }
+        .card-tags { font-size: 10px; font-weight: 700; color: var(--gold-primary); letter-spacing: 0.5px; text-transform: uppercase; }
+        .empty-state { text-align: center; padding: 80px 20px; background: var(--bg-surface); border: 1px solid var(--border-container); border-radius: 16px; }
+        .site-footer { border-top: 1px solid var(--border-container); padding: 40px 54px; margin-top: 60px; display: flex; justify-content: space-between; align-items: center; background: rgba(7, 9, 14, 0.6); font-size: 12px; color: var(--text-sub); }
+        .footer-brand { font-weight: 800; color: var(--text-main); letter-spacing: 1.5px; font-size: 14px; }
+        .footer-link { color: var(--text-sub); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .footer-link:hover { color: var(--gold-primary); }
+        @media (max-width: 900px) {
+            .top-nav { padding: 0 24px; }
+            .nav-menu { display: none; }
+            .catalog-container { padding: 30px 24px; }
+            .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 16px; height: 64px; }
+            .nav-right > a.btn-gold { display: none; }
+            .catalog-container { padding: 24px 16px; }
+            .catalog-title h1 { font-size: 22px; }
+            .filter-tab { padding: 6px 12px; font-size: 11px; }
+            .movies-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .card-details { padding: 10px 12px 14px; }
+            .card-title { font-size: 13px; }
+            .card-subtitle { font-size: 11px; }
+            .site-footer { padding: 28px 16px; }
+        }
+        @media (max-width: 360px) {
+            .top-nav { padding: 0 12px; height: 60px; }
+            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .movies-grid { grid-template-columns: 1fr; gap: 14px; }
+        }
+    </style>
+</head>
+<body>
+<nav class="top-nav">
+    <div class="nav-left">
+        <a href="{{ url_for('home') }}" class="brand-logo"><span class="brand-name">CINEVO <span>LUXE</span></span><span class="brand-tagline">EXECUTIVE CINEMA</span></a>
+        <div class="nav-menu">
+            <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+            <a href="{{ url_for('movies') }}" class="nav-item active">Explore Movies</a>
+            <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+            <a href="{{ url_for('cinemas') }}" class="nav-item">Cinemas</a>
+            <a href="{{ url_for('offers') }}" class="nav-item">Offers</a>
+        </div>
+    </div>
+    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+        <a href="{{ url_for('my_bookings') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">My Bookings</a>
+        <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
+    </div>
+</nav>
+
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-drawer-overlay" id="cinevoDrawerOverlay" onclick="toggleCinevoNav()"></div>
+<div class="mobile-nav-drawer" id="cinevoNavDrawer">
+    <div class="mobile-drawer-header">
+        <span class="brand-name" style="font-size: 18px;">CINEVO <span>LUXE</span></span>
+        <button class="mobile-drawer-close" onclick="toggleCinevoNav()">✕</button>
+    </div>
+    <div class="mobile-drawer-links">
+        <a href="{{ url_for('home') }}" class="mobile-drawer-link">Home <span>&rarr;</span></a>
+        <a href="{{ url_for('movies') }}" class="mobile-drawer-link active">Explore Movies <span>&rarr;</span></a>
+        <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link">Showtimes <span>&rarr;</span></a>
+        <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link">Cinemas <span>&rarr;</span></a>
+        <a href="{{ url_for('offers') }}" class="mobile-drawer-link">Offers <span>&rarr;</span></a>
+        <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
+    </div>
+</div>
+
+<main class="catalog-container">
+    <div class="catalog-header">
+        <div class="catalog-title"><h1>Curated Cinema Catalog</h1><p>Explore luxury screenings across Dolby Atmos, IMAX 70mm, and Private VIP Suites.</p></div>
+        <div class="filter-bar">
+            <a href="{{ url_for('movies') }}" class="filter-tab {% if not selected_category %}active{% endif %}">All Titles</a>
+            <a href="{{ url_for('movies', category='now_showing') }}" class="filter-tab {% if selected_category == 'now_showing' %}active{% endif %}">Now Showing</a>
+            <a href="{{ url_for('movies', category='premiere') }}" class="filter-tab {% if selected_category == 'premiere' %}active{% endif %}">Premiere Screenings</a>
+            <a href="{{ url_for('movies', category='imax') }}" class="filter-tab {% if selected_category == 'imax' %}active{% endif %}">IMAX Experience</a>
+        </div>
+    </div>
+    {% if movies %}
+        <div class="movies-grid">
+            {% for movie in movies %}
+                <a href="{{ url_for('movie_details', movie_id=movie.id) }}" class="movie-card">
+                    <div class="poster-box"><div class="card-badge">⭐ {{ movie.formatted_rating }}</div><img src="{{ movie.poster }}" alt="{{ movie.name }}"><div class="poster-overlay"><div class="card-book-action">▶ Reserve Tickets</div></div></div>
+                    <div class="card-details"><div class="card-title" title="{{ movie.name }}">{{ movie.name }}</div><div class="card-subtitle">{{ movie.genre }} • {{ movie.duration }}</div><div class="card-tags">{{ movie.format }}</div></div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state"><h3 style="font-size: 20px; color: #fff; margin-bottom: 8px;">No Movies Found</h3><p style="color: var(--text-sub); margin-bottom: 20px;">No titles matched your selected filter.</p><a href="{{ url_for('movies') }}" class="btn-gold">View All Movies</a></div>
+    {% endif %}
+</main>
+<footer class="site-footer">
+    <div><span class="footer-brand">CINEVO LUXE</span><div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc. All rights reserved.</div></div>
+    <div><a href="{{ url_for('home') }}" class="footer-link" style="margin-right: 20px;">Home</a><a href="{{ url_for('showtimings') }}" class="footer-link" style="margin-right: 20px;">Showtimes</a><a href="{{ url_for('cinemas') }}" class="footer-link" style="margin-right: 20px;">Cinemas</a></div>
+</footer>
+
+<script>
+function toggleCinevoNav() {
+    var drawer = document.getElementById('cinevoNavDrawer');
+    var overlay = document.getElementById('cinevoDrawerOverlay');
+    if (drawer && overlay) {
+        var isOpen = drawer.classList.contains('open');
+        if (isOpen) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        } else {
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+        }
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Cinemas & Partner Venues | Cinevo Luxe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-name span { color: var(--gold-primary); }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
+        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
+
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
+        .page-header { margin-bottom: 36px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; }
+        .page-header h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+        .page-header p { font-size: 14px; color: var(--text-sub); }
+
+        .cinemas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 28px; }
+        .cinema-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 16px;
+            padding: 30px;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .cinema-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold-primary);
+        }
+        .cinema-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .cinema-address { font-size: 13px; color: var(--text-sub); margin-bottom: 16px; line-height: 1.5; }
+        .feature-badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .feature-pill {
+            background: rgba(229, 193, 88, 0.08);
+            border: 1px solid rgba(229, 193, 88, 0.25);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+        }
+
+        .active-shows-box {
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 16px;
+        }
+        .active-shows-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-sub); margin-bottom: 12px; }
+        .show-slot-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+        }
+        .show-slot-row:last-child { border-bottom: none; }
+
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        @media (max-width: 900px) {
+            .top-nav { padding: 0 24px; }
+            .nav-menu { display: none; }
+            .container { padding: 30px 24px; }
+            .cinemas-grid { grid-template-columns: 1fr; gap: 20px; }
+            .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 16px; height: 64px; }
+            .nav-right > a.btn-gold { display: none; }
+            .container { padding: 24px 16px; }
+            .page-header h1 { font-size: 22px; }
+            .cinema-card { padding: 18px 14px; border-radius: 12px; }
+            .show-slot-row { flex-direction: row; justify-content: space-between; align-items: center; }
+            .site-footer { padding: 28px 16px; }
+        }
+        @media (max-width: 360px) {
+            .top-nav { padding: 0 12px; height: 60px; }
+            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .cinema-title { font-size: 18px; }
+            .show-slot-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <div class="nav-left">
+        <a href="{{ url_for('home') }}" class="brand-logo">
+            <span class="brand-name">CINEVO <span>LUXE</span></span>
+        </a>
+        <div class="nav-menu">
+            <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+            <a href="{{ url_for('movies') }}" class="nav-item">Explore Movies</a>
+            <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+            <a href="{{ url_for('cinemas') }}" class="nav-item active">Cinemas</a>
+            <a href="{{ url_for('offers') }}" class="nav-item">Offers</a>
+        </div>
+    </div>
+    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+        <a href="{{ url_for('my_bookings') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">My Bookings</a>
+        <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
+    </div>
+</nav>
+
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-drawer-overlay" id="cinevoDrawerOverlay" onclick="toggleCinevoNav()"></div>
+<div class="mobile-nav-drawer" id="cinevoNavDrawer">
+    <div class="mobile-drawer-header">
+        <span class="brand-name" style="font-size: 18px;">CINEVO <span>LUXE</span></span>
+        <button class="mobile-drawer-close" onclick="toggleCinevoNav()">✕</button>
+    </div>
+    <div class="mobile-drawer-links">
+        <a href="{{ url_for('home') }}" class="mobile-drawer-link">Home <span>&rarr;</span></a>
+        <a href="{{ url_for('movies') }}" class="mobile-drawer-link">Explore Movies <span>&rarr;</span></a>
+        <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link">Showtimes <span>&rarr;</span></a>
+        <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link active">Cinemas <span>&rarr;</span></a>
+        <a href="{{ url_for('offers') }}" class="mobile-drawer-link">Offers <span>&rarr;</span></a>
+        <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
+    </div>
+</div>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Partner Luxury Venues</h1>
+        <p>Experience state-of-the-art acoustics, custom recliners, and private lounges in your city.</p>
+    </div>
+
+    <div class="cinemas-grid">
+        {% for cinema in cinemas %}
+            <div class="cinema-card">
+                <div class="cinema-title">{{ cinema.name }}</div>
+                <div class="cinema-address">📍 {{ cinema.address }} &bull; {{ cinema.city }}</div>
+                <div class="feature-badge-row">
+                    <span class="feature-pill">{{ cinema.screen_name }}</span>
+                    <span class="feature-pill">{{ cinema.formats }}</span>
+                    <span class="feature-pill">Recliner Suites</span>
+                </div>
+
+                <div class="active-shows-box">
+                    <div class="active-shows-title">Today's Featured Screenings</div>
+                    {% set active_shows = [] %}
+                    {% for st in showtimes %}
+                        {% if st.cinema_id == cinema.id %}
+                            <div class="show-slot-row">
+                                <span style="font-weight: 700; color: #fff;">{{ st.movie.title }}</span>
+                                <a href="{{ url_for('seat_selection', showtime_id=st.id) }}" class="btn-gold" style="padding: 6px 12px; font-size: 11px;">
+                                    {{ st.time }} &rarr;
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div>
+        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+    </div>
+    <div>
+        <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+        <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+    </div>
+</footer>
+
+<script>
+function toggleCinevoNav() {
+    var drawer = document.getElementById('cinevoNavDrawer');
+    var overlay = document.getElementById('cinevoDrawerOverlay');
+    if (drawer && overlay) {
+        var isOpen = drawer.classList.contains('open');
+        if (isOpen) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        } else {
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+        }
+    }
+}
+</script>
+</body>
+</html>

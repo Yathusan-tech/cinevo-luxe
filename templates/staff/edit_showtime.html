@@ -1,0 +1,41 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}Edit Showtime{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Edit Showtime</h1>
+    <a href="{{ url_for('staff_showtimes') }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">&larr; Back to Showtimes</a>
+</div>
+
+<div class="section-box">
+    <div class="section-title">Update {{ showtime.movie.title }} Screening</div>
+    {% if has_reservations %}
+    <div style="background: rgba(229,193,88,0.12); border: 1px solid var(--border-gold); color: var(--gold-light); padding: 12px 18px; border-radius: 8px; margin-bottom: 24px; font-size: 13px; font-weight: 600;">
+        This showtime has customer reservations. Movie, cinema, date, and time are locked; ticket price may still be updated.
+    </div>
+    {% endif %}
+    <form action="{{ url_for('staff_update_showtime', showtime_id=showtime.id) }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-row">
+            <select name="movie_id" class="form-control" {% if has_reservations %}disabled{% endif %} required>
+                {% for movie in movies %}<option value="{{ movie.id }}" {% if movie.id == showtime.movie_id %}selected{% endif %}>{{ movie.title }}</option>{% endfor %}
+            </select>
+            <select name="cinema_id" class="form-control" {% if has_reservations %}disabled{% endif %} required>
+                {% for cinema in cinemas %}<option value="{{ cinema.id }}" {% if cinema.id == showtime.cinema_id %}selected{% endif %}>{{ cinema.name }}</option>{% endfor %}
+            </select>
+            <input type="date" name="date" class="form-control" value="{{ showtime.date.strftime('%Y-%m-%d') }}" {% if has_reservations %}readonly{% endif %} required>
+            <input type="text" name="time" class="form-control" value="{{ showtime.time }}" {% if has_reservations %}readonly{% endif %} required>
+            <input type="number" name="base_price" class="form-control" value="{{ showtime.base_price }}" min="0" step="0.01" required>
+        </div>
+        {% if has_reservations %}
+        <input type="hidden" name="movie_id" value="{{ showtime.movie_id }}">
+        <input type="hidden" name="cinema_id" value="{{ showtime.cinema_id }}">
+        {% endif %}
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button type="submit" class="btn-gold" style="padding: 10px 20px;">Save Changes</button>
+            <a href="{{ url_for('staff_showtimes') }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

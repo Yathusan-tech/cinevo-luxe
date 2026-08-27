@@ -1,0 +1,40 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Staff Management Console</h1>
+</div>
+
+<!-- Metrics -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Active Movies</div>
+        <div class="stat-num">{{ movies|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Bookings</div>
+        <div class="stat-num">{{ bookings|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Partner Cinemas</div>
+        <div class="stat-num">{{ cinemas|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Showtimes</div>
+        <div class="stat-num">{{ showtimes|length }}</div>
+    </div>
+</div>
+
+<div class="section-box">
+    <div class="section-title">Dashboard Overview</div>
+    <p style="color: var(--text-sub); line-height: 1.6; font-size: 14px;">
+        Welcome to the Cinevo Luxe private management system. Use the navigation links above to schedule new movie titles, configure active showtimes, audit venue configurations, and monitor real-time passenger reservations.
+    </p>
+    <div style="margin-top: 20px; display: flex; gap: 15px;">
+        <a href="{{ url_for('staff_movies') }}" class="btn-gold" style="padding: 10px 20px; font-size: 12px;">Manage Movies</a>
+        <a href="{{ url_for('staff_bookings') }}" class="btn-gold" style="padding: 10px 20px; font-size: 12px; background: transparent; border: 1px solid var(--border-gold); color: var(--gold-primary);">Audit Bookings</a>
+    </div>
+</div>
+{% endblock %}

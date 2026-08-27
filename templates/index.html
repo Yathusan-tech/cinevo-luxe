@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinevo | Executive Cinema Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --gold-grad-hover: linear-gradient(135deg, #f7e099 0%, #c99d31 100%);
+
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation Bar */
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-name span { color: var(--gold-primary); }
+
+        .main-content { padding: 40px 54px; }
+        .section-title { font-size: 20px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 20px; border-bottom: 1px solid var(--border-container); padding-bottom: 10px; }
+
+        /* Minimalist Footer */
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+        .footer-left { display: flex; flex-direction: column; gap: 6px; }
+        .footer-brand { font-weight: 800; color: var(--text-main); letter-spacing: 1.5px; font-size: 14px; }
+
+        .footer-center { display: flex; align-items: center; gap: 22px; }
+        .footer-link { color: var(--text-sub); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .footer-link:hover { color: var(--gold-primary); }
+
+        /* Updated Staff Portal Link with smooth hover arrow */
+        .footer-admin-link {
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .footer-admin-link:hover {
+            color: var(--gold-primary);
+            transform: translateX(3px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <a href="#" class="brand-logo">
+            <span class="brand-name">CINEVO <span>LUXE</span></span>
+        </a>
+    </nav>
+
+    <!-- Main Placeholder Sections Matching Wireframe -->
+    <main class="main-content">
+        <section style="margin-bottom: 50px;">
+            <h2 class="section-title">Hero Section</h2>
+            <p style="color: var(--text-sub);">Featured Movie + Poster overview goes here.</p>
+        </section>
+
+        <section style="margin-bottom: 50px;">
+            <h2 class="section-title">Now Showing</h2>
+            <p style="color: var(--text-sub);">[Movie] [Movie] [Movie] [Movie] [Movie]</p>
+        </section>
+    </main>
+
+    <!-- Updated Footer -->
+    <footer class="site-footer">
+        <div class="footer-left">
+            <span class="footer-brand">CINEVO LUXE</span>
+            <span class="footer-copy">&copy; 2026 Cinevo Luxe. All rights reserved.</span>
+        </div>
+
+        <div class="footer-center">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <!-- Updated staff portal link with clear action indicator -->
+            <a href="/staff-login.html" class="footer-admin-link">Staff Portal &rarr;</a>
+        </div>
+    </footer>
+
+</body>
+</html>

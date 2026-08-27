@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Avengers: Endgame",
+        "genre": "Action / Sci-Fi",
+        "rating": 9.0,
+        "duration": "3h 1m",
+        "poster": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRXef9DJnZiq5az0UnjkmvkQufOQ5MFnF7HATYRUXN913swRuH1",
+        "description": "The Avengers unite for one final battle to restore what was lost and save the universe.",
+        "showtimes": [
+            "1:00 PM",
+            "4:00 PM",
+            "7:00 PM"
+        ]
+    },
+    {
+        "name": "Attack on Titan: The Last Attack",
+        "genre": "Dark fantasy / Action / Mystery",
+        "rating": 10.0,
+        "duration": "1h 25m",
+        "poster": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSvAzMxVb7pQUlHGjtC8do83vd-UClldQQivBaI3Dq1ny95Ewf4",
+        "description": "Humanity faces its final confrontation as the truth behind the Titans reaches its climax.",
+        "showtimes": [
+            "10:00 AM",
+            "1:00 PM",
+            "4:00 PM",
+            "7:00 PM"
+        ]
+    },
+    {
+        "name": "Dhurandhar: The Revenge",
+        "genre": "Action / Thriller",
+        "rating": 9.6,
+        "duration": "3h 49m",
+        "poster": "https://cdn.district.in/movies-assets/images/cinema/DD-1be608f0-1d22-11f1-96c9-4539b6d27dc7.jpg?im=Resize,width=400",
+        "description": "An intense action thriller following a dangerous mission filled with revenge, intelligence operations and high-stakes conflict.",
+        "showtimes": [
+            "10:00 AM",
+            "1:00 PM",
+            "4:00 PM",
+            "7:00 PM"
+        ]
+    }
+]

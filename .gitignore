@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+.env.local
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Backup directories
+backup_original/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Backup Python files
+*_backup.py
+app_backup*.py
+
+# Local database files
+database.db
+instance/*.db
+
+# Backup Python files
+models_backup*.py
+
+# Local booking/customer data
+static/bookings.json
+data/bookings.json
+
+# Backup and test templates
+templates/*backup*
+templates/test.py

@@ -1,0 +1,78 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}Manage Movies{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Movie Management</h1>
+</div>
+
+<!-- Add Movie Module -->
+<div class="section-box">
+    <div class="section-title">Schedule New Title & Screenings</div>
+    <form action="{{ url_for('staff_add_movie') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-row">
+            <input type="text" name="title" class="form-control" placeholder="Movie Title *" required>
+            <input type="text" name="genre" class="form-control" placeholder="Genre (e.g. Action / Sci-Fi) *" required>
+            <input type="text" name="format" class="form-control" placeholder="Format (e.g. IMAX 70mm • LASER 4K)" required>
+            <input type="text" name="rating" class="form-control" placeholder="Rating (e.g. 9.2)" required>
+        </div>
+        <div class="form-row">
+            <input type="text" name="age_rating" class="form-control" placeholder="Age Rating (e.g. UA 16+)" required>
+            <input type="text" name="duration" class="form-control" placeholder="Duration (e.g. 2h 45m)" required>
+            <input type="url" name="poster" class="form-control" placeholder="Poster Image URL *" required>
+            <select name="category" class="form-control">
+                <option value="now_showing">Now Showing</option>
+                <option value="premiere">Premiere Screening</option>
+                <option value="imax">IMAX Experience</option>
+            </select>
+        </div>
+        <div class="form-row">
+            <input type="text" name="description" class="form-control" placeholder="Synopsis / Description" style="grid-column: 1 / -1;" required>
+            <button type="submit" class="btn-gold" style="height: 44px; width: 100%; grid-column: 1 / -1;">
+                + Add Movie & Schedule
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Movies List Module -->
+<div class="section-box">
+    <div class="section-title">Active Movie Catalog</div>
+    <div class="data-table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Format</th>
+                    <th>Rating</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in movies %}
+                <tr>
+                    <td><strong style="color: #fff;">{{ m.title }}</strong></td>
+                    <td>{{ m.genre }}</td>
+                    <td>{{ m.format }}</td>
+                    <td style="color: var(--gold-primary); font-weight: 700;">★ {{ m.formatted_rating }}</td>
+                    <td><span style="text-transform: uppercase; font-size: 11px; color: var(--text-sub);">{{ m.category }}</span></td>
+                    <td>
+                        <a href="{{ url_for('staff_edit_movie', movie_id=m.id) }}" class="btn-gold" style="display: inline-block; text-decoration: none; padding: 8px 14px; margin-right: 6px;">
+                            Edit
+                        </a>
+                        <form action="{{ url_for('staff_delete_movie', movie_id=m.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Remove movie and its showtimes?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn-delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

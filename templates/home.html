@@ -1,0 +1,3979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinevo | Executive Cinema Experience</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --gold-grad-hover: linear-gradient(135deg, #f7e099 0%, #c99d31 100%);
+
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        @keyframes pageFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+            scroll-behavior: smooth;
+            animation: pageFadeIn 0.3s ease forwards;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+
+        .btn-gold {
+            background: var(--gold-grad);
+            color: #07090e;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(184, 142, 40, 0.2);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-grad-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(244, 223, 155, 0.35);
+            color: #07090e;
+        }
+
+        /* ============================================================
+           NAVIGATION BAR
+           ============================================================ */
+
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+
+        .brand-logo {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            transition: opacity 0.2s;
+        }
+
+        .brand-logo:hover {
+            opacity: 0.85;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .brand-name span {
+            color: var(--gold-primary);
+        }
+
+        .brand-tagline {
+            font-size: 8px;
+            color: var(--text-sub);
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: var(--text-sub);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            color: var(--gold-light);
+            background: rgba(229, 193, 88, 0.08);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background: var(--gold-primary);
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(229, 193, 88, 0.6);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* ============================================================
+           SEARCH
+           ============================================================ */
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-container);
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-sub);
+            transition: all 0.25s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--gold-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 13px;
+            width: 210px;
+        }
+
+        .search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            min-width: 300px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 10px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+            z-index: 150;
+            display: none;
+            overflow: hidden;
+            animation: pageFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .search-dropdown-header {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold-primary);
+            padding: 10px 14px 6px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(229, 193, 88, 0.04);
+        }
+
+        .search-dropdown-item {
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.2s, color 0.2s;
+            text-decoration: none;
+        }
+
+        .search-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-dropdown-item:hover {
+            background: rgba(229, 193, 88, 0.12);
+            color: var(--gold-light);
+        }
+
+        .search-dropdown-item .item-type {
+            font-size: 9px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* ============================================================
+           CITY BUTTON
+           ============================================================ */
+
+        .city-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-container);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .city-btn:hover {
+            border-color: var(--gold-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-container);
+            color: var(--text-main);
+            font-size: 20px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           MOBILE DRAWER
+           ============================================================ */
+
+        .mobile-drawer-nav {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-container);
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 150;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.8);
+            animation: pageFadeIn 0.25s ease;
+        }
+
+        .mobile-drawer-nav .nav-item {
+            padding: 12px;
+            font-size: 15px;
+        }
+
+        /* ============================================================
+           HERO
+           ============================================================ */
+
+        .hero-section {
+            position: relative;
+            min-height: 480px;
+            padding: 50px 54px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-size: cover;
+            background-position: center right;
+            border-bottom: 1px solid var(--border-container);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                #07090e 0%,
+                #07090e 50%,
+                rgba(7, 9, 14, 0.75) 75%,
+                rgba(7, 9, 14, 0.25) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-left {
+            max-width: 620px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(229, 193, 88, 0.1);
+            border: 1px solid rgba(229, 193, 88, 0.35);
+            color: var(--gold-primary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            color: #ffffff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-container);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        .meta-tag.gold {
+            color: var(--gold-primary);
+            border-color: rgba(229, 193, 88, 0.35);
+            background: rgba(229, 193, 88, 0.08);
+        }
+
+        .hero-desc {
+            font-size: 14px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin-bottom: 28px;
+            max-width: 560px;
+        }
+
+        .hero-right {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-poster-card {
+            width: 220px;
+            height: 320px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-container);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
+            background: #0f131c;
+            transition:
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s ease;
+        }
+
+        .hero-poster-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 26px 50px rgba(0, 0, 0, 0.95);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-poster-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .hero-poster-card:hover img {
+            transform: scale(1.03);
+        }
+
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 52px;
+            height: 52px;
+            background: var(--gold-grad);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #07090e;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            transition:
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.25s ease;
+            z-index: 5;
+        }
+
+        .play-btn:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+            background: var(--gold-grad-hover);
+        }
+
+        /* ============================================================
+           QUICK BOOKING
+           ============================================================ */
+
+        .quick-book-container {
+            padding: 0 54px;
+            margin-top: -30px;
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .quick-book-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 14px;
+            padding: 22px 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75);
+            transition: border-color 0.3s ease;
+        }
+
+        .quick-book-bar:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .qb-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gold-primary);
+            white-space: nowrap;
+            padding-right: 4px;
+        }
+
+        .qb-selects {
+            display: flex;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .qb-select {
+            flex: 1;
+            height: 46px;
+            padding: 0 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-container);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .qb-select:focus,
+        .qb-select:hover {
+            border-color: var(--gold-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .qb-select option {
+            background: var(--bg-card);
+            color: #fff;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+           ============================================================ */
+
+        .main-content {
+            margin: 0 auto;
+            padding: 32px 54px;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        .movie-section-block {
+            margin-bottom: 48px;
+        }
+
+        .section-title-row {
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--border-container);
+            padding-bottom: 12px;
+        }
+
+        .section-header-content h2 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .section-header-content p {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .section-header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .carousel-arrows {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .carousel-nav-btn {
+            width: 30px;
+            height: 30px;
+            background: rgba(15, 19, 28, 0.92);
+            border: 1px solid var(--border-container);
+            color: var(--text-sub);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .carousel-nav-btn:hover {
+            background: rgba(229, 193, 88, 0.15);
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+            transform: scale(1.08);
+            box-shadow: 0 6px 16px rgba(229, 193, 88, 0.2);
+        }
+
+        .see-all-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: opacity 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .see-all-link:hover {
+            opacity: 0.85;
+            transform: translateX(2px);
+        }
+
+        /* ============================================================
+           CAROUSEL
+           ============================================================ */
+
+        .movie-carousel-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .movie-carousel {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: calc((100% - (4 * 18px)) / 5);
+            gap: 18px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 6px 4px 16px 4px;
+            width: 100%;
+        }
+
+        .movie-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* ============================================================
+           MOVIE CARDS
+           ============================================================ */
+
+        .movie-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-container);
+            overflow: hidden;
+            width: 100%;
+            transition:
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(229, 193, 88, 0.4);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6);
+        }
+
+        .poster-box {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+        }
+
+        .poster-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .movie-card:hover .poster-box img {
+            transform: scale(1.03);
+        }
+
+        .poster-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(7, 9, 14, 0) 40%,
+                rgba(7, 9, 14, 0.82) 100%
+            );
+            opacity: 0;
+            display: flex;
+            align-items: flex-end;
+            padding: 16px;
+            transition: opacity 0.25s ease;
+        }
+
+        .movie-card:hover .poster-overlay {
+            opacity: 1;
+        }
+
+        .card-book-action {
+            width: 100%;
+            background: var(--gold-grad);
+            color: #07090e;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transform: translateY(6px);
+            transition:
+                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                background 0.2s ease;
+        }
+
+        .movie-card:hover .card-book-action {
+            transform: translateY(0);
+        }
+
+        .card-book-action:hover {
+            background: var(--gold-grad-hover);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(7, 9, 14, 0.88);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(229, 193, 88, 0.35);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            z-index: 2;
+        }
+
+        .card-details {
+            padding: 12px 14px 16px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            min-height: 38px;
+            line-height: 1.35;
+            color: #ffffff;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-subtitle {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .card-tags {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ============================================================
+           VIP LOUNGE
+           ============================================================ */
+
+        .vip-banner-block {
+            background: linear-gradient(
+                135deg,
+                rgba(15, 19, 28, 0.92) 0%,
+                rgba(26, 21, 10, 0.88) 100%
+            );
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 32px 40px;
+            margin-bottom: 48px;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(229, 193, 88, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vip-banner-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .vip-titles h2 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .vip-titles p {
+            font-size: 14px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .vip-benefit-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(229, 193, 88, 0.08);
+            border: 1px solid rgba(229, 193, 88, 0.25);
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .vip-banner-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .vip-preview-card {
+            width: 140px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-container);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+            background: #000;
+            flex-shrink: 0;
+        }
+
+        .vip-preview-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .footer-brand {
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: 1.5px;
+            font-size: 14px;
+        }
+
+        .footer-copy {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .footer-center {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 12px;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: var(--gold-primary);
+        }
+
+        .footer-admin-link {
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .footer-admin-link:hover {
+            color: var(--gold-primary);
+            transform: translateX(2px);
+        }
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .social-icon-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-container);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .social-icon-btn:hover {
+            background: rgba(229, 193, 88, 0.12);
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================================
+           FLOATING DOCK
+           ============================================================ */
+
+        .floating-dock {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 30px;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+            z-index: 99;
+            transition: all 0.3s ease;
+        }
+
+        .floating-dock:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .dock-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: none;
+            color: var(--text-main);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .dock-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dock-btn.gold {
+            background: var(--gold-grad);
+            color: #07090e;
+            transition: all 0.25s ease;
+        }
+
+        .dock-btn.gold:hover {
+            background: var(--gold-grad-hover);
+            transform: scale(1.02);
+        }
+
+        /* ============================================================
+           MODALS
+           ============================================================ */
+
+        .modal-overlay {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+
+            background: rgba(7, 9, 14, 0.88);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            z-index: 99999 !important;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            animation: pageFadeIn 0.2s ease;
+
+            padding: 20px;
+        }
+
+        .modal-drawer {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 100%;
+            max-width: 380px;
+
+            background: var(--bg-surface);
+
+            border-left: 1px solid var(--border-container);
+
+            padding: 28px;
+
+            overflow-y: auto;
+        }
+
+        .modal-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 20px;
+            color: var(--text-sub);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #fff;
+        }
+
+        .drawer-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 18px;
+            color: #fff;
+        }
+
+        .city-search {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-container);
+            border-radius: 6px;
+            color: #fff;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .city-search:focus {
+            border-color: var(--gold-primary);
+        }
+
+        .city-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .city-card {
+            height: 90px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--border-container);
+            transition: all 0.25s ease;
+        }
+
+        .city-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .city-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.55;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .city-card:hover img {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .city-card span {
+            position: absolute;
+            bottom: 8px;
+            left: 10px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .fb-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .fb-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .fb-price {
+            font-size: 13px;
+            color: var(--gold-primary);
+            font-weight: 700;
+        }
+
+        /* ============================================================
+           PROFESSIONAL TRAILER OVERLAY
+
+           IMPORTANT:
+           This is the only trailer-specific correction.
+           The video is inside a fixed modal overlay and therefore
+           does NOT appear down the page.
+           ============================================================ */
+
+        /*
+         * The homepage body uses a transform animation.
+         * That makes position:fixed descendants (this overlay)
+         * size to the full document instead of the viewport,
+         * so the player sat down the page (audio only on screen).
+         * Pin THIS overlay to the visual viewport only.
+         */
+        #trailerModal {
+            z-index: 9999;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
+            overflow: hidden;
+            inset: auto;
+            top: 0;
+            left: 0;
+        }
+
+        .trailer-modal-card {
+            width: 90%;
+            max-width: 900px;
+
+            padding: 0;
+
+            background: #000;
+
+            border: 1px solid rgba(229, 193, 88, 0.25);
+
+            border-radius: 14px;
+
+            overflow: hidden;
+
+            position: relative;
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.95),
+                0 0 40px rgba(0, 0, 0, 0.7);
+
+            animation: trailerModalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes trailerModalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .trailer-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .trailer-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #000;
+        }
+
+        .trailer-close {
+            top: 12px;
+            right: 14px;
+
+            z-index: 20;
+
+            width: 36px;
+            height: 36px;
+
+            border-radius: 50%;
+
+            background: rgba(7, 9, 14, 0.78);
+
+            border: 1px solid rgba(255, 255, 255, 0.18);
+
+            color: #fff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 16px;
+
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+
+            transition: all 0.2s ease;
+        }
+
+        .trailer-close:hover {
+            color: var(--gold-primary);
+
+            border-color: var(--gold-primary);
+
+            background: rgba(7, 9, 14, 0.95);
+
+            transform: scale(1.05);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+
+        @media (max-width: 1200px) {
+            .movie-carousel {
+                grid-auto-columns: calc((100% - (2 * 18px)) / 3);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .top-nav {
+                padding: 0 24px;
+            }
+
+            .hero-section {
+                padding: 30px 24px;
+                flex-direction: column-reverse;
+                align-items: flex-start;
+                gap: 24px;
+                min-height: auto;
+            }
+
+            .quick-book-container {
+                padding: 0 24px;
+            }
+
+            .main-content {
+                padding: 32px 24px;
+            }
+
+            .movie-carousel {
+                grid-auto-columns: calc((100% - (1 * 18px)) / 2);
+            }
+
+            .site-footer {
+                padding: 40px 24px;
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .footer-center {
+                justify-content: center;
+            }
+
+            .footer-right {
+                justify-content: center;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero-right {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .hero-poster-card {
+                width: 170px;
+                height: 250px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .quick-book-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 18px;
+                gap: 12px;
+            }
+
+            .qb-selects {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .qb-select {
+                width: 100%;
+            }
+
+            .quick-book-container {
+                margin-top: -20px;
+            }
+
+            .vip-banner-block {
+                flex-direction: column;
+                padding: 24px;
+                gap: 20px;
+            }
+
+            .vip-banner-right {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .floating-dock {
+                bottom: 16px;
+                right: 16px;
+                padding: 0;
+                border-radius: 50%;
+                width: 48px;
+                height: 48px;
+                justify-content: center;
+            }
+
+            .dock-btn-text,
+            .dock-btn.secondary-mobile {
+                display: none;
+            }
+
+            .dock-btn.gold {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+            }
+
+            .nav-right .search-container {
+                display: none;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .movie-carousel {
+                grid-auto-columns: 100%;
+            }
+
+            .carousel-arrows {
+                display: flex !important;
+            }
+
+            .trailer-modal-card {
+                width: 96%;
+                max-width: none;
+                border-radius: 10px;
+            }
+
+            .trailer-close {
+                top: 8px;
+                right: 8px;
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .nav-right > a.btn-gold {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-nav {
+                padding: 0 16px;
+                height: 64px;
+            }
+
+            .hero-section {
+                padding: 24px 16px;
+                gap: 16px;
+            }
+
+            .hero-title {
+                font-size: 26px;
+            }
+
+            .hero-desc {
+                font-size: 13px;
+                margin-bottom: 20px;
+            }
+
+            .quick-book-container {
+                padding: 0 16px;
+                margin-top: -15px;
+            }
+
+            .quick-book-bar {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .main-content {
+                padding: 24px 16px;
+            }
+
+            .vip-banner-block {
+                padding: 20px 16px;
+                border-radius: 14px;
+            }
+
+            .vip-titles h2 {
+                font-size: 20px;
+            }
+
+            .vip-benefit-row {
+                width: 100%;
+                justify-content: center;
+                font-size: 10px;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .site-footer {
+                padding: 28px 16px;
+            }
+
+            .modal-drawer {
+                padding: 20px 16px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .top-nav {
+                padding: 0 12px;
+                height: 60px;
+            }
+
+            .brand-name {
+                font-size: 18px;
+                letter-spacing: 1px;
+            }
+
+            .city-btn {
+                padding: 6px 8px;
+                font-size: 11px;
+                gap: 4px;
+            }
+
+            .hero-title {
+                font-size: 22px;
+            }
+
+            .meta-tag {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+
+<nav class="top-nav">
+
+    <div class="nav-left">
+
+        <a href="{{ url_for('home') }}" class="brand-logo">
+
+            <span class="brand-name">
+                CINEVO <span>LUXE</span>
+            </span>
+
+            <span class="brand-tagline">
+                EXECUTIVE CINEMA
+            </span>
+
+        </a>
+
+        <div class="nav-menu">
+
+            <a href="{{ url_for('home') }}" class="nav-item active">
+                Home
+            </a>
+
+            <a href="{{ url_for('movies') }}" class="nav-item">
+                Explore Movies
+            </a>
+
+            <a href="{{ url_for('showtimings') }}" class="nav-item">
+                Showtimes
+            </a>
+
+            <a href="{{ url_for('cinemas') }}" class="nav-item">
+                Cinemas
+            </a>
+
+            <a href="{{ url_for('offers') }}" class="nav-item">
+                Offers
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="nav-right">
+
+        <!-- Search -->
+
+        <div class="search-container">
+
+            <div class="search-box">
+
+                <svg width="14"
+                     height="14"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2">
+
+                    <circle cx="11"
+                            cy="11"
+                            r="8"></circle>
+
+                    <line x1="21"
+                          y1="21"
+                          x2="16.65"
+                          y2="16.65"></line>
+
+                </svg>
+
+                <input
+                    type="text"
+                    id="movieSearch"
+                    placeholder="Search movies, cinemas..."
+                    oninput="handleSearchInput()"
+                    onfocus="handleSearchInput()"
+                >
+
+            </div>
+
+            <div
+                class="search-dropdown"
+                id="searchDropdown">
+            </div>
+
+        </div>
+
+        <!-- City -->
+
+        <button
+            class="city-btn"
+            onclick="openModal('cityModal')">
+
+            <svg width="14"
+                 height="14"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2">
+
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+
+            </svg>
+
+            <span id="current-city">
+                Chennai
+            </span>
+
+            ▾
+
+        </button>
+
+        <!-- My Bookings -->
+
+        <a
+            href="{{ url_for('my_bookings') }}"
+            class="btn-gold"
+            style="padding: 8px 16px; font-size: 12px;">
+
+            My Bookings
+
+        </a>
+
+        <button
+            class="mobile-menu-toggle"
+            onclick="toggleMobileMenu()">
+
+            ☰
+
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- ============================================================
+     MOBILE NAVIGATION
+     ============================================================ -->
+
+<div
+    class="mobile-drawer-nav"
+    id="mobileDrawer">
+
+    <a
+        href="{{ url_for('home') }}"
+        class="nav-item active">
+
+        Home
+
+    </a>
+
+    <a
+        href="{{ url_for('movies') }}"
+        class="nav-item"
+        onclick="toggleMobileMenu();">
+
+        Explore Movies
+
+    </a>
+
+    <a
+        href="{{ url_for('showtimings') }}"
+        class="nav-item"
+        onclick="toggleMobileMenu();">
+
+        Showtimes
+
+    </a>
+
+    <a
+        href="{{ url_for('cinemas') }}"
+        class="nav-item"
+        onclick="toggleMobileMenu();">
+
+        Cinemas
+
+    </a>
+
+    <a
+        href="{{ url_for('offers') }}"
+        class="nav-item"
+        onclick="toggleMobileMenu();">
+
+        Offers
+
+    </a>
+
+    <a
+        href="{{ url_for('my_bookings') }}"
+        class="nav-item">
+
+        My Bookings
+
+    </a>
+
+</div>
+
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+
+{% if movies and movies|length > 0 %}
+
+    {% set top_movies = movies | sort(attribute='rating', reverse=True) %}
+    {% set hero_movie = top_movies[0] %}
+    {% set hero_image = hero_movie.backdrop or hero_movie.poster %}
+
+    <div
+        class="hero-section"
+        id="heroBanner">
+
+        <div id="heroBgCurrent" style="position: absolute; inset: 0; background-image: url('{{ hero_image }}'); background-size: cover; background-position: center right; z-index: 0;"></div>
+        <div id="heroBgNext" style="position: absolute; inset: 0; background-size: cover; background-position: center right; opacity: 0; transition: opacity 0.4s ease-in-out; z-index: 0;"></div>
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-left">
+            <div id="heroLeftContent" style="transition: opacity 0.4s ease-in-out;">
+                <span class="hero-badge">
+                    Exclusive Screening
+                </span>
+
+                <h1 class="hero-title" id="heroTitle">
+                    {{ hero_movie.title or hero_movie.name }}
+                </h1>
+
+                <div class="hero-meta">
+                    <span class="meta-tag gold" id="heroRating">
+                        ⭐ {{ hero_movie.rating or '9.2' }} RATING
+                    </span>
+                    <span class="meta-tag" id="heroAge">
+                        {{ hero_movie.age_rating or 'UA 16+' }}
+                    </span>
+                    <span class="meta-tag" id="heroDuration">
+                        {{ hero_movie.duration or '2h 30m' }}
+                    </span>
+                    <span class="meta-tag" id="heroFormat">
+                        {{ hero_movie.format or 'DOLBY ATMOS' }}
+                    </span>
+                </div>
+
+                <p class="hero-desc" id="heroDesc">
+                    {{ hero_movie.description }}
+                </p>
+
+                <div id="heroDetails" style="font-size: 12px; color: var(--text-sub); margin-bottom: 24px;">
+                    <strong>Genre:</strong> <span id="heroGenre">{{ hero_movie.genre or 'Action' }}</span> &bull;
+                    <strong>Language:</strong> <span id="heroLanguage">{{ hero_movie.language or 'English' }}</span> &bull;
+                    <strong>Director:</strong> <span id="heroDirector">{{ hero_movie.director or 'Unknown' }}</span>
+                </div>
+
+                <a id="heroBookBtn" href="{{ url_for('movie_details', movie_id=hero_movie.id) }}" class="btn-gold">
+                    <span>
+                        Reserve Tickets
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-right">
+
+            <div class="hero-poster-card" id="posterCarouselContainer" onmouseenter="pausePosterCarousel()" onmouseleave="resumePosterCarousel()">
+                {% set top_movies = movies | sort(attribute='rating', reverse=True) %}
+                {% set carousel_movies = top_movies[:5] %}
+
+                {% for m in carousel_movies %}
+                <div class="hero-poster-slide" id="posterSlide{{ loop.index0 }}" style="position: absolute; inset: 0; opacity: {% if loop.first %}1{% else %}0{% endif %}; transition: opacity 0.8s ease-in-out; z-index: {% if loop.first %}2{% else %}1{% endif %};">
+                    <img
+                        src="{{ m.poster }}"
+                        alt="{{ m.name }}"
+                        style="cursor: pointer; width: 100%; height: 100%; object-fit: cover; opacity: 1 !important;"
+                        data-trailer-url="{{ m.trailer_url or '' }}"
+                        onclick="openTrailer(this.dataset.trailerUrl)">
+
+                    <button
+                        class="play-btn"
+                        type="button"
+                        data-trailer-url="{{ m.trailer_url or '' }}"
+                        onclick="openTrailer(this.dataset.trailerUrl)"
+                        aria-label="Watch trailer">
+                        ▶
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+
+<!-- ============================================================
+     QUICK RESERVE
+     ============================================================ -->
+
+<div class="quick-book-container">
+
+    <div class="quick-book-bar">
+
+        <span class="qb-label">
+            Quick Reserve
+        </span>
+
+        <div class="qb-selects">
+
+            <select
+                class="qb-select"
+                id="qbMovieSelect">
+
+                <option value="">
+                    Select Movie
+                </option>
+
+                {% for movie in movies %}
+
+                    <option value="{{ movie.id }}">
+                        {{ movie.name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <select
+                class="qb-select"
+                id="qbDateSelect">
+
+                <option value="">
+                    Select Date
+                </option>
+
+                <!-- Options will be populated by JS to use proper absolute dates -->
+
+            </select>
+
+            <select
+                class="qb-select"
+                id="qbCinemaSelect">
+
+                <option value="">
+                    Select Cinema
+                </option>
+
+                {% for c in cinemas %}
+
+                    <option value="{{ c.id }}">
+                        {{ c.name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <select
+                class="qb-select"
+                id="qbTimingSelect">
+
+                <option value="">
+                    Select Timing
+                </option>
+
+                <option value="10:30 AM">
+                    10:30 AM
+                </option>
+
+                <option value="02:15 PM">
+                    02:15 PM
+                </option>
+
+                <option value="06:45 PM">
+                    06:45 PM
+                </option>
+
+                <option value="09:30 PM">
+                    09:30 PM
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            class="btn-gold"
+            style="height: 46px; width: 100%; padding: 0 28px;"
+            onclick="submitQuickBook()">
+
+            <span>
+                Proceed
+            </span>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+
+<div
+    class="main-content"
+    id="showtimings">
+
+
+    <!-- NOW SHOWING -->
+
+    <div class="movie-section-block">
+
+        <div class="section-title-row">
+
+            <div class="section-header-content">
+
+                <h2>
+                    Now Showing
+                </h2>
+
+                <p>
+                    Movies currently playing in your selected city.
+                </p>
+
+            </div>
+
+            <div class="section-header-right">
+
+                <div class="carousel-arrows">
+
+                    <button
+                        class="carousel-nav-btn"
+                        onclick="scrollCarousel('nowShowingCarousel', -1)"
+                        title="Previous">
+
+                        ←
+
+                    </button>
+
+                    <button
+                        class="carousel-nav-btn"
+                        onclick="scrollCarousel('nowShowingCarousel', 1)"
+                        title="Next">
+
+                        →
+
+                    </button>
+
+                </div>
+
+                <a
+                    href="#showtimings"
+                    class="see-all-link">
+
+                    See All →
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="movie-carousel-wrapper">
+
+            <div
+                class="movie-carousel"
+                id="nowShowingCarousel">
+
+                {% for movie in movies %}
+
+                    <a
+                        href="{{ url_for('movie_details', movie_id=movie.id) }}"
+                        class="movie-card"
+                        data-title="{{ movie.name|lower }}">
+
+                        <div class="poster-box">
+
+                            <div class="card-badge">
+                                ⭐ {{ movie.rating or '9.2' }}
+                            </div>
+
+                            <img
+                                src="{{ movie.poster }}"
+                                alt="{{ movie.name }}">
+
+                            <div class="poster-overlay">
+
+                                <div class="card-book-action">
+                                    ▶ Book Now
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card-details">
+
+                            <div
+                                class="card-title"
+                                title="{{ movie.name }}">
+
+                                {{ movie.name }}
+
+                            </div>
+
+                            <div class="card-subtitle">
+                                {{ movie.genre or 'Action / Sci-Fi' }}
+                            </div>
+
+                            <div class="card-tags">
+                                {{ movie.format or '2D • 3D • ATMOS' }}
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PREMIERE SCREENINGS -->
+
+    <div class="movie-section-block">
+
+        <div class="section-title-row">
+
+            <div class="section-header-content">
+
+                <h2>
+                    Premiere Screenings
+                </h2>
+
+                <p>
+                    Exclusive first screenings and special events.
+                </p>
+
+            </div>
+
+            <div class="section-header-right">
+
+                <div class="carousel-arrows">
+
+                    <button
+                        class="carousel-nav-btn"
+                        onclick="scrollCarousel('premiereCarousel', -1)"
+                        title="Previous">
+
+                        ←
+
+                    </button>
+
+                    <button
+                        class="carousel-nav-btn"
+                        onclick="scrollCarousel('premiereCarousel', 1)"
+                        title="Next">
+
+                        →
+
+                    </button>
+
+                </div>
+
+                <a
+                    href="{{ url_for('movies', category='premiere') }}"
+                    class="see-all-link">
+
+                    See All →
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="movie-carousel-wrapper">
+
+            <div
+                class="movie-carousel"
+                id="premiereCarousel">
+
+                {% set premiere_movies = movies | reverse | list %}
+
+                {% for movie in premiere_movies %}
+
+                    <a
+                        href="{{ url_for('movie_details', movie_id=movie.id) }}"
+                        class="movie-card"
+                        data-title="{{ movie.name|lower }}">
+
+                        <div class="poster-box">
+
+                            <div class="card-badge">
+                                ⭐ {{ movie.rating or '9.2' }}
+                            </div>
+
+                            <img
+                                src="{{ movie.poster }}"
+                                alt="{{ movie.name }}">
+
+                            <div class="poster-overlay">
+
+                                <div class="card-book-action">
+                                    ▶ Book Now
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card-details">
+
+                            <div
+                                class="card-title"
+                                title="{{ movie.name }}">
+
+                                {{ movie.name }}
+
+                            </div>
+
+                            <div class="card-subtitle">
+                                Red Carpet Premiere
+                            </div>
+
+                            <div class="card-tags">
+                                LIMITED SEATS • BUBBLY
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- IMAX -->
+
+    <div class="movie-section-block">
+
+        <div class="section-title-row">
+
+            <div class="section-header-content">
+
+                <h2>
+                    IMAX Experience
+                </h2>
+
+                <p>
+                    Large-format cinema with immersive sound.
+                </p>
+
+            </div>
+
+            <div class="section-header-right">
+
+                <div class="carousel-arrows">
+
+                    <button
+                        class="carousel-nav-btn"
+                        onclick="scrollCarousel('imaxCarousel', -1)"
+                        title="Previous">
+
+                        ←
+
+                    </button>
+
+                    <button
+                        class="carousel-nav-btn"
+                        onclick="scrollCarousel('imaxCarousel', 1)"
+                        title="Next">
+
+                        →
+
+                    </button>
+
+                </div>
+
+                <a
+                    href="{{ url_for('movies', category='imax') }}"
+                    class="see-all-link">
+
+                    See All →
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="movie-carousel-wrapper">
+
+            <div
+                class="movie-carousel"
+                id="imaxCarousel">
+
+                {% for movie in movies %}
+
+                    <a
+                        href="{{ url_for('movie_details', movie_id=movie.id) }}"
+                        class="movie-card"
+                        data-title="{{ movie.name|lower }}">
+
+                        <div class="poster-box">
+
+                            <div class="card-badge">
+                                ⭐ {{ movie.rating or '9.2' }}
+                            </div>
+
+                            <img
+                                src="{{ movie.poster }}"
+                                alt="{{ movie.name }}">
+
+                            <div class="poster-overlay">
+
+                                <div class="card-book-action">
+                                    ▶ Book Now
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card-details">
+
+                            <div
+                                class="card-title"
+                                title="{{ movie.name }}">
+
+                                {{ movie.name }}
+
+                            </div>
+
+                            <div class="card-subtitle">
+                                IMAX Expanded Aspect
+                            </div>
+
+                            <div class="card-tags">
+                                LASER 4K • 12-CH SOUND
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- VIP LOUNGE -->
+
+    <div class="vip-banner-block">
+
+        <div class="vip-banner-left">
+
+            <div class="vip-titles">
+
+                <h2>
+                    VIP Lounge
+                </h2>
+
+                <p>
+                    Premium seating, dining and personalized service.
+                </p>
+
+            </div>
+
+            <div class="vip-benefit-row">
+
+                <span>
+                    🛋 Recliner Suites
+                </span>
+
+                <span>
+                    •
+                </span>
+
+                <span>
+                    🍿 Gourmet Dining
+                </span>
+
+                <span>
+                    •
+                </span>
+
+                <span>
+                    🥂 Butler Service
+                </span>
+
+            </div>
+
+            <div>
+                <a
+                    href="{{ url_for('offers') }}"
+                    class="btn-gold"
+                    style="padding: 10px 22px; font-size: 12px;">
+
+                    Explore VIP Experience
+
+                </a>
+            </div>
+
+        </div>
+
+        <div class="vip-banner-right">
+
+            {% if movies and movies|length > 0 %}
+
+                <div class="vip-preview-card">
+
+                    <img
+                        src="{{ movies[0].poster }}"
+                        alt="{{ movies[0].name }}">
+
+                </div>
+
+            {% endif %}
+
+            {% if movies and movies|length > 1 %}
+
+                <div
+                    class="vip-preview-card"
+                    style="transform: translateY(12px);">
+
+                    <img
+                        src="{{ movies[1].poster }}"
+                        alt="{{ movies[1].name }}">
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+
+<footer class="site-footer">
+
+    <div class="footer-left">
+
+        <span class="footer-brand">
+            CINEVO LUXE
+        </span>
+
+        <span class="footer-copy">
+            &copy; 2026 Cinevo Entertainment Inc. All rights reserved.
+        </span>
+
+    </div>
+
+    <div class="footer-center">
+
+        <a
+            style="cursor: pointer;"
+            class="footer-link"
+            onclick="openModal('aboutModal')">
+
+            About CINEVO
+
+        </a>
+
+        <a
+            href="javascript:void(0)"
+            class="footer-link"
+            onclick="openModal('contactModal')">
+
+            Contact
+
+        </a>
+
+        <a
+            href="javascript:void(0)"
+            class="footer-link"
+            onclick="openModal('privacyModal')">
+
+            Privacy
+
+        </a>
+
+        <a
+            style="cursor: pointer;"
+            class="footer-link"
+            onclick="openModal('termsModal')">
+
+            Terms
+
+        </a>
+
+        <a
+            style="cursor: pointer;"
+            class="footer-link"
+            onclick="openModal('cityModal')">
+
+            Locations
+
+        </a>
+
+        <a
+            style="cursor: pointer;"
+            class="footer-link"
+            onclick="openModal('offersModal')">
+
+            Privilege Terms
+
+        </a>
+
+    </div>
+
+    <div class="footer-right">
+
+        <a
+            href="https://instagram.com"
+            target="_blank"
+            class="social-icon-btn"
+            title="Instagram">
+
+            IG
+
+        </a>
+
+        <a
+            href="https://twitter.com"
+            target="_blank"
+            class="social-icon-btn"
+            title="X / Twitter">
+
+            𝕏
+
+        </a>
+
+        <a
+            href="https://youtube.com"
+            target="_blank"
+            class="social-icon-btn"
+            title="YouTube">
+
+            YT
+
+        </a>
+
+    </div>
+
+</footer>
+
+
+<!-- ============================================================
+     FLOATING DOCK
+     ============================================================ -->
+
+<div class="floating-dock">
+
+    <button
+        class="dock-btn secondary-mobile"
+        onclick="openModal('supportModal')">
+
+        ✦
+
+        <span class="dock-btn-text">
+            Guest Support
+        </span>
+
+    </button>
+
+    <button
+        class="dock-btn gold"
+        onclick="openModal('curatedModal')"
+        title="Curated Shows">
+
+        <span class="dock-btn-icon">
+            ✨
+        </span>
+
+        <span class="dock-btn-text">
+            Curated Shows
+        </span>
+
+    </button>
+
+</div>
+
+
+<!-- ============================================================
+     LOCATION MODAL
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="cityModal">
+
+    <div class="modal-drawer">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('cityModal')">
+
+            ✕
+
+        </button>
+
+        <div class="drawer-title">
+            Select Location
+        </div>
+
+        <input
+            type="text"
+            class="city-search"
+            id="citySearchInput"
+            placeholder="Search location..."
+            onkeyup="filterCities()">
+
+        <div
+            class="city-grid"
+            id="cityGrid">
+
+            <div
+                class="city-card"
+                onclick="selectCity('Mumbai')">
+
+                <img
+                    src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=300&auto=format&fit=crop"
+                    alt="Mumbai">
+
+                <span>
+                    Mumbai
+                </span>
+
+            </div>
+
+            <div
+                class="city-card"
+                onclick="selectCity('Delhi-NCR')">
+
+                <img
+                    src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=300&auto=format&fit=crop"
+                    alt="Delhi">
+
+                <span>
+                    Delhi-NCR
+                </span>
+
+            </div>
+
+            <div
+                class="city-card"
+                onclick="selectCity('Bengaluru')">
+
+                <img
+                    src="https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=300&auto=format&fit=crop"
+                    alt="Bengaluru">
+
+                <span>
+                    Bengaluru
+                </span>
+
+            </div>
+
+            <div
+                class="city-card"
+                onclick="selectCity('Chennai')">
+
+                <img
+                    src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=300&auto=format&fit=crop"
+                    alt="Chennai">
+
+                <span>
+                    Chennai
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     GUEST SUPPORT MODAL
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="supportModal">
+
+    <div class="modal-card" style="max-width: 480px; text-align: center; padding: 36px 28px;">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('supportModal')">
+            ✕
+        </button>
+
+        <div style="font-size: 42px; margin-bottom: 16px; color: var(--gold-primary);">✦</div>
+
+        <h3 style="margin-bottom: 6px; color: #fff; font-size: 22px; font-weight: 800; letter-spacing: 0.5px;">
+            CINEVO LUXE
+        </h3>
+
+        <div style="font-size: 13px; color: var(--gold-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">
+            Guest Support
+        </div>
+
+        <p style="color: #fff; font-size: 14px; font-weight: 600; margin-bottom: 14px;">
+            Need assistance with your reservation?
+        </p>
+
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 20px; font-size: 13px; color: var(--text-sub); line-height: 1.8;">
+            <div>• Booking &amp; seat selection</div>
+            <div>• Food &amp; beverage orders</div>
+            <div>• Payment assistance</div>
+            <div>• Reservation confirmation</div>
+        </div>
+
+        <p style="color: var(--text-sub); font-size: 12px; line-height: 1.5; margin-bottom: 24px;">
+            Our Guest Support team is available to assist you with reservations, payments, and lounge orders.
+        </p>
+
+        <button
+            type="button"
+            class="btn-gold"
+            style="width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: 700; border-radius: 8px;"
+            onclick="closeModal('supportModal')">
+            OK / CLOSE
+        </button>
+
+    </div>
+</div>
+
+<!-- ============================================================
+     CURATED SHOWS
+     ============================================================ -->
+<div
+    class="modal-overlay"
+    id="curatedModal">
+
+    <div class="modal-card" style="max-height: 85vh; overflow-y: auto;">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('curatedModal')">
+            ✕
+        </button>
+
+        <h3 style="margin-bottom: 16px; color: #fff;">
+            ✨ Executive Curated Shows
+        </h3>
+
+        <p style="font-size: 13px; color: var(--text-sub); line-height: 1.6; margin-bottom: 20px;">
+            Experience cinema like never before. Hand-picked selections featuring exclusive premieres, timeless classics, and director's cuts tailored for our distinguished guests.
+        </p>
+
+        {% if movies %}
+            {% for movie in movies[:3] %}
+            <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); cursor: pointer;" onclick="window.location.href='{{ url_for('movie_details', movie_id=movie.id) }}'">
+                <div style="width: 45px; height: 65px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: #000;">
+                    <img src="{{ movie.poster }}" style="width: 100%; height: 100%; object-fit: cover;" alt="{{ movie.name }}">
+                </div>
+                <div style="flex-grow: 1;">
+                    <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">{{ movie.name }}</div>
+                    <div style="font-size: 11px; color: var(--text-sub);">{% if loop.index == 1 %}IMAX Special Screening{% elif loop.index == 2 %}Director's Cut{% else %}Premium Movie Screening{% endif %}</div>
+                    <div style="font-size: 10px; color: var(--gold-primary); margin-top: 4px;">{{ movie.format }}</div>
+                </div>
+                <span style="font-size: 12px; color: var(--text-sub);">Details ➔</span>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 45px; height: 65px; flex-shrink: 0; border-radius: 6px; overflow: hidden; background: #222; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                🎬
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Classic Cinema Night</div>
+                <div style="font-size: 11px; color: var(--text-sub);">Special Curated Screening</div>
+                <div style="font-size: 10px; color: var(--gold-primary); margin-top: 4px;">EXCLUSIVE EVENT</div>
+            </div>
+            <span style="font-size: 12px; color: var(--text-sub);">Coming Soon</span>
+        </div>
+
+        <button
+            class="btn-gold"
+            style="width: 100%; margin-top: 20px;"
+            onclick="closeModal('curatedModal')">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     PRIVILEGE OFFERS
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="offersModal">
+
+    <div class="modal-card">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('offersModal')">
+
+            ✕
+
+        </button>
+
+        <h3 style="margin-bottom: 12px; color: #fff;">
+            Executive Privilege Offers
+        </h3>
+
+        <p
+            style="
+                font-size: 13px;
+                color: var(--text-sub);
+                line-height: 1.6;
+                margin-bottom: 20px;
+            ">
+
+            Enjoy complimentary lounge access, priority seating upgrades,
+            and 20% off all gourmet dining when booking with Black or
+            Titanium tier cards.
+
+        </p>
+
+        <button
+            class="btn-gold"
+            style="width: 100%;"
+            onclick="closeModal('offersModal')">
+
+            Claim Offer
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     ABOUT MODAL
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="aboutModal">
+
+    <div class="modal-card">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('aboutModal')">
+
+            ✕
+
+        </button>
+
+        <h3 style="margin-bottom: 12px; color: #fff;">
+            About CINEVO LUXE
+        </h3>
+
+        <p
+            style="
+                font-size: 13px;
+                color: var(--text-sub);
+                line-height: 1.6;
+                margin-bottom: 20px;
+            ">
+
+            Cinevo Luxe redefines the cinematic journey by marrying
+            state-of-the-art laser projection and immersive acoustic
+            engineering with executive hospitality, private screening
+            suites, and bespoke dining.
+
+        </p>
+
+        <button
+            class="btn-gold"
+            style="width: 100%;"
+            onclick="closeModal('aboutModal')">
+
+            Close
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     CONTACT MODAL
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="contactModal">
+
+    <div class="modal-card">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('contactModal')">
+
+            ✕
+
+        </button>
+
+        <h3 style="margin-bottom: 12px; color: #fff;">
+            Concierge & Contact
+        </h3>
+
+        <p
+            style="
+                font-size: 13px;
+                color: var(--text-sub);
+                line-height: 1.6;
+                margin-bottom: 16px;
+            ">
+
+            For private lounge reservations, corporate buyouts,
+            or VIP membership inquiries:
+
+        </p>
+
+        <div
+            style="
+                font-size: 13px;
+                color: #fff;
+                font-weight: 600;
+                margin-bottom: 20px;
+            ">
+
+            📧 concierge@cinevoluxe.com
+            <br>
+
+            📞 +1 (800) 555-CINE
+
+        </div>
+
+        <button
+            class="btn-gold"
+            style="width: 100%;"
+            onclick="closeModal('contactModal')">
+
+            Done
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     PRIVACY MODAL
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="privacyModal">
+
+    <div class="modal-card">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('privacyModal')">
+
+            ✕
+
+        </button>
+
+        <h3 style="margin-bottom: 12px; color: #fff;">
+            Privacy Policy
+        </h3>
+
+        <p
+            style="
+                font-size: 13px;
+                color: var(--text-sub);
+                line-height: 1.6;
+                margin-bottom: 20px;
+            ">
+
+            We safeguard your personal and booking data with encrypted
+            protocols. Your information is solely utilized to elevate
+            your cinematic experience and membership privileges.
+
+        </p>
+
+        <button
+            class="btn-gold"
+            style="width: 100%;"
+            onclick="closeModal('privacyModal')">
+
+            Acknowledge
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     TERMS MODAL
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="termsModal">
+
+    <div class="modal-card">
+
+        <button
+            class="close-modal"
+            onclick="closeModal('termsModal')">
+
+            ✕
+
+        </button>
+
+        <h3 style="margin-bottom: 12px; color: #fff;">
+            Terms of Service
+        </h3>
+
+        <p
+            style="
+                font-size: 13px;
+                color: var(--text-sub);
+                line-height: 1.6;
+                margin-bottom: 20px;
+            ">
+
+            All ticket sales are final. Complimentary lounge reservations
+            require arrival 20 minutes prior to screening. Management
+            reserves the right of admission for executive suites.
+
+        </p>
+
+        <button
+            class="btn-gold"
+            style="width: 100%;"
+            onclick="closeModal('termsModal')">
+
+            Acknowledge
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     PROFESSIONAL TRAILER MODAL
+
+     IMPORTANT:
+     The iframe is INSIDE the modal.
+     It will only exist visually when the modal is opened.
+     It will NOT appear underneath the page.
+     ============================================================ -->
+
+<div
+    class="modal-overlay"
+    id="trailerModal">
+
+    <div class="trailer-modal-card">
+
+        <button
+            class="close-modal trailer-close"
+            onclick="closeTrailer()"
+            aria-label="Close trailer">
+
+            ✕
+
+        </button>
+
+        <div class="trailer-container">
+
+            <iframe
+                id="trailerFrame"
+                src="about:blank"
+                title="Movie Trailer"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+
+<script>
+
+    /* ============================================================
+       MOVIE SEARCH DATA
+       ============================================================ */
+
+    const availableMovies = [
+
+        {% for movie in movies %}
+
+            {
+                name: {{ movie.name | tojson }},
+                url: "{{ url_for('movie_details', movie_id=movie.id) }}",
+                type: "Movie"
+            },
+
+        {% endfor %}
+
+    ];
+
+
+    /* ============================================================
+       CINEMA SEARCH DATA
+       ============================================================ */
+
+    const availableCinemas = [
+
+        {
+            name: "Cinevo Pallas Grand",
+            url: "#showtimings",
+            type: "Cinema"
+        },
+
+        {
+            name: "Cinevo IMAX Signature",
+            url: "#showtimings",
+            type: "Cinema"
+        },
+
+        {
+            name: "Cinevo Royal Suite",
+            url: "#showtimings",
+            type: "Cinema"
+        },
+
+        {
+            name: "Chennai Cinemas Hub",
+            url: "#showtimings",
+            type: "Location"
+        }
+
+    ];
+
+
+    /* ============================================================
+       MOBILE MENU
+       ============================================================ */
+
+    function toggleMobileMenu() {
+
+        const drawer =
+            document.getElementById('mobileDrawer');
+
+        drawer.style.display =
+            drawer.style.display === 'flex'
+                ? 'none'
+                : 'flex';
+
+    }
+
+
+    /* ============================================================
+       CAROUSEL
+       ============================================================ */
+
+    function scrollCarousel(carouselId, direction) {
+
+        const container =
+            document.getElementById(carouselId);
+
+        if (container) {
+
+            const firstCard =
+                container.querySelector('.movie-card');
+
+            if (firstCard) {
+
+                const cardWidth =
+                    firstCard.offsetWidth + 18;
+
+                container.scrollBy({
+                    left: direction * cardWidth,
+                    behavior: 'smooth'
+                });
+
+            }
+
+        }
+
+    }
+
+
+    /* ============================================================
+       SEARCH
+       ============================================================ */
+
+    function handleSearchInput() {
+
+        const query =
+            document
+                .getElementById('movieSearch')
+                .value
+                .toLowerCase()
+                .trim();
+
+        const dropdown =
+            document.getElementById('searchDropdown');
+
+        const cards =
+            document.querySelectorAll('.movie-card');
+
+        cards.forEach(card => {
+
+            const title =
+                card.getAttribute('data-title') || '';
+
+            card.style.display =
+                title.includes(query)
+                    ? 'flex'
+                    : 'none';
+
+        });
+
+        if (query.length === 0) {
+
+            dropdown.style.display = 'none';
+
+            return;
+
+        }
+
+        const matches = [
+
+            ...availableMovies.filter(
+                m => m.name.toLowerCase().includes(query)
+            ),
+
+            ...availableCinemas.filter(
+                c => c.name.toLowerCase().includes(query)
+            )
+
+        ];
+
+        if (matches.length > 0) {
+
+            dropdown.innerHTML = `
+
+                <div class="search-dropdown-header">
+                    Quick Suggestions
+                </div>
+
+                ${matches.map(item => `
+
+                    <a
+                        href="${item.url}"
+                        class="search-dropdown-item">
+
+                        <span>
+                            ${item.name}
+                        </span>
+
+                        <span class="item-type">
+                            ${item.type}
+                        </span>
+
+                    </a>
+
+                `).join('')}
+
+            `;
+
+            dropdown.style.display = 'block';
+
+        } else {
+
+            dropdown.innerHTML = `
+
+                <div
+                    class="search-dropdown-item"
+                    style="
+                        color: var(--text-sub);
+                        cursor: default;
+                        justify-content: center;
+                        padding: 16px;
+                    ">
+
+                    <span>
+                        No matches found
+                    </span>
+
+                </div>
+
+            `;
+
+            dropdown.style.display = 'block';
+
+        }
+
+    }
+
+
+    /* ============================================================
+       CLOSE SEARCH WHEN CLICKING OUTSIDE
+       ============================================================ */
+
+    document.addEventListener('click', function(e) {
+
+        const container =
+            document.querySelector('.search-container');
+
+        if (
+            container &&
+            !container.contains(e.target)
+        ) {
+
+            document
+                .getElementById('searchDropdown')
+                .style.display = 'none';
+
+        }
+
+    });
+
+
+    /* ============================================================
+       GENERIC MODALS
+       ============================================================ */
+
+    function openModal(id) {
+
+        const modal =
+            document.getElementById(id);
+
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+    }
+
+
+    function closeModal(id) {
+
+        const modal =
+            document.getElementById(id);
+
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+    }
+
+
+    /* ============================================================
+       CLICK OUTSIDE MODAL
+       ============================================================ */
+
+    window.addEventListener('click', function(event) {
+
+        if (
+            event.target.classList.contains('modal-overlay')
+        ) {
+
+            if (event.target.id === 'trailerModal') {
+
+                closeTrailer();
+
+            } else {
+
+                closeModal(event.target.id);
+
+            }
+
+        }
+
+    });
+
+
+    /* ============================================================
+       ESCAPE KEY
+       ============================================================ */
+
+    document.addEventListener('keydown', function(event) {
+
+        if (event.key === 'Escape') {
+
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                if (modal.style.display === 'flex') {
+                    if (modal.id === 'trailerModal') {
+                        closeTrailer();
+                    } else {
+                        closeModal(modal.id);
+                    }
+                }
+            });
+
+        }
+
+    });
+
+
+    /* ============================================================
+       CITY
+       ============================================================ */
+
+    function selectCity(cityName) {
+
+        document.getElementById(
+            'current-city'
+        ).innerText = cityName;
+
+        closeModal('cityModal');
+
+    }
+
+
+    function filterCities() {
+
+        let query =
+            document
+                .getElementById('citySearchInput')
+                .value
+                .toLowerCase();
+
+        let cards =
+            document.querySelectorAll(
+                '#cityGrid .city-card'
+            );
+
+        cards.forEach(card => {
+
+            let name =
+                card
+                    .querySelector('span')
+                    .innerText
+                    .toLowerCase();
+
+            card.style.display =
+                name.includes(query)
+                    ? 'block'
+                    : 'none';
+
+        });
+
+    }
+
+
+    /* ============================================================
+       QUICK BOOKING
+       ============================================================ */
+
+    function submitQuickBook() {
+
+        let movieId =
+            document.getElementById(
+                'qbMovieSelect'
+            ).value;
+
+        let date =
+            document.getElementById(
+                'qbDateSelect'
+            ).value;
+
+        let cinema =
+            document.getElementById(
+                'qbCinemaSelect'
+            ).value;
+
+        let timing =
+            document.getElementById(
+                'qbTimingSelect'
+            ).value;
+
+
+        if (!movieId && movieId !== "0") {
+
+            alert(
+                'Please select a movie from the dropdown.'
+            );
+
+            return;
+
+        }
+
+
+        let targetUrl =
+            "/movie/" + movieId;
+
+        let params = [];
+
+
+        if (date) {
+
+            params.push(
+                "date=" +
+                encodeURIComponent(date)
+            );
+
+        }
+
+
+        if (cinema) {
+
+            params.push(
+                "cinema=" +
+                encodeURIComponent(cinema)
+            );
+
+        }
+
+
+        if (timing) {
+
+            params.push(
+                "timing=" +
+                encodeURIComponent(timing)
+            );
+
+        }
+
+
+        if (params.length > 0) {
+
+            targetUrl +=
+                "?" + params.join("&");
+
+        }
+
+
+        window.location.href =
+            targetUrl;
+
+    }
+
+
+    /* ============================================================
+       SCROLL TO SHOWTIMINGS
+       ============================================================ */
+
+    function scrollToShowtimings() {
+
+        const section =
+            document.getElementById(
+                'showtimings'
+            );
+
+        if (section) {
+
+            section.scrollIntoView({
+                behavior: 'smooth'
+            });
+
+        }
+
+    }
+
+
+    /* ============================================================
+       PROFESSIONAL TRAILER
+
+       This is the important corrected section.
+       ============================================================ */
+
+    function pinTrailerToViewport() {
+
+        const modal =
+            document.getElementById(
+                'trailerModal'
+            );
+
+        if (!modal) {
+            return;
+        }
+
+        modal.style.position = 'absolute';
+        modal.style.top = window.scrollY + 'px';
+        modal.style.left = window.scrollX + 'px';
+        modal.style.right = 'auto';
+        modal.style.bottom = 'auto';
+        modal.style.width = '100vw';
+        modal.style.height = window.innerHeight + 'px';
+        modal.style.zIndex = '9999';
+
+    }
+
+
+    function unpinTrailerFromViewport() {
+
+        const modal =
+            document.getElementById(
+                'trailerModal'
+            );
+
+        if (!modal) {
+            return;
+        }
+
+        modal.style.position = '';
+        modal.style.top = '';
+        modal.style.left = '';
+        modal.style.right = '';
+        modal.style.bottom = '';
+        modal.style.width = '';
+        modal.style.height = '';
+        modal.style.zIndex = '';
+
+    }
+
+
+    function openTrailer(url) {
+        const modal = document.getElementById('trailerModal');
+        const frame = document.getElementById('trailerFrame');
+        if (!modal || !frame) return;
+        if (!url || url.trim() === '') {
+            alert('Trailer is currently unavailable.');
+            return;
+        }
+
+        let embedUrl = convertToEmbedUrl(url);
+        if (!/[?&]autoplay=/.test(embedUrl)) {
+            embedUrl += embedUrl.includes('?') ? '&autoplay=1' : '?autoplay=1';
+        }
+
+        frame.src = embedUrl;
+        pinTrailerToViewport();
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+
+    /* ============================================================
+       YOUTUBE URL CONVERTER
+       ============================================================ */
+
+    function convertToEmbedUrl(url) {
+
+        try {
+
+            const parsed =
+                new URL(url);
+
+            const host =
+                parsed.hostname.replace(
+                    /^www\./,
+                    ''
+                );
+
+            const isYouTube =
+                host === 'youtube.com' ||
+                host === 'm.youtube.com' ||
+                host === 'youtu.be';
+
+
+            /*
+             * youtube.com/watch?v=VIDEO_ID
+             */
+
+            if (
+                isYouTube &&
+                parsed.pathname === '/watch'
+            ) {
+
+                const videoId =
+                    parsed.searchParams.get('v');
+
+                if (videoId) {
+
+                    return (
+                        'https://www.youtube.com/embed/' +
+                        videoId
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * youtu.be/VIDEO_ID
+             */
+
+            if (host === 'youtu.be') {
+
+                const videoId =
+                    parsed.pathname
+                        .split('/')
+                        .filter(Boolean)[0];
+
+                if (videoId) {
+
+                    return (
+                        'https://www.youtube.com/embed/' +
+                        videoId
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * youtube.com/shorts/VIDEO_ID
+             */
+
+            if (
+                isYouTube &&
+                parsed.pathname.indexOf(
+                    '/shorts/'
+                ) === 0
+            ) {
+
+                const videoId =
+                    parsed.pathname
+                        .split('/')
+                        .filter(Boolean)[1];
+
+                if (videoId) {
+
+                    return (
+                        'https://www.youtube.com/embed/' +
+                        videoId
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * Already an embed URL or
+             * another supported video URL.
+             */
+
+            return url;
+
+        } catch (error) {
+
+            return url;
+
+        }
+
+    }
+
+
+    /* ============================================================
+       CLOSE TRAILER
+       ============================================================ */
+
+    function closeTrailer() {
+
+        const modal =
+            document.getElementById(
+                'trailerModal'
+            );
+
+        const frame =
+            document.getElementById(
+                'trailerFrame'
+            );
+
+
+        /*
+         * IMPORTANT:
+         * Clearing the iframe source stops
+         * the video and audio immediately.
+         */
+
+        if (frame) {
+
+            frame.src = 'about:blank';
+
+        }
+
+
+        /*
+         * Hide the modal.
+         */
+
+        if (modal) {
+
+            modal.style.display = 'none';
+            unpinTrailerFromViewport();
+
+        }
+
+
+        /*
+         * Restore page scrolling.
+         */
+
+        document.body.style.overflow = '';
+
+    }
+
+</script>
+
+<script>
+    // Hero Carousel Logic
+    let posterCarouselIndex = 0;
+    let posterCarouselInterval;
+    let isPosterCarouselPaused = false;
+    const posterSlides = document.querySelectorAll('.hero-poster-slide');
+
+    // Extract top movies data directly from Jinja
+    const carouselData = [
+        {% set top_movies = movies | sort(attribute='rating', reverse=True) %}
+        {% set carousel_movies = top_movies[:5] %}
+        {% for m in carousel_movies %}
+        {
+            title: {{ (m.title or m.name) | tojson }},
+            rating: {{ m.rating | tojson }},
+            age_rating: {{ m.age_rating | tojson }},
+            duration: {{ m.duration | tojson }},
+            format: {{ m.format | tojson }},
+            description: {{ m.description | tojson }},
+            genre: {{ m.genre | tojson }},
+            language: {{ m.language | tojson }},
+            director: {{ m.director | tojson }},
+            backdrop: {{ (m.backdrop or m.poster) | tojson }},
+            details_url: {{ url_for('movie_details', movie_id=m.id) | tojson }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const heroLeftContent = document.getElementById('heroLeftContent');
+    const heroBgCurrent = document.getElementById('heroBgCurrent');
+    const heroBgNext = document.getElementById('heroBgNext');
+
+    function startPosterCarousel() {
+        if (posterSlides.length <= 1) return;
+        posterCarouselInterval = setInterval(() => {
+            if (isPosterCarouselPaused) return;
+
+            const currentSlide = posterSlides[posterCarouselIndex];
+            posterCarouselIndex = (posterCarouselIndex + 1) % posterSlides.length;
+            const nextSlide = posterSlides[posterCarouselIndex];
+            const nextData = carouselData[posterCarouselIndex];
+
+            // 1. Fade out current left content and set next background
+            heroLeftContent.style.opacity = '0';
+
+            heroBgNext.style.backgroundImage = `url('${nextData.backdrop}')`;
+            heroBgNext.style.opacity = '1';
+
+            // 2. Poster slide transition
+            currentSlide.style.opacity = '0';
+            currentSlide.style.zIndex = '1';
+            nextSlide.style.opacity = '1';
+            nextSlide.style.zIndex = '2';
+
+            // 3. Update left content after fade out completes
+            setTimeout(() => {
+                document.getElementById('heroTitle').innerText = nextData.title;
+                document.getElementById('heroRating').innerHTML = `⭐ ${nextData.rating || '9.2'} RATING`;
+                document.getElementById('heroAge').innerText = nextData.age_rating || 'UA 16+';
+                document.getElementById('heroDuration').innerText = nextData.duration || '2h 30m';
+                document.getElementById('heroFormat').innerText = nextData.format || 'DOLBY ATMOS';
+                document.getElementById('heroDesc').innerText = nextData.description;
+                document.getElementById('heroGenre').innerText = nextData.genre || 'Action';
+                document.getElementById('heroLanguage').innerText = nextData.language || 'English';
+                document.getElementById('heroDirector').innerText = nextData.director || 'Unknown';
+                document.getElementById('heroBookBtn').href = nextData.details_url;
+
+                // Fade left content back in
+                heroLeftContent.style.opacity = '1';
+
+                // Commit background transition quietly
+                heroBgCurrent.style.backgroundImage = `url('${nextData.backdrop}')`;
+                heroBgNext.style.opacity = '0';
+
+            }, 400); // Wait 400ms (matches CSS transition duration for left content)
+
+        }, 4000); // 4 seconds
+    }
+
+    function pausePosterCarousel() {
+        isPosterCarouselPaused = true;
+    }
+
+    function resumePosterCarousel() {
+        isPosterCarouselPaused = false;
+    }
+
+    // Quick Reserve Date Logic
+    function initQuickReserveDates() {
+        const dateSelect = document.getElementById("qbDateSelect");
+        if (!dateSelect) return;
+
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+        const dayAfter = new Date();
+        dayAfter.setDate(today.getDate() + 2);
+
+        const formatDateVal = (d) => {
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        };
+
+        const formatLabel = (d, prefix) => {
+            const options = { month: 'long', day: 'numeric' };
+            const dateStr = d.toLocaleDateString('en-US', options);
+            return `${prefix} - ${dateStr}`;
+        };
+
+        // Preserve TODAY exactly as it worked before
+        dateSelect.add(new Option(formatLabel(today, "Today"), "today"));
+
+        // Add dynamic dates for Tomorrow and Day After Tomorrow
+        dateSelect.add(new Option(formatLabel(tomorrow, "Tomorrow"), formatDateVal(tomorrow)));
+        dateSelect.add(new Option(formatLabel(dayAfter, "Day After Tomorrow"), formatDateVal(dayAfter)));
+    }
+
+    // Start on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            startPosterCarousel();
+            initQuickReserveDates();
+        });
+    } else {
+        startPosterCarousel();
+        initQuickReserveDates();
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Seat Selection | Cinevo Luxe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --gold-grad-hover: linear-gradient(135deg, #f7e099 0%, #c99d31 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-name span { color: var(--gold-primary); }
+
+        .booking-wrapper {
+            max-width: 1200px;
+            margin: 30px auto;
+            width: 90%;
+            flex: 1;
+        }
+
+        /* Movie Header Bar */
+        .screening-bar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 14px;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .screening-movie { display: flex; gap: 16px; align-items: center; }
+        .screening-thumb { width: 45px; height: 65px; border-radius: 6px; object-fit: cover; }
+        .screening-title { font-size: 18px; font-weight: 800; color: #fff; }
+        .screening-meta { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+        .screening-price-badge { font-size: 13px; font-weight: 800; color: var(--gold-primary); background: rgba(229,193,88,0.08); border: 1px solid var(--border-gold); padding: 6px 14px; border-radius: 6px; }
+
+        /* Flash Messages */
+        .flash-alert {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Booking Grid Layout */
+        .seat-layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* Cinema Screen Arena */
+        .auditorium-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 16px;
+            padding: 36px 24px;
+            text-align: center;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+
+        .screen-curve {
+            width: 75%;
+            height: 6px;
+            background: var(--gold-grad);
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            box-shadow: 0 6px 20px rgba(229, 193, 88, 0.5);
+        }
+        .screen-text { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--text-sub); margin-bottom: 36px; }
+
+        /* Seat Grid Component */
+        .seats-rows-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 30px;
+            min-width: min-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .seat-row { display: flex; gap: 10px; align-items: center; }
+        .row-identifier { width: 24px; font-size: 12px; font-weight: 800; color: var(--text-sub); text-align: center; }
+
+        .seat-btn {
+            width: 36px;
+            height: 34px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-container);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+        }
+        .seat-btn:hover:not(.occupied) {
+            border-color: var(--gold-primary);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        .seat-btn.selected {
+            background: var(--gold-grad);
+            color: #07090e;
+            border-color: var(--gold-light);
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(229, 193, 88, 0.4);
+            transform: translateY(-2px);
+        }
+        .seat-btn.occupied {
+            background: #1c212d;
+            border-color: transparent;
+            color: #3b4252;
+            cursor: not-allowed;
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Legend */
+        .legend-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); font-weight: 600; }
+        .legend-icon { width: 16px; height: 16px; border-radius: 4px; }
+
+        /* Summary Sidebar */
+        .reservation-summary-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 16px;
+            padding: 26px;
+        }
+        .summary-header { font-size: 17px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 18px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; }
+
+        .summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
+        .summary-row strong { color: #fff; }
+        .summary-row.total-row {
+            border-top: 1px dashed var(--border-container);
+            padding-top: 16px;
+            margin-top: 16px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .summary-row.total-row span:last-child { color: var(--gold-primary); font-size: 20px; }
+
+        .btn-proceed {
+            width: 100%;
+            background: var(--gold-grad);
+            color: #07090e;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(184, 142, 40, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-proceed:hover:not(:disabled) { background: var(--gold-grad-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 223, 155, 0.35); }
+        .btn-proceed:disabled { background: #222634; color: #555e70; cursor: not-allowed; box-shadow: none; }
+
+        /* Footer */
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        @media (max-width: 900px) {
+            .top-nav { padding: 0 24px; }
+            .booking-wrapper { width: 94%; margin: 20px auto; }
+            .seat-layout-grid { grid-template-columns: 1fr; }
+            .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+
+        @media (max-width: 768px) {
+            .seat-row { gap: 8px; }
+            .seat-btn { width: 32px; height: 30px; font-size: 11px; }
+            .row-identifier { width: 20px; font-size: 11px; }
+        }
+
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 16px; height: 64px; }
+            .brand-name { font-size: 20px; }
+            .booking-wrapper { width: 100%; padding: 0 14px; margin: 16px auto; }
+            .screening-bar { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
+            .auditorium-box { padding: 20px 12px; border-radius: 12px; }
+            .reservation-summary-card { padding: 18px 14px; border-radius: 12px; }
+            .seat-row { gap: 6px; }
+            .seat-btn { width: 28px; height: 28px; font-size: 10px; border-radius: 4px; }
+            .row-identifier { width: 18px; font-size: 10px; }
+            .legend-row { gap: 12px; font-size: 11px; }
+            .modal-card { width: 95% !important; padding: 18px 14px !important; }
+            .site-footer { padding: 28px 16px; }
+        }
+
+        @media (max-width: 360px) {
+            .top-nav { padding: 0 12px; height: 60px; }
+            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .auditorium-box { padding: 16px 8px; }
+            .seat-row { gap: 4px; }
+            .seat-btn { width: 26px; height: 26px; font-size: 9px; }
+            .row-identifier { width: 14px; font-size: 9px; }
+            .legend-row { gap: 8px; font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <a href="{{ url_for('home') }}" class="brand-logo">
+        <span class="brand-name">CINEVO <span>LUXE</span></span>
+    </a>
+    <a href="{{ url_for('movies') }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">&larr; Back to Catalog</a>
+</nav>
+
+<div class="booking-wrapper">
+
+    <!-- Screening Bar -->
+    <div class="screening-bar">
+        <div class="screening-movie">
+            <img src="{{ showtime.movie.poster }}" alt="{{ showtime.movie.title }}" class="screening-thumb">
+            <div>
+                <div class="screening-title">{{ showtime.movie.title }}</div>
+                <div class="screening-meta">{{ showtime.cinema.name }} &bull; {{ showtime.time }} &bull; {{ showtime.date.strftime('%a, %d %b %Y') }}</div>
+            </div>
+        </div>
+        <div class="screening-price-badge">
+            ₹{{ showtime.base_ticket_price | int }} / Ticket
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="seat-layout-grid">
+
+        <!-- Auditorium Seat Selector -->
+        <div class="auditorium-box">
+            <div class="screen-curve"></div>
+            <div class="screen-text">Executive Laser Screen This Way</div>
+
+            <div class="seats-rows-container">
+                {% set cap = showtime.cinema.seat_capacity if (showtime.cinema and showtime.cinema.seat_capacity) else 40 %}
+                {% set num_rows = 4 if cap <= 32 else 5 %}
+                {% set row_letters = ['A', 'B', 'C', 'D', 'E'][:num_rows] %}
+                {% for row in row_letters %}
+                    <div class="seat-row">
+                        <span class="row-identifier">{{ row }}</span>
+                        {% for col in range(1, 9) %}
+                            {% set seat_code = row ~ col %}
+                            {% set is_occupied = seat_code in booked_seats %}
+                            <div
+                                class="seat-btn {% if is_occupied %}occupied{% endif %}"
+                                data-seat="{{ seat_code }}"
+                                {% if not is_occupied %}onclick="toggleSeat('{{ seat_code }}', this)"{% endif %}
+                            >
+                                {{ col }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Legend -->
+            <div class="legend-row">
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: var(--bg-card); border: 1px solid var(--border-container);"></div>
+                    <span>Available</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: var(--gold-grad);"></div>
+                    <span>Selected</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-icon" style="background: #1c212d;"></div>
+                    <span>Occupied</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation Summary Sidebar -->
+        <div class="reservation-summary-card">
+            <div class="summary-header">Reservation Summary</div>
+
+            <div class="summary-row">
+                <span>Selected Seats:</span>
+                <strong id="display-seats" style="color: var(--gold-primary);">None</strong>
+            </div>
+            <div class="summary-row">
+                <span>Tickets Count:</span>
+                <strong id="display-count">0</strong>
+            </div>
+            <div class="summary-row">
+                <span>Price per Seat:</span>
+                <span>₹{{ showtime.base_ticket_price | int }}</span>
+            </div>
+            <div class="summary-row total-row">
+                <span>Estimated Total:</span>
+                <span id="display-total">₹0</span>
+            </div>
+
+            <form action="{{ url_for('checkout') }}" method="POST" id="checkoutForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="showtime_id" value="{{ showtime.id }}">
+                <input type="hidden" name="seats" id="input-seats" value="">
+                <input type="hidden" name="food_items" id="input-food" value="{}">
+                <button type="button" id="proceed-btn" class="btn-proceed" disabled onclick="openFoodModal()">
+                    Proceed to Add Food &rarr;
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!-- Food Selection Modal -->
+<div class="modal-overlay" id="foodModal" style="display: none; position: fixed; inset: 0; background: rgba(4, 5, 8, 0.85); backdrop-filter: blur(12px); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="modal-card" style="width: 90%; max-width: 500px; background: #0f131c; border: 1px solid rgba(229, 193, 88, 0.25); border-radius: 14px; padding: 24px; position: relative; max-height: 85vh; overflow-y: auto;">
+        <button onclick="closeFoodModal()" style="position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer;">✕</button>
+        <h3 style="margin-bottom: 16px; color: #fff; font-size: 20px; font-weight: 800;">ADD FOOD & DRINKS</h3>
+        <p style="color: var(--text-sub); font-size: 13px; margin-bottom: 20px;">Enhance your executive experience. Delivered directly to your seat.</p>
+
+        <!-- POPCORN -->
+        <h4 style="color: var(--gold-primary); margin-top: 15px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Popcorn</h4>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1585647347384-2593bc35786b?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Small Popcorn" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🍿</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Small Popcorn</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹120</span>
+                <button type="button" onclick="addFoodItem('Small Popcorn', 120)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1585647347384-2593bc35786b?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Large Popcorn" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🍿</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Large Popcorn</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹180</span>
+                <button type="button" onclick="addFoodItem('Large Popcorn', 180)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1585647347384-2593bc35786b?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Jumbo Popcorn" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🍿</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Jumbo Popcorn</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹240</span>
+                <button type="button" onclick="addFoodItem('Jumbo Popcorn', 240)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+
+        <!-- PIZZA -->
+        <h4 style="color: var(--gold-primary); margin-top: 20px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Pizza</h4>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Classic Cheese Pizza" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🍕</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Classic Cheese Pizza</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹299</span>
+                <button type="button" onclick="addFoodItem('Classic Cheese Pizza', 299)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Premium Veggie Pizza" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🍕</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Premium Veggie Pizza</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹349</span>
+                <button type="button" onclick="addFoodItem('Premium Veggie Pizza', 349)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+
+        <!-- BEVERAGES -->
+        <h4 style="color: var(--gold-primary); margin-top: 20px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Beverages</h4>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Coca-Cola" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🥤</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Coca-Cola</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹100</span>
+                <button type="button" onclick="addFoodItem('Coca-Cola', 100)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Pepsi_can.png/150px-Pepsi_can.png" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Pepsi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🥤</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Pepsi</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹100</span>
+                <button type="button" onclick="addFoodItem('Pepsi', 100)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/RedBullEnergyDrink.svg/150px-RedBullEnergyDrink.svg.png" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Red Bull" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🥤</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Red Bull</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹160</span>
+                <button type="button" onclick="addFoodItem('Red Bull', 160)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+
+        <!-- SNACKS -->
+        <h4 style="color: var(--gold-primary); margin-top: 20px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Snacks</h4>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1619860860504-6447833cc177?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Gourmet Sandwich" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🥪</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Gourmet Sandwich</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹220</span>
+                <button type="button" onclick="addFoodItem('Gourmet Sandwich', 220)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
+                <img src="https://images.unsplash.com/photo-1576107232684-1279f3908594?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="French Fries" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">🍟</span>
+            </div>
+            <div style="flex-grow: 1;">
+                <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">French Fries</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹160</span>
+                <button type="button" onclick="addFoodItem('French Fries', 160)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+            </div>
+        </div>
+
+        <!-- CART SUMMARY -->
+        <div id="bookingFoodSummary" style="display: none; margin-top: 20px; padding: 15px; border-radius: 8px; background: #1a1a1a; border: 1px solid var(--gold-primary);">
+            <h4 style="color: var(--gold-primary); margin-bottom: 10px; font-size: 13px; text-transform: uppercase;">Selected Food</h4>
+            <div id="bookingFoodItems" style="font-size: 12px; color: #fff; margin-bottom: 10px;"></div>
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: #fff; font-size: 14px; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+                <span>Food Total</span>
+                <span id="bookingFoodTotal">₹0</span>
+            </div>
+        </div>
+
+        <button type="button" id="foodSubmitBtn" style="width: 100%; margin-top: 20px; background: var(--gold-primary); color: #000; border: none; padding: 12px; border-radius: 4px; font-weight: 700; cursor: pointer;" onclick="submitWithFood()">
+            Continue to Payment
+        </button>
+
+        <button type="button" style="width: 100%; margin-top: 12px; background: transparent; color: var(--text-sub); border: 1px solid var(--border-container); padding: 12px; border-radius: 4px; font-weight: 600; cursor: pointer;" onclick="skipFood()">
+            Skip Food / Continue Without Food
+        </button>
+
+    </div>
+</div>
+
+<script>
+    let myFoodCart = {};
+    function openFoodModal() {
+        document.getElementById('foodModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeFoodModal() {
+        document.getElementById('foodModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    function addFoodItem(name, price) {
+        if (myFoodCart[name]) {
+            myFoodCart[name].quantity += 1;
+        } else {
+            myFoodCart[name] = { price: price, quantity: 1 };
+        }
+        updateFoodUI();
+    }
+    function updateFoodUI() {
+        const summary = document.getElementById('bookingFoodSummary');
+        const items = document.getElementById('bookingFoodItems');
+        const totalEl = document.getElementById('bookingFoodTotal');
+        let total = 0;
+        let html = '';
+        for (let key in myFoodCart) {
+            let itemTotal = myFoodCart[key].price * myFoodCart[key].quantity;
+            total += itemTotal;
+            html += '<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">' +
+                    '<span>' + key + ' × ' + myFoodCart[key].quantity + '</span>' +
+                    '<span>₹' + itemTotal + '</span></div>';
+        }
+        if (total > 0) {
+            summary.style.display = 'block';
+            items.innerHTML = html;
+            totalEl.innerText = '₹' + total;
+        } else {
+            summary.style.display = 'none';
+        }
+    }
+    function submitWithFood() {
+        document.getElementById('input-food').value = JSON.stringify(myFoodCart);
+        document.getElementById('checkoutForm').submit();
+    }
+    function skipFood() {
+        document.getElementById('input-food').value = JSON.stringify({});
+        document.getElementById('checkoutForm').submit();
+    }
+</script>
+
+<script>
+    const TICKET_PRICE = {{ showtime.base_ticket_price }};
+    let selectedSeats = [];
+
+    const displaySeats = document.getElementById('display-seats');
+    const displayCount = document.getElementById('display-count');
+    const displayTotal = document.getElementById('display-total');
+    const inputSeats = document.getElementById('input-seats');
+    const proceedBtn = document.getElementById('proceed-btn');
+
+    function toggleSeat(seatCode, elem) {
+        if (elem.classList.contains('occupied')) return;
+
+        if (elem.classList.contains('selected')) {
+            elem.classList.remove('selected');
+            selectedSeats = selectedSeats.filter(s => s !== seatCode);
+        } else {
+            elem.classList.add('selected');
+            selectedSeats.push(seatCode);
+        }
+
+        updateSummary();
+    }
+
+    function updateSummary() {
+        if (selectedSeats.length > 0) {
+            displaySeats.textContent = selectedSeats.join(', ');
+            displayCount.textContent = selectedSeats.length;
+            displayTotal.textContent = '₹' + (selectedSeats.length * TICKET_PRICE);
+            inputSeats.value = selectedSeats.join(',');
+            proceedBtn.disabled = false;
+        } else {
+            displaySeats.textContent = 'None';
+            displayCount.textContent = '0';
+            displayTotal.textContent = '₹0';
+            inputSeats.value = '';
+            proceedBtn.disabled = true;
+        }
+    }
+</script>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div>
+        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+    </div>
+    <div>
+        <a href="{{ url_for('home') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none; margin-right: 15px;">Home</a>
+        <a href="{{ url_for('my_bookings') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none;">My Bookings</a>
+    </div>
+</footer>
+
+</body>
+</html>

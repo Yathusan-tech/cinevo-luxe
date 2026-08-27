@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reservations | Cinevo Luxe Cinema</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #e5c158;
+            --gold-light: #f4df9b;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --gold-grad-hover: linear-gradient(135deg, #f7e099 0%, #c99d31 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        .top-nav {
+            background: rgba(7, 9, 14, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-container);
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 54px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; text-decoration: none; }
+        .brand-name span { color: var(--gold-primary); }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
+        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
+
+        .container { max-width: 1000px; margin: 40px auto; width: 90%; flex: 1; }
+
+        .page-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--border-container);
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .page-header h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 4px; }
+        .page-header p { font-size: 13px; color: var(--text-sub); }
+
+        /* Search Box */
+        .search-box-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+        }
+        .search-form { display: flex; gap: 12px; }
+        .search-input {
+            flex: 1;
+            padding: 12px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-container);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus { border-color: var(--gold-primary); }
+
+        /* Bookings List */
+        .bookings-list { display: flex; flex-direction: column; gap: 20px; }
+        .booking-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+        .booking-card:hover { border-color: rgba(229, 193, 88, 0.4); transform: translateY(-2px); }
+        .booking-poster { width: 85px; height: 120px; border-radius: 8px; object-fit: cover; background: #000; flex-shrink: 0; }
+        .booking-info { flex: 1; }
+
+        .booking-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .movie-title { font-size: 18px; font-weight: 800; color: #fff; }
+        .ref-badge {
+            background: rgba(229, 193, 88, 0.12);
+            border: 1px solid var(--border-gold);
+            color: var(--gold-primary);
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .booking-meta-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+        }
+        .booking-meta-row strong { color: #fff; }
+        .seats-highlight { color: var(--gold-primary); font-weight: 700; }
+
+        .status-pill {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-container);
+            border-radius: 16px;
+        }
+
+        .site-footer {
+            border-top: 1px solid var(--border-container);
+            padding: 40px 54px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 9, 14, 0.6);
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        @media (max-width: 900px) {
+            .top-nav { padding: 0 24px; }
+            .nav-menu { display: none; }
+            .container { padding: 30px 24px; width: 94%; }
+            .booking-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .top-nav { padding: 0 16px; height: 64px; }
+            .nav-right > a.btn-gold { display: none; }
+            .container { width: 100%; padding: 0 14px; margin: 24px auto; }
+            .page-header h1 { font-size: 22px; }
+            .search-box-card { padding: 14px 12px; }
+            .search-form { flex-direction: column; gap: 8px; }
+            .search-form button, .search-form a { width: 100%; height: 42px; display: flex; align-items: center; justify-content: center; }
+            .booking-card { padding: 18px 14px; border-radius: 12px; }
+            .booking-poster { width: 70px; height: 100px; }
+            .movie-title { font-size: 16px; }
+            .booking-meta-row { flex-direction: column; gap: 6px; font-size: 12px; }
+            .booking-top-row { flex-direction: column; gap: 6px; }
+            .site-footer { padding: 28px 16px; }
+        }
+        @media (max-width: 360px) {
+            .top-nav { padding: 0 12px; height: 60px; }
+            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .page-header h1 { font-size: 19px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="top-nav">
+    <div class="nav-left">
+        <a href="{{ url_for('home') }}" class="brand-logo">
+            <span class="brand-name">CINEVO <span>LUXE</span></span>
+        </a>
+        <div class="nav-menu">
+            <a href="{{ url_for('home') }}" class="nav-item">Home</a>
+            <a href="{{ url_for('movies') }}" class="nav-item">Explore Movies</a>
+            <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+            <a href="{{ url_for('cinemas') }}" class="nav-item">Cinemas</a>
+            <a href="{{ url_for('offers') }}" class="nav-item">Offers</a>
+        </div>
+    </div>
+    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
+        <a href="{{ url_for('my_bookings') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">My Bookings</a>
+        <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
+    </div>
+</nav>
+
+<!-- Mobile Navigation Drawer -->
+<div class="mobile-drawer-overlay" id="cinevoDrawerOverlay" onclick="toggleCinevoNav()"></div>
+<div class="mobile-nav-drawer" id="cinevoNavDrawer">
+    <div class="mobile-drawer-header">
+        <span class="brand-name" style="font-size: 18px;">CINEVO <span>LUXE</span></span>
+        <button class="mobile-drawer-close" onclick="toggleCinevoNav()">✕</button>
+    </div>
+    <div class="mobile-drawer-links">
+        <a href="{{ url_for('home') }}" class="mobile-drawer-link">Home <span>&rarr;</span></a>
+        <a href="{{ url_for('movies') }}" class="mobile-drawer-link">Explore Movies <span>&rarr;</span></a>
+        <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link">Showtimes <span>&rarr;</span></a>
+        <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link">Cinemas <span>&rarr;</span></a>
+        <a href="{{ url_for('offers') }}" class="mobile-drawer-link">Offers <span>&rarr;</span></a>
+        <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link active" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
+    </div>
+</div>
+
+<main class="container">
+    <div class="page-header">
+        <div>
+            <h1>My Bookings & Reservations</h1>
+            <p>Track your executive cinema tickets, allocated seats, and boarding passes.</p>
+        </div>
+        <a href="{{ url_for('movies') }}" class="btn-gold" style="padding: 8px 18px; font-size: 12px;">+ Book Another Movie</a>
+    </div>
+
+    <!-- Search Lookup Box -->
+    <div class="search-box-card">
+        <form method="GET" action="{{ url_for('my_bookings') }}" class="search-form">
+            <input type="text" name="search" class="search-input" placeholder="Search by Booking Reference (e.g. CNV-778201), Phone, Email or Name..." value="{{ search_query or '' }}">
+            <button type="submit" class="btn-gold" style="padding: 0 22px;">Search</button>
+            {% if search_query %}
+                <a href="{{ url_for('my_bookings') }}" class="btn-gold" style="background: var(--bg-card); color: var(--text-sub); border: 1px solid var(--border-container); padding: 0 16px;">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Bookings List -->
+    {% if bookings %}
+        <div class="bookings-list">
+            {% for booking in bookings %}
+                <div class="booking-card">
+                    {% if booking.poster %}
+                        <img src="{{ booking.poster }}" alt="{{ booking.movie_name }}" class="booking-poster">
+                    {% else %}
+                        <div class="booking-poster" style="display: flex; align-items: center; justify-content: center; font-size: 28px; background: rgba(229,193,88,0.06); border: 1px dashed var(--border-gold);">🍽️</div>
+                    {% endif %}
+                    <div class="booking-info">
+                        <div class="booking-top-row">
+                            <div class="movie-title">{{ booking.movie_name }}</div>
+                            <span class="ref-badge">{{ booking.booking_reference }}</span>
+                        </div>
+                        <div class="booking-meta-row">
+                            <div>Venue: <strong>{{ booking.cinema_name }}</strong></div>
+                            <div>{% if booking.is_food_only %}Order Date:{% else %}Schedule:{% endif %} <strong>{{ booking.date_str }} at {{ booking.time }}</strong></div>
+                            <div>{% if booking.is_food_only %}Items:{% else %}Seats:{% endif %} <span class="seats-highlight">{{ booking.seats }}</span></div>
+                            <div>Total: <strong>{{ booking.price }}</strong></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="status-pill">✓ {{ booking.booking_status }}</span>
+                            <a href="{{ url_for('confirmation', booking_ref=booking.booking_reference) }}" style="color: var(--gold-primary); text-decoration: none; font-size: 12px; font-weight: 700;">
+                                {% if booking.is_food_only %}View Lounge Pass &rarr;{% else %}View Boarding Pass &rarr;{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3 style="font-size: 20px; color: #fff; margin-bottom: 8px;">No Reservations Found</h3>
+            <p style="color: var(--text-sub); margin-bottom: 24px;">
+                {% if search_query %}
+                    No bookings found matching "{{ search_query }}". Please check your reference ID.
+                {% else %}
+                    You haven't made any reservations yet.
+                {% endif %}
+            </p>
+            <a href="{{ url_for('movies') }}" class="btn-gold">Explore Current Screenings</a>
+        </div>
+    {% endif %}
+</main>
+
+<footer class="site-footer">
+    <div>
+        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+    </div>
+    <div>
+        <a href="{{ url_for('home') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none;">Home</a>
+    </div>
+</footer>
+
+<script>
+function toggleCinevoNav() {
+    var drawer = document.getElementById('cinevoNavDrawer');
+    var overlay = document.getElementById('cinevoDrawerOverlay');
+    if (drawer && overlay) {
+        var isOpen = drawer.classList.contains('open');
+        if (isOpen) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        } else {
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+        }
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticket Booking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}" class="brand-logo">MovieBooking</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="active">Home</a></li>
+                <li><a href="{{ url_for('movies') }}">Movies</a></li>
+                <li><a href="{{ url_for('showtimings') }}">Showtimes</a></li>
+                <li><a href="{{ url_for('cinemas') }}">Cinemas</a></li>
+                <li><a href="{{ url_for('my_bookings') }}">My Bookings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <section class="hero">
+            <h1>Book Your Favorite Movies</h1>
+            <p>Experience cinema like never before. Secure your seats today!</p>
+            <a href="{{ url_for('movies') }}" class="btn-primary">Explore Movies</a>
+        </section>
+
+        <section class="featured-movies">
+            <h2>Featured Movies</h2>
+            <div class="movie-grid">
+                {% if movies %}
+                    {% for movie in movies %}
+                        <div class="movie-card">
+                            {% if movie.poster %}
+                                <img src="{{ movie.poster }}" alt="{{ movie.title }}">
+                            {% else %}
+                                <div class="poster-placeholder">No Image</div>
+                            {% endif %}
+                            <h3>{{ movie.title }}</h3>
+                            <p class="genre">{{ movie.genre }}</p>
+                            <a href="{{ url_for('movie_details', movie_id=movie.id) }}" class="btn-details">View Details</a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No movies available at the moment.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

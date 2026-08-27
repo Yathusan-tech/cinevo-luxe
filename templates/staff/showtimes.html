@@ -1,0 +1,80 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}Manage Showtimes{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Showtime Operations</h1>
+</div>
+
+<!-- Add Showtime Module -->
+<div class="section-box">
+    <div class="section-title">Add Showtime</div>
+    <form action="{{ url_for('staff_add_showtime') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-row">
+            <select name="movie_id" class="form-control" required>
+                <option value="">Select Movie</option>
+                {% for movie in movies %}
+                <option value="{{ movie.id }}">{{ movie.title }}</option>
+                {% endfor %}
+            </select>
+            <select name="cinema_id" class="form-control" required>
+                <option value="">Select Cinema</option>
+                {% for cinema in cinemas %}
+                <option value="{{ cinema.id }}">{{ cinema.name }}</option>
+                {% endfor %}
+            </select>
+            <input type="date" name="date" class="form-control" required>
+            <input type="text" name="time" class="form-control" placeholder="Time (e.g. 06:45 PM)" required>
+            <input type="number" name="base_price" class="form-control" placeholder="Ticket Price" min="0" step="0.01" required>
+        </div>
+        <button type="submit" class="btn-gold" style="padding: 10px 20px;">+ Add Showtime</button>
+    </form>
+</div>
+
+<!-- Active Showtimes List Module -->
+<div class="section-box">
+    <div class="section-title">Scheduled Showtimes</div>
+    <div class="data-table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Cinema Venue</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Base Ticket Price</th>
+                    <th>Reservations</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for st in showtimes %}
+                <tr>
+                    <td><strong style="color: #fff;">{{ st.movie.title }}</strong></td>
+                    <td>{{ st.cinema.name }}</td>
+                    <td>{{ st.date.strftime('%d %b %Y') }}</td>
+                    <td>{{ st.time }}</td>
+                    <td>₹{{ st.base_price|int }}</td>
+                    <td>{{ st.bookings|length }}</td>
+                    <td>
+                        <a href="{{ url_for('staff_edit_showtime', showtime_id=st.id) }}" class="btn-gold" style="display: inline-block; text-decoration: none; padding: 8px 14px; margin-right: 6px;">Edit</a>
+                        <form action="{{ url_for('staff_delete_showtime', showtime_id=st.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Remove this unbooked showtime?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn-delete">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-sub); padding: 30px;">
+                        No active showtimes scheduled in system.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

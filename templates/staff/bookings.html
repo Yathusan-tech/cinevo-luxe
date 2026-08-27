@@ -1,0 +1,60 @@
+{% extends "staff/base_staff.html" %}
+
+{% block title %}Manage Bookings{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Reservations Audit Log</h1>
+</div>
+
+<!-- Customer Reservations Module -->
+<div class="section-box">
+    <div class="section-title">Passenger Bookings & Search</div>
+
+    <form action="{{ url_for('staff_bookings') }}" method="GET" style="margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+        <input type="search" name="q" value="{{ booking_query }}" class="form-control" placeholder="Search booking reference, customer name, email, or phone number..." style="height: 44px; flex: 1; min-width: 200px;">
+        <button type="submit" class="btn-gold" style="height: 44px; padding: 0 28px;">Search</button>
+        {% if booking_query %}
+            <a href="{{ url_for('staff_bookings') }}" class="btn-gold" style="height: 44px; padding: 0 20px; background: transparent; border: 1px solid var(--border-container); color: var(--text-sub); display: flex; align-items: center; justify-content: center; text-decoration: none;">Clear</a>
+        {% endif %}
+    </form>
+
+    <div class="data-table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking Ref</th>
+                    <th>Customer Details</th>
+                    <th>Movie Title</th>
+                    <th>Cinema Venue</th>
+                    <th>Confirmed Seats</th>
+                    <th>Paid Amount</th>
+                    <th>Booking Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td><strong style="color: var(--gold-primary);">{{ b.booking_reference }}</strong></td>
+                    <td>
+                        <div style="font-weight: 600; color: #fff;">{{ b.customer_name }}</div>
+                        <div style="font-size: 11px; color: var(--text-sub);">{{ b.email }} &bull; {{ b.phone }}</div>
+                    </td>
+                    <td>{{ b.movie_name }}</td>
+                    <td>{{ b.cinema_name }}</td>
+                    <td><span style="color: var(--gold-light); font-weight: 700;">{{ b.seats }}</span></td>
+                    <td><strong>{{ b.price }}</strong></td>
+                    <td><span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ {{ b.booking_status }}</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-sub); padding: 30px;">
+                        No customer reservations found matching your query.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
