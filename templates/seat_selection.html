@@ -160,12 +160,12 @@
             transform: translateY(-2px);
         }
         .seat-btn.occupied {
-            background: #1c212d;
-            border-color: transparent;
-            color: #3b4252;
+            background: #141720;
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #ef4444;
             cursor: not-allowed;
             text-decoration: line-through;
-            opacity: 0.6;
+            opacity: 0.65;
         }
 
         /* Legend */
@@ -303,7 +303,9 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="flash-alert">{{ message }}</div>
+                {% if category == 'error' and 'confirmed' not in message.lower() %}
+                    <div class="flash-alert">{{ message }}</div>
+                {% endif %}
             {% endfor %}
         {% endif %}
     {% endwith %}
@@ -312,6 +314,7 @@
 
         <!-- Auditorium Seat Selector -->
         <div class="auditorium-box">
+            <div id="seat-alert-msg" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 20px;"></div>
             <div class="screen-curve"></div>
             <div class="screen-text">Executive Laser Screen This Way</div>
 
@@ -328,7 +331,7 @@
                             <div
                                 class="seat-btn {% if is_occupied %}occupied{% endif %}"
                                 data-seat="{{ seat_code }}"
-                                {% if not is_occupied %}onclick="toggleSeat('{{ seat_code }}', this)"{% endif %}
+                                onclick="handleSeatClick('{{ seat_code }}', this, {{ 'true' if is_occupied else 'false' }})"
                             >
                                 {{ col }}
                             </div>
@@ -348,8 +351,8 @@
                     <span>Selected</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-icon" style="background: #1c212d;"></div>
-                    <span>Occupied</span>
+                    <div class="legend-icon" style="background: #141720; border: 1px solid rgba(239, 68, 68, 0.35);"></div>
+                    <span>Occupied / Booked</span>
                 </div>
             </div>
         </div>
@@ -617,6 +620,35 @@
     const displayTotal = document.getElementById('display-total');
     const inputSeats = document.getElementById('input-seats');
     const proceedBtn = document.getElementById('proceed-btn');
+
+    let seatAlertTimeout = null;
+    function showSeatAlert(msg) {
+        const alertBox = document.getElementById('seat-alert-msg');
+        if (alertBox) {
+            alertBox.textContent = msg;
+            alertBox.style.display = 'block';
+            clearTimeout(seatAlertTimeout);
+            seatAlertTimeout = setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 4000);
+        }
+    }
+
+    function hideSeatAlert() {
+        const alertBox = document.getElementById('seat-alert-msg');
+        if (alertBox) {
+            alertBox.style.display = 'none';
+        }
+    }
+
+    function handleSeatClick(seatCode, elem, isOccupied) {
+        if (isOccupied || elem.classList.contains('occupied')) {
+            showSeatAlert("This seat is already booked. Please select another seat.");
+            return;
+        }
+        hideSeatAlert();
+        toggleSeat(seatCode, elem);
+    }
 
     function toggleSeat(seatCode, elem) {
         if (elem.classList.contains('occupied')) return;

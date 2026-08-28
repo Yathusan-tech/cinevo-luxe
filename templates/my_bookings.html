@@ -230,6 +230,16 @@
 </div>
 
 <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="background: rgba(229,193,88,0.12); border: 1px solid var(--border-gold); color: var(--gold-light); padding: 12px 18px; border-radius: 8px; margin-bottom: 24px; font-size: 13px; font-weight: 600;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
     <div class="page-header">
         <div>
             <h1>My Bookings & Reservations</h1>

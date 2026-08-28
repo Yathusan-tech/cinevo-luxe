@@ -27,9 +27,11 @@
                     <th>Customer Details</th>
                     <th>Movie Title</th>
                     <th>Cinema Venue</th>
+                    <th>Date &amp; Time</th>
                     <th>Confirmed Seats</th>
                     <th>Paid Amount</th>
                     <th>Booking Status</th>
+                    <th>Payment Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -42,13 +44,27 @@
                     </td>
                     <td>{{ b.movie_name }}</td>
                     <td>{{ b.cinema_name }}</td>
+                    <td>{{ b.date_str }} at {{ b.time }}</td>
                     <td><span style="color: var(--gold-light); font-weight: 700;">{{ b.seats }}</span></td>
                     <td><strong>{{ b.price }}</strong></td>
-                    <td><span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ {{ b.booking_status }}</span></td>
+                    <td>
+                        {% if b.booking_status == 'Confirmed' %}
+                            <span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ Confirmed</span>
+                        {% else %}
+                            <span style="color: var(--text-sub); font-weight: 600; font-size: 11px;">{{ b.booking_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if b.payment_status == 'Paid' %}
+                            <span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ Paid</span>
+                        {% else %}
+                            <span style="color: #facc15; font-weight: 600; font-size: 11px;">{{ b.payment_status }}</span>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" style="text-align: center; color: var(--text-sub); padding: 30px;">
+                    <td colspan="9" style="text-align: center; color: var(--text-sub); padding: 30px;">
                         No customer reservations found matching your query.
                     </td>
                 </tr>

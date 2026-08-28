@@ -1218,11 +1218,6 @@ def checkout():
             session.pop("pending_food_items", None)
             session.pop("pending_food_cart", None)
 
-            flash(
-                "Reservation confirmed successfully! Enjoy your Cinevo Luxe experience.",
-                "success"
-            )
-
             return redirect(url_for("confirmation", booking_ref=booking_ref))
 
         except Exception as e:
@@ -1349,6 +1344,17 @@ def confirmation(booking_ref):
         )
         return redirect(url_for("my_bookings"))
 
+    # Safely remember verified customer session identity
+    if "my_booking_refs" not in session or not isinstance(session["my_booking_refs"], list):
+        session["my_booking_refs"] = []
+    if booking_ref not in session["my_booking_refs"]:
+        session["my_booking_refs"].append(booking_ref)
+    if booking.email and not session.get("customer_email"):
+        session["customer_email"] = booking.email
+    if booking.phone and not session.get("customer_phone"):
+        session["customer_phone"] = booking.phone
+    session.modified = True
+
     return render_template(
         "confirmation.html",
         booking=booking
@@ -1368,38 +1374,151 @@ def my_bookings():
         ""
     ).strip()
 
-    if search_query:
+    def normalize_digits(text):
+        return "".join(filter(str.isdigit, text or ""))
 
-        digits = "".join(filter(str.isdigit, search_query))
+    if search_query:
+        query_lower = search_query.lower()
+        digits = normalize_digits(search_query)
+
         filters = [
             Booking.booking_reference.ilike(f"%{search_query}%"),
-            db.func.lower(Booking.email) == search_query.lower()
+            Booking.customer_name.ilike(f"%{search_query}%"),
+            Booking.email.ilike(f"%{search_query}%"),
+            Booking.phone.ilike(f"%{search_query}%")
         ]
-        if len(digits) >= 10:
-            filters.append(Booking.phone.like(f"%{digits[-10:]}%"))
 
-        bookings = Booking.query.filter(
+        if len(digits) >= 10:
+            last10 = digits[-10:]
+            filters.append(Booking.phone.like(f"%{last10}%"))
+            filters.append(Booking.phone.like(f"%{last10[:5]}%{last10[5:]}%"))
+        elif digits:
+            filters.append(Booking.phone.like(f"%{digits}%"))
+
+        candidate_bookings = Booking.query.filter(
             db.or_(*filters)
         ).order_by(
             Booking.created_at.desc()
         ).all()
 
+        if candidate_bookings:
+            # Resolve customer identity from the search result.
+            # Exact customer-name searches use the matching booking as the
+            # identity anchor, so unrelated customers are never merged.
+            exact_name_booking = next(
+                (
+                    b for b in candidate_bookings
+                    if b.customer_name
+                    and b.customer_name.strip().lower() == search_query.strip().lower()
+                ),
+                None
+            )
+
+            if exact_name_booking:
+                matched_emails = {
+                    exact_name_booking.email.strip().lower()
+                } if exact_name_booking.email else set()
+
+                matched_phones_digits = {
+                    normalize_digits(exact_name_booking.phone)
+                } if exact_name_booking.phone and len(normalize_digits(exact_name_booking.phone)) >= 10 else set()
+
+                matched_refs = {
+                    exact_name_booking.booking_reference
+                } if exact_name_booking.booking_reference else set()
+            else:
+                matched_emails = {b.email.strip().lower() for b in candidate_bookings if b.email}
+                matched_phones_digits = {normalize_digits(b.phone) for b in candidate_bookings if b.phone and len(normalize_digits(b.phone)) >= 10}
+                matched_refs = {b.booking_reference for b in candidate_bookings if b.booking_reference}
+
+            # Retrieve ALL historical bookings for this verified customer
+            expanded_filters = []
+            if matched_refs:
+                expanded_filters.append(Booking.booking_reference.in_(list(matched_refs)))
+            for em in matched_emails:
+                expanded_filters.append(db.func.lower(Booking.email) == em)
+            for p_digits in matched_phones_digits:
+                last10 = p_digits[-10:]
+                expanded_filters.append(Booking.phone.like(f"%{last10}%"))
+                expanded_filters.append(Booking.phone.like(f"%{last10[:5]}%{last10[5:]}%"))
+
+            if expanded_filters:
+                bookings = Booking.query.filter(
+                    db.or_(*expanded_filters)
+                ).order_by(
+                    Booking.created_at.desc()
+                ).all()
+            else:
+                bookings = candidate_bookings
+
+            # Establish and lock verified customer session identity
+            if "my_booking_refs" not in session or not isinstance(session["my_booking_refs"], list):
+                session["my_booking_refs"] = []
+            for b in bookings:
+                if b.booking_reference and b.booking_reference not in session["my_booking_refs"]:
+                    session["my_booking_refs"].append(b.booking_reference)
+            if matched_emails:
+                session["customer_email"] = list(matched_emails)[0]
+            if candidate_bookings[0].phone:
+                session["customer_phone"] = candidate_bookings[0].phone
+            session.modified = True
+        else:
+            bookings = []
+
     else:
         session_refs = session.get("my_booking_refs", [])
-        customer_email = session.get("customer_email")
-        customer_phone = session.get("customer_phone")
+        if not isinstance(session_refs, list):
+            session_refs = [session_refs] if session_refs else []
 
-        filters = []
+        session_email = (session.get("customer_email") or "").strip().lower()
+        session_phone = (session.get("customer_phone") or "").strip()
+
+        known_emails = set()
+        if session_email:
+            known_emails.add(session_email)
+
+        known_phones_raw = set()
+        known_phones_digits = set()
+        if session_phone:
+            known_phones_raw.add(session_phone)
+            p_digits = normalize_digits(session_phone)
+            if p_digits:
+                known_phones_digits.add(p_digits)
+
+        all_known_refs = set(session_refs)
+
+        # 1. Expand identity from any existing known session references in the database
         if session_refs:
-            filters.append(Booking.booking_reference.in_(session_refs))
-        if customer_email:
-            cleaned_email = customer_email.strip().lower()
-            if cleaned_email:
-                filters.append(db.func.lower(Booking.email) == cleaned_email)
-        if customer_phone:
-            digits = "".join(filter(str.isdigit, customer_phone))
-            if len(digits) >= 10:
-                filters.append(Booking.phone.like(f"%{digits[-10:]}%"))
+            ref_bookings = Booking.query.filter(Booking.booking_reference.in_(session_refs)).all()
+            for b in ref_bookings:
+                if b.email:
+                    known_emails.add(b.email.strip().lower())
+                if b.phone:
+                    known_phones_raw.add(b.phone.strip())
+                    b_digits = normalize_digits(b.phone)
+                    if b_digits:
+                        known_phones_digits.add(b_digits)
+
+        # 2. Build multi-factor query matching all historical bookings for this customer from SQLite database
+        filters = []
+        if all_known_refs:
+            filters.append(Booking.booking_reference.in_(list(all_known_refs)))
+
+        for em in known_emails:
+            if em:
+                filters.append(db.func.lower(Booking.email) == em)
+
+        for ph in known_phones_raw:
+            if ph:
+                filters.append(Booking.phone.ilike(f"%{ph}%"))
+
+        for ph_digits in known_phones_digits:
+            if len(ph_digits) >= 10:
+                last10 = ph_digits[-10:]
+                filters.append(Booking.phone.like(f"%{last10}%"))
+                filters.append(Booking.phone.like(f"%{last10[:5]}%{last10[5:]}%"))
+            elif ph_digits:
+                filters.append(Booking.phone.like(f"%{ph_digits}%"))
 
         if filters:
             bookings = Booking.query.filter(
@@ -1407,8 +1526,21 @@ def my_bookings():
             ).order_by(
                 Booking.created_at.desc()
             ).all()
+
+            # Keep session booking references synchronized with all historical bookings found
+            if "my_booking_refs" not in session or not isinstance(session["my_booking_refs"], list):
+                session["my_booking_refs"] = []
+            for b in bookings:
+                if b.booking_reference and b.booking_reference not in session["my_booking_refs"]:
+                    session["my_booking_refs"].append(b.booking_reference)
+                if b.email and not session.get("customer_email"):
+                    session["customer_email"] = b.email
+                if b.phone and not session.get("customer_phone"):
+                    session["customer_phone"] = b.phone
+            session.modified = True
+
         else:
-            # Privacy Protection: strangers must not see other customers' bookings
+            # Privacy Protection: strangers with no session or lookup receive empty list
             bookings = []
 
     return render_template(
@@ -1515,14 +1647,29 @@ def staff_dashboard():
     movies = Movie.query.all()
     cinemas = Cinema.query.all()
     showtimes = Showtime.query.all()
-    bookings = Booking.query.all()
+    bookings = Booking.query.order_by(Booking.created_at.desc()).all()
+
+    total_bookings = len(bookings)
+    confirmed_bookings = len([
+        b for b in bookings
+        if (b.booking_status or "").strip().lower() == "confirmed"
+    ])
+    paid_revenue = sum(
+        float(b.final_amount or 0.0)
+        for b in bookings
+        if (b.payment_status or "").strip().lower() == "paid"
+        and (b.booking_status or "").strip().lower() == "confirmed"
+    )
 
     return render_template(
         "staff/dashboard.html",
         movies=movies,
         cinemas=cinemas,
         showtimes=showtimes,
-        bookings=bookings
+        bookings=bookings,
+        total_bookings=total_bookings,
+        confirmed_bookings=confirmed_bookings,
+        paid_revenue=paid_revenue
     )
 
 
@@ -2209,7 +2356,7 @@ def staff_bookings():
 
     bookings = bookings_query.order_by(
         Booking.created_at.desc()
-    ).limit(50).all()
+    ).all()
 
     return render_template(
         "staff/bookings.html",

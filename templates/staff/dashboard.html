@@ -15,7 +15,15 @@
     </div>
     <div class="stat-card">
         <div class="stat-label">Total Bookings</div>
-        <div class="stat-num">{{ bookings|length }}</div>
+        <div class="stat-num">{{ total_bookings }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Confirmed Bookings</div>
+        <div class="stat-num">{{ confirmed_bookings }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Paid Revenue</div>
+        <div class="stat-num">₹{{ "{:,.2f}".format(paid_revenue) if paid_revenue is not none else "0.00" }}</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Partner Cinemas</div>
@@ -27,12 +35,70 @@
     </div>
 </div>
 
+<!-- Customer Reservations Table -->
+<div class="section-box">
+    <div class="section-title">All Customer Reservations ({{ bookings|length }})</div>
+    <div class="data-table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking Ref</th>
+                    <th>Customer Details</th>
+                    <th>Movie</th>
+                    <th>Cinema</th>
+                    <th>Date &amp; Time</th>
+                    <th>Seats</th>
+                    <th>Paid Amount</th>
+                    <th>Booking Status</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td><strong style="color: var(--gold-primary);">{{ b.booking_reference }}</strong></td>
+                    <td>
+                        <div style="font-weight: 600; color: #fff;">{{ b.customer_name }}</div>
+                        <div style="font-size: 11px; color: var(--text-sub);">{{ b.email }} &bull; {{ b.phone }}</div>
+                    </td>
+                    <td>{{ b.movie_name }}</td>
+                    <td>{{ b.cinema_name }}</td>
+                    <td>{{ b.date_str }} at {{ b.time }}</td>
+                    <td><span style="color: var(--gold-light); font-weight: 700;">{{ b.seats }}</span></td>
+                    <td><strong>{{ b.price }}</strong></td>
+                    <td>
+                        {% if b.booking_status == 'Confirmed' %}
+                            <span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ Confirmed</span>
+                        {% else %}
+                            <span style="color: var(--text-sub); font-weight: 600; font-size: 11px;">{{ b.booking_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if b.payment_status == 'Paid' %}
+                            <span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ Paid</span>
+                        {% else %}
+                            <span style="color: #facc15; font-weight: 600; font-size: 11px;">{{ b.payment_status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--text-sub); padding: 30px;">
+                        No customer reservations found in the database.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div class="section-box">
     <div class="section-title">Dashboard Overview</div>
     <p style="color: var(--text-sub); line-height: 1.6; font-size: 14px;">
         Welcome to the Cinevo Luxe private management system. Use the navigation links above to schedule new movie titles, configure active showtimes, audit venue configurations, and monitor real-time passenger reservations.
     </p>
-    <div style="margin-top: 20px; display: flex; gap: 15px;">
+    <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
         <a href="{{ url_for('staff_movies') }}" class="btn-gold" style="padding: 10px 20px; font-size: 12px;">Manage Movies</a>
         <a href="{{ url_for('staff_bookings') }}" class="btn-gold" style="padding: 10px 20px; font-size: 12px; background: transparent; border: 1px solid var(--border-gold); color: var(--gold-primary);">Audit Bookings</a>
     </div>
