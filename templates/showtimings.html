@@ -48,9 +48,9 @@
         .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
         .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
 
-        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px clamp(14px, 4vw, 54px); flex: 1; }
         .page-header { margin-bottom: 30px; }
-        .page-header h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+        .page-header h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
         .page-header p { font-size: 14px; color: var(--text-sub); }
 
         /* Date Navigation Bar */
@@ -61,6 +61,8 @@
             padding-bottom: 16px;
             margin-bottom: 32px;
             border-bottom: 1px solid var(--border-container);
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
         }
         .date-tab-card {
             background: var(--bg-surface);
@@ -72,6 +74,7 @@
             color: var(--text-sub);
             min-width: 100px;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
         .date-tab-card:hover { border-color: rgba(255, 255, 255, 0.25); color: #fff; }
         .date-tab-card.active {
@@ -97,7 +100,7 @@
         }
         .showtime-card:hover { border-color: rgba(229, 193, 88, 0.4); }
         .movie-thumb { width: 90px; height: 130px; border-radius: 8px; object-fit: cover; background: #000; flex-shrink: 0; }
-        .showtime-details { flex: 1; }
+        .showtime-details { flex: 1; min-width: 0; }
         .movie-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px; }
         .cinema-info { font-size: 13px; color: var(--gold-primary); font-weight: 600; margin-bottom: 8px; }
         .tech-meta { font-size: 11px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
@@ -116,6 +119,7 @@
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
         .time-action-pill:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(229, 193, 88, 0.4); }
 
@@ -148,12 +152,15 @@
             .date-tab-card { min-width: 70px; padding: 8px 10px; }
             .date-tab-card .day-num { font-size: 15px; }
             .showtime-card { padding: 16px; }
-            .movie-thumb { width: 70px; height: 100px; }
+            .movie-thumb { width: 75px; height: 110px; }
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
-            .top-nav { padding: 0 12px; height: 60px; }
-            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .top-nav { padding: 0 10px; height: 60px; }
+            .brand-name { font-size: 17px; letter-spacing: 1px; }
+            .container { padding: 20px 12px; }
+            .date-tab-card { min-width: 64px; padding: 6px 8px; }
+            .movie-thumb { width: 65px; height: 95px; }
             .time-action-pill { padding: 8px 14px; font-size: 12px; }
         }
     </style>

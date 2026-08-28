@@ -100,6 +100,7 @@
             text-align: center;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior-x: contain;
             max-width: 100%;
         }
 
@@ -142,6 +143,8 @@
             color: var(--text-sub);
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         .seat-btn:hover:not(.occupied) {
             border-color: var(--gold-primary);
@@ -213,6 +216,7 @@
             margin-top: 20px;
             box-shadow: 0 4px 15px rgba(184, 142, 40, 0.25);
             transition: all 0.2s ease;
+            touch-action: manipulation;
         }
         .btn-proceed:hover:not(:disabled) { background: var(--gold-grad-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 223, 155, 0.35); }
         .btn-proceed:disabled { background: #222634; color: #555e70; cursor: not-allowed; box-shadow: none; }
@@ -239,7 +243,7 @@
 
         @media (max-width: 768px) {
             .seat-row { gap: 8px; }
-            .seat-btn { width: 32px; height: 30px; font-size: 11px; }
+            .seat-btn { width: 32px; height: 32px; font-size: 11px; }
             .row-identifier { width: 20px; font-size: 11px; }
         }
 
@@ -248,22 +252,23 @@
             .brand-name { font-size: 20px; }
             .booking-wrapper { width: 100%; padding: 0 14px; margin: 16px auto; }
             .screening-bar { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
-            .auditorium-box { padding: 20px 12px; border-radius: 12px; }
+            .auditorium-box { padding: 20px 10px; border-radius: 12px; }
             .reservation-summary-card { padding: 18px 14px; border-radius: 12px; }
             .seat-row { gap: 6px; }
             .seat-btn { width: 28px; height: 28px; font-size: 10px; border-radius: 4px; }
             .row-identifier { width: 18px; font-size: 10px; }
             .legend-row { gap: 12px; font-size: 11px; }
-            .modal-card { width: 95% !important; padding: 18px 14px !important; }
+            .modal-card { width: 94% !important; padding: 18px 14px !important; }
             .site-footer { padding: 28px 16px; }
         }
 
         @media (max-width: 360px) {
-            .top-nav { padding: 0 12px; height: 60px; }
-            .brand-name { font-size: 18px; letter-spacing: 1px; }
-            .auditorium-box { padding: 16px 8px; }
+            .top-nav { padding: 0 10px; height: 60px; }
+            .brand-name { font-size: 17px; letter-spacing: 1px; }
+            .booking-wrapper { padding: 0 10px; }
+            .auditorium-box { padding: 16px 6px; }
             .seat-row { gap: 4px; }
-            .seat-btn { width: 26px; height: 26px; font-size: 9px; }
+            .seat-btn { width: 25px; height: 25px; font-size: 9px; }
             .row-identifier { width: 14px; font-size: 9px; }
             .legend-row { gap: 8px; font-size: 10px; }
         }

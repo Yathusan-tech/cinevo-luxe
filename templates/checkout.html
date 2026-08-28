@@ -70,7 +70,8 @@
             background: var(--bg-surface);
             border: 1px solid var(--border-container);
             border-radius: 16px;
-            padding: 28px;
+            padding: clamp(18px, 3vw, 28px);
+            min-width: 0;
         }
 
         .card-heading {
@@ -99,7 +100,7 @@
         }
         .form-input:focus { border-color: var(--gold-primary); box-shadow: 0 0 10px rgba(229,193,88,0.2); }
 
-        .billing-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-sub); margin-bottom: 12px; }
+        .billing-item { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-sub); margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
         .billing-item strong { color: #fff; }
         .billing-item.highlight { color: var(--gold-primary); font-weight: 700; }
         .billing-divider { border-top: 1px dashed var(--border-container); margin: 16px 0; }
@@ -126,6 +127,7 @@
             margin-top: 24px;
             box-shadow: 0 4px 18px rgba(184, 142, 40, 0.3);
             transition: all 0.25s ease;
+            touch-action: manipulation;
         }
         .btn-confirm-pay:hover { background: var(--gold-grad-hover); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(244, 223, 155, 0.4); }
 
@@ -150,16 +152,17 @@
         @media (max-width: 480px) {
             .top-nav { padding: 0 16px; height: 64px; }
             .checkout-wrapper { width: 100%; padding: 0 14px; margin: 18px auto; }
-            .checkout-header h1 { font-size: 20px; }
+            .checkout-header h1 { font-size: 22px; }
             .customer-card, .billing-card { padding: 18px 14px; border-radius: 12px; }
-            .form-input { padding: 10px 14px; font-size: 13px; }
-            .btn-confirm-pay { padding: 12px; font-size: 13px; }
+            .form-input { padding: 11px 14px; font-size: 14px; }
+            .btn-confirm-pay { padding: 13px; font-size: 13px; }
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
-            .top-nav { padding: 0 12px; height: 60px; }
-            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .top-nav { padding: 0 10px; height: 60px; }
+            .brand-name { font-size: 17px; letter-spacing: 1px; }
             .checkout-header h1 { font-size: 18px; }
+            .customer-card, .billing-card { padding: 14px 10px; }
         }
     </style>
 </head>
@@ -289,17 +292,17 @@
 
                     </div>
 
-                    <div style="background: rgba(255,255,255,0.02); padding: 18px; border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 14px;">
-                        <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap;">
+                    <div style="background: rgba(255,255,255,0.02); padding: clamp(14px, 3vw, 18px); border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 14px;">
+                        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center;">
                             <div style="background: #fff; padding: 10px; border-radius: 10px; flex-shrink: 0; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                                 <!-- UPI Payment QR Generator -->
                                 <img id="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi%3A%2F%2Fpay%3Fpa%3Dcinevoluxe%40upi%26pn%3DCINEVO%2520LUXE%26am%3D{{ final_amount }}%26cu%3DINR%26tn%3DCINEVO%2520LUXE%2520Reservation" alt="UPI Payment QR Code" style="width: 110px; height: 110px; display: block; margin: 0 auto;">
                                 <div style="font-size: 9px; font-weight: 800; color: #111; margin-top: 4px; letter-spacing: 0.5px;">SCAN TO PAY</div>
                             </div>
-                            <div style="flex: 1; min-width: 200px;">
+                            <div style="flex: 1; min-width: 160px;">
                                 <div style="font-size: 11px; text-transform: uppercase; color: var(--gold-primary); font-weight: 700; margin-bottom: 2px;">Payment Method: UPI</div>
-                                <div id="qr-amount-text" style="font-weight: 800; color: #fff; margin-bottom: 4px; font-size: 18px;">Total Due: ?{{ final_amount }}</div>
-                                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px;">
+                                <div id="qr-amount-text" style="font-weight: 800; color: #fff; margin-bottom: 4px; font-size: 18px;">Total Due: ₹{{ final_amount | round | int }}</div>
+                                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px; word-break: break-all;">
                                     UPI ID: <span style="color: #fff; font-family: monospace; font-weight: 600;">cinevoluxe@upi</span>
                                 </div>
                                 <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
@@ -363,8 +366,8 @@
             <div class="billing-divider"></div>
 
             <div class="billing-item">
-                <span>Ticket Price ({{ seats|length }}x ₹{{ showtime.base_ticket_price | int }})</span>
-                <span>₹{{ ticket_amount | int }}</span>
+                <span>Ticket Price ({{ seats|length }}x ₹{{ showtime.base_ticket_price | round | int }})</span>
+                <span>₹{{ ticket_amount | round | int }}</span>
             </div>
 
             {% if food_total > 0 %}
@@ -374,13 +377,13 @@
                 {% if details.quantity > 0 %}
                 <div class="billing-item" style="margin-bottom: 6px;">
                     <span style="padding-left: 8px; color: var(--text-sub);">{{ name }} (x{{ details.quantity }})</span>
-                    <span>₹{{ (details.price * details.quantity) | int }}</span>
+                    <span>₹{{ (details.price * details.quantity) | round | int }}</span>
                 </div>
                 {% endif %}
             {% endfor %}
             <div class="billing-item" style="margin-bottom: 12px; margin-top: 6px;">
                 <span>Food Total</span>
-                <span>₹{{ food_total | int }}</span>
+                <span>₹{{ food_total | round | int }}</span>
             </div>
             <div class="billing-divider" style="margin: 8px 0; border-top: 1px solid var(--border-subtle);"></div>
             {% endif %}
@@ -388,18 +391,18 @@
             {% if showtime %}
             <div class="billing-item">
                 <span>Lounge Convenience Fee</span>
-                <span>₹{{ convenience_fee | int }}</span>
+                <span>₹{{ convenience_fee | round | int }}</span>
             </div>
 
             <div class="billing-item">
                 <span>GST & Entertainment Taxes (18%)</span>
-                <span>₹{{ taxes }}</span>
+                <span>₹{{ taxes | round | int }}</span>
             </div>
 
             {% if discount > 0 %}
             <div class="billing-item" style="color: var(--gold-primary); font-weight: 700;">
                 <span>Offer Applied ({{ applied_promo }})</span>
-                <span>- ₹{{ discount | int }}</span>
+                <span>- ₹{{ discount | round | int }}</span>
             </div>
             {% endif %}
             {% endif %}
@@ -408,7 +411,7 @@
 
             <div class="billing-item total-payable">
                 <span>Total Payable</span>
-                <span>₹{{ final_amount }}</span>
+                <span>₹{{ final_amount | round | int }}</span>
             </div>
         </div>
 

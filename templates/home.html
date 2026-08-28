@@ -1374,6 +1374,7 @@
 
             .quick-book-container {
                 padding: 0 24px;
+                margin-top: -20px;
             }
 
             .main-content {
@@ -1381,7 +1382,8 @@
             }
 
             .movie-carousel {
-                grid-auto-columns: calc((100% - (1 * 18px)) / 2);
+                grid-auto-columns: calc((100% - 16px) / 2.3);
+                gap: 14px;
             }
 
             .site-footer {
@@ -1414,12 +1416,13 @@
             }
 
             .hero-poster-card {
-                width: 170px;
-                height: 250px;
+                width: clamp(140px, 32vw, 175px);
+                aspect-ratio: 2 / 3;
+                height: auto;
             }
 
             .hero-title {
-                font-size: 32px;
+                font-size: clamp(26px, 4.5vw, 36px);
             }
 
             .quick-book-bar {
@@ -1437,10 +1440,6 @@
 
             .qb-select {
                 width: 100%;
-            }
-
-            .quick-book-container {
-                margin-top: -20px;
             }
 
             .vip-banner-block {
@@ -1486,11 +1485,23 @@
             .nav-right .search-container {
                 display: none;
             }
+
+            .movie-carousel {
+                grid-auto-columns: calc((100% - 14px) / 2.15);
+                gap: 12px;
+                scroll-snap-type: x proximity;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .movie-card {
+                scroll-snap-align: start;
+            }
         }
 
         @media (max-width: 650px) {
             .movie-carousel {
-                grid-auto-columns: 100%;
+                grid-auto-columns: calc((100% - 12px) / 2.05);
+                gap: 12px;
             }
 
             .carousel-arrows {
@@ -1530,12 +1541,18 @@
             }
 
             .hero-title {
-                font-size: 26px;
+                font-size: clamp(22px, 5.5vw, 28px);
             }
 
             .hero-desc {
                 font-size: 13px;
-                margin-bottom: 20px;
+                margin-bottom: 18px;
+            }
+
+            .hero-poster-card {
+                width: 140px;
+                aspect-ratio: 2 / 3;
+                height: auto;
             }
 
             .quick-book-container {
@@ -1552,13 +1569,37 @@
                 padding: 24px 16px;
             }
 
+            .movie-carousel {
+                grid-auto-columns: clamp(140px, 46vw, 175px);
+                gap: 10px;
+                padding-bottom: 12px;
+            }
+
+            .card-details {
+                padding: 10px 10px 14px;
+            }
+
+            .card-title {
+                font-size: 13px;
+                min-height: 34px;
+            }
+
+            .card-subtitle {
+                font-size: 10px;
+            }
+
+            .card-book-action {
+                padding: 7px 8px;
+                font-size: 10px;
+            }
+
             .vip-banner-block {
                 padding: 20px 16px;
                 border-radius: 14px;
             }
 
             .vip-titles h2 {
-                font-size: 20px;
+                font-size: 19px;
             }
 
             .vip-benefit-row {
@@ -1575,33 +1616,68 @@
 
             .modal-drawer {
                 padding: 20px 16px;
+                max-width: 100%;
             }
         }
 
         @media (max-width: 360px) {
             .top-nav {
-                padding: 0 12px;
+                padding: 0 10px;
                 height: 60px;
             }
 
             .brand-name {
-                font-size: 18px;
+                font-size: 17px;
+                letter-spacing: 1px;
+            }
+
+            .brand-tagline {
+                font-size: 7px;
                 letter-spacing: 1px;
             }
 
             .city-btn {
-                padding: 6px 8px;
+                padding: 5px 8px;
                 font-size: 11px;
-                gap: 4px;
+                gap: 3px;
+            }
+
+            .hero-section {
+                padding: 18px 12px;
             }
 
             .hero-title {
-                font-size: 22px;
+                font-size: 20px;
+            }
+
+            .hero-poster-card {
+                width: 125px;
             }
 
             .meta-tag {
-                padding: 3px 6px;
-                font-size: 10px;
+                padding: 3px 5px;
+                font-size: 9px;
+            }
+
+            .movie-carousel {
+                grid-auto-columns: 145px;
+                gap: 8px;
+            }
+
+            .card-title {
+                font-size: 12px;
+            }
+
+            .main-content {
+                padding: 20px 12px;
+            }
+
+            .quick-book-container {
+                padding: 0 12px;
+            }
+
+            .city-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>

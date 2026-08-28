@@ -48,7 +48,7 @@
         .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
         .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
 
-        .container { max-width: 1000px; margin: 40px auto; width: 90%; flex: 1; }
+        .container { max-width: 1000px; margin: 40px auto; width: 100%; padding: 0 clamp(14px, 3.5vw, 40px); flex: 1; }
 
         .page-header {
             margin-bottom: 30px;
@@ -60,7 +60,7 @@
             flex-wrap: wrap;
             gap: 16px;
         }
-        .page-header h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 4px; }
+        .page-header h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 4px; }
         .page-header p { font-size: 13px; color: var(--text-sub); }
 
         /* Search Box */
@@ -79,9 +79,10 @@
             border: 1px solid var(--border-container);
             border-radius: 8px;
             color: #fff;
-            font-size: 13px;
+            font-size: 14px;
             outline: none;
             transition: border-color 0.2s;
+            min-width: 0;
         }
         .search-input:focus { border-color: var(--gold-primary); }
 
@@ -96,12 +97,13 @@
             gap: 24px;
             align-items: center;
             transition: border-color 0.2s ease, transform 0.2s ease;
+            min-width: 0;
         }
         .booking-card:hover { border-color: rgba(229, 193, 88, 0.4); transform: translateY(-2px); }
         .booking-poster { width: 85px; height: 120px; border-radius: 8px; object-fit: cover; background: #000; flex-shrink: 0; }
-        .booking-info { flex: 1; }
+        .booking-info { flex: 1; min-width: 0; }
 
-        .booking-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .booking-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px; flex-wrap: wrap; }
         .movie-title { font-size: 18px; font-weight: 800; color: #fff; }
         .ref-badge {
             background: rgba(229, 193, 88, 0.12);
@@ -111,18 +113,19 @@
             font-weight: 800;
             padding: 4px 10px;
             border-radius: 6px;
+            white-space: nowrap;
         }
 
         .booking-meta-row {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             flex-wrap: wrap;
             font-size: 13px;
             color: var(--text-sub);
             margin-bottom: 12px;
         }
         .booking-meta-row strong { color: #fff; }
-        .seats-highlight { color: var(--gold-primary); font-weight: 700; }
+        .seats-highlight { color: var(--gold-primary); font-weight: 700; word-break: break-word; }
 
         .status-pill {
             display: inline-block;
@@ -163,14 +166,16 @@
             .booking-card { flex-direction: column; align-items: flex-start; gap: 16px; }
             .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
         }
+        @media (max-width: 600px) {
+            .search-form { flex-direction: column; gap: 10px; }
+            .search-form button, .search-form a { width: 100%; height: 42px; display: flex; align-items: center; justify-content: center; }
+        }
         @media (max-width: 480px) {
             .top-nav { padding: 0 16px; height: 64px; }
             .nav-right > a.btn-gold { display: none; }
             .container { width: 100%; padding: 0 14px; margin: 24px auto; }
             .page-header h1 { font-size: 22px; }
             .search-box-card { padding: 14px 12px; }
-            .search-form { flex-direction: column; gap: 8px; }
-            .search-form button, .search-form a { width: 100%; height: 42px; display: flex; align-items: center; justify-content: center; }
             .booking-card { padding: 18px 14px; border-radius: 12px; }
             .booking-poster { width: 70px; height: 100px; }
             .movie-title { font-size: 16px; }
@@ -179,9 +184,10 @@
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
-            .top-nav { padding: 0 12px; height: 60px; }
-            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .top-nav { padding: 0 10px; height: 60px; }
+            .brand-name { font-size: 17px; letter-spacing: 1px; }
             .page-header h1 { font-size: 19px; }
+            .booking-card { padding: 14px 10px; }
         }
     </style>
 </head>

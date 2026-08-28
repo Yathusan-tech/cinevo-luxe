@@ -234,9 +234,12 @@
         @media (max-width: 900px) {
             .top-nav { padding: 0 24px; }
             .nav-menu { display: none; }
-            .movie-backdrop { padding: 30px 24px; }
-            .backdrop-content { flex-direction: column; align-items: flex-start; gap: 20px; }
-            .movie-title { font-size: 28px; }
+            .movie-backdrop { padding: 30px 24px; min-height: auto; }
+            .backdrop-content { flex-direction: column; align-items: center; text-align: center; gap: 24px; }
+            .movie-poster-card { width: clamp(140px, 32vw, 180px); aspect-ratio: 2 / 3; height: auto; }
+            .movie-info-header { text-align: center; }
+            .movie-title { font-size: clamp(24px, 4.5vw, 32px); }
+            .movie-synopsis { margin-left: auto; margin-right: auto; }
             .details-container { padding: 30px 24px; }
             .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
         }
@@ -247,7 +250,7 @@
             .top-nav { padding: 0 16px; height: 64px; }
             .nav-right > a.btn-gold { display: none; }
             .movie-backdrop { padding: 24px 16px; }
-            .movie-poster-card { width: 140px; height: 200px; margin: 0 auto; }
+            .movie-poster-card { width: 140px; }
             .movie-title { font-size: 22px; }
             .meta-tag { padding: 3px 8px; font-size: 10px; margin-bottom: 6px; }
             .details-container { padding: 24px 16px; }
@@ -256,9 +259,12 @@
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
-            .top-nav { padding: 0 12px; height: 60px; }
-            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .top-nav { padding: 0 10px; height: 60px; }
+            .brand-name { font-size: 17px; letter-spacing: 1px; }
+            .movie-backdrop { padding: 18px 12px; }
+            .movie-poster-card { width: 125px; }
             .movie-title { font-size: 20px; }
+            .details-container { padding: 18px 12px; }
             .time-pill { padding: 6px 10px; }
         }
     </style>

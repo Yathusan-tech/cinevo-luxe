@@ -48,17 +48,17 @@
         .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
         .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
 
-        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px clamp(14px, 4vw, 54px); flex: 1; }
         .page-header { margin-bottom: 36px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; }
-        .page-header h1 { font-size: 30px; font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+        .page-header h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
         .page-header p { font-size: 14px; color: var(--text-sub); }
 
-        .cinemas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 28px; }
+        .cinemas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 24px; }
         .cinema-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-container);
             border-radius: 16px;
-            padding: 30px;
+            padding: clamp(18px, 3.5vw, 30px);
             transition: transform 0.25s ease, border-color 0.25s ease;
         }
         .cinema-card:hover {
@@ -91,6 +91,8 @@
             padding: 8px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             font-size: 13px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
         .show-slot-row:last-child { border-bottom: none; }
 
@@ -119,14 +121,15 @@
             .container { padding: 24px 16px; }
             .page-header h1 { font-size: 22px; }
             .cinema-card { padding: 18px 14px; border-radius: 12px; }
-            .show-slot-row { flex-direction: row; justify-content: space-between; align-items: center; }
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
-            .top-nav { padding: 0 12px; height: 60px; }
-            .brand-name { font-size: 18px; letter-spacing: 1px; }
+            .top-nav { padding: 0 10px; height: 60px; }
+            .brand-name { font-size: 17px; letter-spacing: 1px; }
+            .container { padding: 20px 12px; }
             .cinema-title { font-size: 18px; }
             .show-slot-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .show-slot-row a { width: 100%; text-align: center; }
         }
     </style>
 </head>

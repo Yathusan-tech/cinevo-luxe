@@ -19,7 +19,25 @@
             <a href="{{ url_for('offers') }}" class="{% if request.endpoint == 'offers' %}active{% endif %}">Offers</a>
             <a href="{{ url_for('my_bookings') }}" class="{% if request.endpoint == 'my_bookings' %}active{% endif %}">My Bookings</a>
         </div>
+        <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
     </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer-overlay" id="cinevoDrawerOverlay" onclick="toggleCinevoNav()"></div>
+    <div class="mobile-nav-drawer" id="cinevoNavDrawer">
+        <div class="mobile-drawer-header">
+            <span class="navbar-brand" style="font-size: 18px;">CINEVO<span>LUXE</span></span>
+            <button class="mobile-drawer-close" onclick="toggleCinevoNav()">✕</button>
+        </div>
+        <div class="mobile-drawer-links">
+            <a href="{{ url_for('home') }}" class="mobile-drawer-link {% if request.endpoint == 'home' %}active{% endif %}">Home <span>&rarr;</span></a>
+            <a href="{{ url_for('movies') }}" class="mobile-drawer-link {% if request.endpoint == 'movies' %}active{% endif %}">Explore Movies <span>&rarr;</span></a>
+            <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link {% if request.endpoint == 'showtimings' %}active{% endif %}">Showtimes <span>&rarr;</span></a>
+            <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link {% if request.endpoint == 'cinemas' %}active{% endif %}">Cinemas <span>&rarr;</span></a>
+            <a href="{{ url_for('offers') }}" class="mobile-drawer-link {% if request.endpoint == 'offers' %}active{% endif %}">Offers <span>&rarr;</span></a>
+            <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link {% if request.endpoint == 'my_bookings' %}active{% endif %}" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
+        </div>
+    </div>
 
     <!-- Flash Messages -->
     <div class="flash-container">
@@ -45,5 +63,22 @@
             <p>&copy; 2026 Cinevo Luxe Cinemas. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+    function toggleCinevoNav() {
+        var drawer = document.getElementById('cinevoNavDrawer');
+        var overlay = document.getElementById('cinevoDrawerOverlay');
+        if (drawer && overlay) {
+            var isOpen = drawer.classList.contains('open');
+            if (isOpen) {
+                drawer.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            }
+        }
+    }
+    </script>
 </body>
 </html>

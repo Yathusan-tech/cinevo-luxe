@@ -24,14 +24,14 @@
         .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
         .catalog-container { max-width: 1400px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
         .catalog-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; flex-wrap: wrap; gap: 20px; }
-        .catalog-title h1 { font-size: 32px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; color: #ffffff; margin-bottom: 6px; }
+        .catalog-title h1 { font-size: clamp(22px, 4vw, 32px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; color: #ffffff; margin-bottom: 6px; }
         .catalog-title p { font-size: 14px; color: var(--text-sub); }
         .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .filter-tab { padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; color: var(--text-sub); background: var(--bg-surface); border: 1px solid var(--border-container); transition: all 0.2s ease; }
+        .filter-tab { padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; text-decoration: none; color: var(--text-sub); background: var(--bg-surface); border: 1px solid var(--border-container); transition: all 0.2s ease; white-space: nowrap; }
         .filter-tab:hover { color: #fff; border-color: rgba(255, 255, 255, 0.2); }
         .filter-tab.active { background: var(--gold-grad); color: #07090e; border-color: transparent; }
-        .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
-        .movie-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-container); overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+        .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 24px; }
+        .movie-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-container); overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; min-width: 0; }
         .movie-card:hover { transform: translateY(-5px); border-color: rgba(229, 193, 88, 0.4); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7); }
         .poster-box { width: 100%; aspect-ratio: 2 / 3; overflow: hidden; position: relative; background: #000; }
         .poster-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
@@ -53,24 +53,39 @@
             .top-nav { padding: 0 24px; }
             .nav-menu { display: none; }
             .catalog-container { padding: 30px 24px; }
+            .movies-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
             .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
+        }
+        @media (max-width: 600px) {
+            .filter-bar {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 6px;
+                -webkit-overflow-scrolling: touch;
+                width: 100%;
+            }
         }
         @media (max-width: 480px) {
             .top-nav { padding: 0 16px; height: 64px; }
             .nav-right > a.btn-gold { display: none; }
             .catalog-container { padding: 24px 16px; }
             .catalog-title h1 { font-size: 22px; }
-            .filter-tab { padding: 6px 12px; font-size: 11px; }
-            .movies-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-            .card-details { padding: 10px 12px 14px; }
-            .card-title { font-size: 13px; }
+            .filter-tab { padding: 6px 14px; font-size: 11px; }
+            .movies-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+            .card-details { padding: 10px 10px 14px; }
+            .card-title { font-size: 13px; min-height: 34px; }
             .card-subtitle { font-size: 11px; }
+            .card-tags { font-size: 9px; }
+            .card-book-action { font-size: 10px; padding: 6px 8px; }
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
-            .top-nav { padding: 0 12px; height: 60px; }
-            .brand-name { font-size: 18px; letter-spacing: 1px; }
-            .movies-grid { grid-template-columns: 1fr; gap: 14px; }
+            .top-nav { padding: 0 10px; height: 60px; }
+            .brand-name { font-size: 17px; letter-spacing: 1px; }
+            .catalog-container { padding: 20px 12px; }
+            .movies-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+            .card-details { padding: 8px 8px 10px; }
+            .card-title { font-size: 12px; }
         }
     </style>
 </head>
