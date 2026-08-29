@@ -46,6 +46,9 @@ def create_app():
     # --------------------------------------------------------
 
     app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
+    app.config["SESSION_COOKIE_SECURE"] = (os.environ.get("FLASK_ENV", "development").lower() == "production")
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
     instance_path = os.path.join(
         os.path.abspath(os.path.dirname(__file__)),
