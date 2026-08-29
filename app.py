@@ -171,7 +171,7 @@ def seed_initial_data():
     if not Staff.query.first():
 
         admin_user = os.environ.get("STAFF_ADMIN_USER", "yathusan").strip() or "yathusan"
-        admin_pass = os.environ.get("STAFF_ADMIN_PASS", "[REDACTED] ") or "[REDACTED] "
+        admin_pass = os.environ.get("STAFF_ADMIN_PASS")
 
         admin = Staff(username=admin_user)
         admin.set_password(admin_pass)

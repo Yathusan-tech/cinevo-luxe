@@ -132,7 +132,7 @@ http://127.0.0.1:5000
 To access the Staff Management Portal (`/staff/login`):
 
 * **Username:** `yathusan`
-* **Password:** `[REDACTED] `
+* **Password:** Configured securely through the `STAFF_ADMIN_PASS` environment variable.
 
 *(You can update or add credentials in the database or via environment variables.)*
 
