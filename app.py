@@ -46,7 +46,7 @@ def create_app():
     # --------------------------------------------------------
 
     app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
-    app.config["SESSION_COOKIE_SECURE"] = (os.environ.get("FLASK_ENV", "development").lower() == "production")
+    app.config["SESSION_COOKIE_SECURE"] = True
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
