@@ -448,6 +448,10 @@
         if (!/[?&]autoplay=/.test(embedUrl)) {
             embedUrl += embedUrl.includes('?') ? '&autoplay=1' : '?autoplay=1';
         }
+        if (embedUrl.includes('youtube.com/embed/')) {
+            const separator = embedUrl.includes('?') ? '&' : '?';
+            embedUrl += separator + 'origin=' + encodeURIComponent(window.location.origin);
+        }
         frame.src = embedUrl;
         pinTrailerToViewport();
         modal.style.display = 'flex';
