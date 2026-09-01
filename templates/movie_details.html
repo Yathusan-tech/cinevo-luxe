@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="referrer" content="origin">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ movie.title }} | Cinevo Luxe Executive Cinema</title>
@@ -405,7 +406,7 @@
             const isYouTube = host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtu.be';
             if (isYouTube && parsed.pathname === '/watch') {
                 const videoId = parsed.searchParams.get('v');
-                if (videoId) return 'https://www.youtube-nocookie.com/embed/' + videoId;
+                if (videoId) return 'https://www.youtube.com/embed/' + videoId;
             }
             if (host === 'youtu.be') return 'https://www.youtube.com/embed' + parsed.pathname;
             return url;
@@ -447,10 +448,6 @@
         let embedUrl = convertToEmbedUrl(url);
         if (!/[?&]autoplay=/.test(embedUrl)) {
             embedUrl += embedUrl.includes('?') ? '&autoplay=1' : '?autoplay=1';
-        }
-        if (embedUrl.includes('youtube.com/embed/') || embedUrl.includes('youtube-nocookie.com/embed/')) {
-            const separator = embedUrl.includes('?') ? '&' : '?';
-            embedUrl += separator + 'origin=' + encodeURIComponent(window.location.origin);
         }
         frame.src = embedUrl;
         pinTrailerToViewport();
