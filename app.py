@@ -1700,10 +1700,12 @@ def staff_movies():
 
 @app.route(
     "/staff/add-movie",
-    methods=["POST"]
+    methods=["GET", "POST"]
 )
 @staff_required
 def staff_add_movie():
+    if request.method == "GET":
+        return redirect(url_for("staff_movies"))
 
     title = request.form.get(
         "title",
