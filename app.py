@@ -289,7 +289,7 @@ def seed_initial_data():
                 description="An intense action thriller following a dangerous clandestine mission filled with espionage, revenge, and high-stakes tactical warfare across borders.",
                 format="DOLBY ATMOS • LASER 4K",
                 category="now_showing",
-                trailer_url="https://www.youtube.com/embed/placeholder",
+                trailer_url="https://www.youtube.com/embed/NHk7scrb_9I",
                 language="Hindi / Tamil",
                 cast="Ranveer Singh, Sanjay Dutt, R. Madhavan, Akshaye Khanna",
                 director="Aditya Dhar",
