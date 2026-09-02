@@ -1,7 +1,10 @@
 import os
+import re
 import uuid
 import secrets
 import shutil
+import urllib.parse
+import logging
 from functools import wraps
 from datetime import datetime, date, timedelta
 
@@ -24,6 +27,7 @@ except ImportError:
 
 from models import (
     db,
+    Customer,
     Movie,
     Cinema,
     Showtime,
@@ -45,8 +49,8 @@ def create_app():
     # CONFIGURATION
     # --------------------------------------------------------
 
-    app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
-    app.config["SESSION_COOKIE_SECURE"] = True
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "[REMOVED-SECRET]")
+    app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "False").lower() in ["true", "1", "t"]
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
@@ -125,6 +129,8 @@ def create_app():
             if "bookings" in tables:
                 columns = [col["name"] for col in inspector.get_columns("bookings")]
                 with db.engine.connect() as conn:
+                    if "customer_id" not in columns:
+                        conn.execute(db.text("ALTER TABLE bookings ADD COLUMN customer_id INTEGER REFERENCES customers(id)"))
                     if "ticket_amount" not in columns:
                         conn.execute(db.text("ALTER TABLE bookings ADD COLUMN ticket_amount FLOAT DEFAULT 0.0"))
                     if "convenience_fee" not in columns:
@@ -506,6 +512,172 @@ def staff_required(view):
 
 
 # ============================================================
+# CUSTOMER AUTHENTICATION DECORATOR & HELPERS
+# ============================================================
+
+def customer_required(view):
+
+    @wraps(view)
+    def wrapped_view(*args, **kwargs):
+
+        if not session.get("customer_logged_in") or not session.get("customer_id"):
+
+            flash(
+                "Please sign in or create an account to proceed.",
+                "info"
+            )
+
+            return redirect(url_for("customer_login", next=request.url))
+
+        return view(*args, **kwargs)
+
+    return wrapped_view
+
+
+# ============================================================
+# CUSTOMER LOGIN, REGISTRATION & LOGOUT ROUTES
+# ============================================================
+
+@app.route("/login", methods=["GET", "POST"])
+def customer_login():
+
+    if session.get("customer_logged_in") and session.get("customer_email"):
+        return redirect(url_for("my_bookings"))
+
+    next_url = request.args.get("next") or request.form.get("next") or ""
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "").strip()
+
+        if not email or not password:
+            flash("Please enter both email and password.", "error")
+            return render_template("login.html", next=next_url, email=email)
+
+        customer = Customer.query.filter(
+            db.func.lower(Customer.email) == email
+        ).first()
+
+        if customer and customer.check_password(password):
+            session["customer_logged_in"] = True
+            session["customer_id"] = customer.id
+            session["customer_email"] = customer.email.lower()
+            session["customer_name"] = customer.name
+            session["customer_phone"] = customer.phone
+            session["authorized_booking_refs"] = [b.booking_reference for b in customer.bookings]
+            session["my_booking_refs"] = session["authorized_booking_refs"]
+            session.modified = True
+
+            flash(f"Welcome back, {customer.name}!", "success")
+
+            if next_url and next_url.startswith("/") and not next_url.startswith("//"):
+                return redirect(next_url)
+            return redirect(url_for("my_bookings"))
+        else:
+            flash("Invalid email or password. Please try again.", "error")
+            return render_template("login.html", next=next_url, email=email)
+
+    return render_template("login.html", next=next_url)
+
+
+@app.route("/register", methods=["GET", "POST"])
+@app.route("/signup", methods=["GET", "POST"])
+def customer_register():
+
+    if session.get("customer_logged_in") and session.get("customer_email"):
+        return redirect(url_for("my_bookings"))
+
+    next_url = request.args.get("next") or request.form.get("next") or ""
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+
+        if not name or not email or not phone or not password:
+            flash("All fields are required.", "error")
+            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
+
+        # Validate email
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+            flash("Please enter a valid email address.", "error")
+            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
+
+        # Validate password length
+        if len(password) < 6:
+            flash("Password must be at least 6 characters long.", "error")
+            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
+
+        # Validate passwords match
+        if password != confirm_password:
+            flash("Passwords do not match. Please try again.", "error")
+            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
+
+        # Check existing customer
+        existing_customer = Customer.query.filter(
+            db.func.lower(Customer.email) == email
+        ).first()
+
+        if existing_customer:
+            flash("An account with this email address already exists. Please sign in.", "error")
+            return redirect(url_for("customer_login", next=next_url))
+
+        try:
+            new_customer = Customer(
+                name=name,
+                email=email,
+                phone=phone
+            )
+            new_customer.set_password(password)
+
+            db.session.add(new_customer)
+            db.session.commit()
+
+            # Auto sign in after registration
+            session["customer_logged_in"] = True
+            session["customer_id"] = new_customer.id
+            session["customer_email"] = new_customer.email.lower()
+            session["customer_name"] = new_customer.name
+            session["customer_phone"] = new_customer.phone
+            session["authorized_booking_refs"] = []
+            session["my_booking_refs"] = []
+            session.modified = True
+
+            flash(f"Account created successfully! Welcome to Cinevo Luxe, {new_customer.name}.", "success")
+
+            if next_url and next_url.startswith("/") and not next_url.startswith("//"):
+                return redirect(next_url)
+            return redirect(url_for("home"))
+
+        except Exception as e:
+            db.session.rollback()
+            flash("An error occurred while creating your account. Please try again.", "error")
+            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
+
+    return render_template("register.html", next=next_url)
+
+
+@app.route("/logout")
+def customer_logout():
+
+    session.pop("customer_logged_in", None)
+    session.pop("customer_id", None)
+    session.pop("customer_email", None)
+    session.pop("customer_name", None)
+    session.pop("customer_phone", None)
+    session.pop("authorized_booking_refs", None)
+    session.pop("my_booking_refs", None)
+    session.pop("claimed_offers", None)
+    session.pop("promo_code", None)
+    session.modified = True
+
+    flash("You have been signed out successfully.", "success")
+    return redirect(url_for("home"))
+
+
+# ============================================================
 # CUSTOMER HOME
 # ============================================================
 
@@ -857,6 +1029,10 @@ def apply_offer(promo_code):
 @app.route("/seat-selection/<int:showtime_id>")
 def seat_selection(showtime_id):
 
+    if not session.get("customer_logged_in") or not session.get("customer_id"):
+        flash("Please sign in or create an account to select your seats.", "info")
+        return redirect(url_for("customer_login", next=request.url))
+
     showtime = Showtime.query.get(
         showtime_id
     )
@@ -894,7 +1070,7 @@ def check_first_booking_eligibility(email=None, phone=None):
     - If phone provided, must have no existing confirmed bookings in the database with that phone
     """
     # 1. Session booking refs check
-    if session.get("my_booking_refs"):
+    if session.get("authorized_booking_refs") or session.get("my_booking_refs"):
         return False
 
     session_email = email or session.get("customer_email")
@@ -1028,6 +1204,10 @@ def checkout():
 
     import json
 
+    if not session.get("customer_logged_in") or not session.get("customer_id"):
+        flash("Please sign in or create an account to complete your booking.", "info")
+        return redirect(url_for("customer_login", next=request.url))
+
     if request.method == "POST":
 
         showtime_id = request.form.get(
@@ -1044,9 +1224,10 @@ def checkout():
             seats_list = request.form.getlist("seats")
             seats_raw = ", ".join(seats_list)
 
-        customer_name = request.form.get("customer_name", "").strip()
-        email = request.form.get("email", "").strip()
-        phone = request.form.get("phone", "").strip()
+        customer_id_val = session.get("customer_id")
+        customer_name = request.form.get("customer_name", "").strip() or session.get("customer_name", "Valued Guest")
+        email = session.get("customer_email") or request.form.get("email", "").strip().lower()
+        phone = session.get("customer_phone") or request.form.get("phone", "").strip()
 
         food_items_raw = request.form.get("food_items", "").strip() or request.form.get("food_items_backup", "").strip()
         try:
@@ -1096,77 +1277,42 @@ def checkout():
             is_first_booking=is_first_booking
         )
 
-        claimed_offers = session.get("claimed_offers", [])
+        # Re-verify seat conflict
+        taken_seats = set()
+        for seat in selected_seats:
+            conflict = SeatBookingRecord.query.filter_by(
+                showtime_id=showtime.id,
+                seat_number=seat
+            ).first()
+            if conflict:
+                taken_seats.add(seat)
 
-        # Display form if customer details are not complete
-        if not customer_name or not email or not phone:
-            return render_template(
-                "checkout.html",
-                showtime=showtime,
-                seats=selected_seats,
-                seats_string=", ".join(selected_seats),
-                ticket_amount=totals["ticket_amount"],
-                convenience_fee=totals["convenience_fee"],
-                taxes=totals["taxes"],
-                food_total=totals["food_total"],
-                food_dict=food_dict,
-                food_summary_str=totals["food_summary_str"],
-                food_items_raw=food_items_raw,
-                discount=totals["discount"],
-                applied_promo=totals["applied_promo"],
-                final_amount=totals["final_amount"],
-                claimed_offers=claimed_offers,
-                is_first_booking=is_first_booking
-            )
-
-        # Phone validation
-        digits_phone = "".join(filter(str.isdigit, phone))
-        if len(digits_phone) != 10:
-            flash("Please enter a valid 10-digit mobile number.", "error")
-            return render_template(
-                "checkout.html",
-                showtime=showtime,
-                seats=selected_seats,
-                seats_string=", ".join(selected_seats),
-                ticket_amount=totals["ticket_amount"],
-                convenience_fee=totals["convenience_fee"],
-                taxes=totals["taxes"],
-                food_total=totals["food_total"],
-                food_dict=food_dict,
-                food_summary_str=totals["food_summary_str"],
-                food_items_raw=food_items_raw,
-                discount=totals["discount"],
-                applied_promo=totals["applied_promo"],
-                final_amount=totals["final_amount"],
-                claimed_offers=claimed_offers,
-                is_first_booking=is_first_booking
-            )
-
-        # ----------------------------------------------------
-        # DOUBLE BOOKING CHECK
-        # ----------------------------------------------------
-        if showtime_id and selected_seats:
-            taken_seats = set()
-            existing_records = SeatBookingRecord.query.filter(
-                SeatBookingRecord.showtime_id == showtime_id,
-                SeatBookingRecord.seat_number.in_(selected_seats)
+        if not taken_seats:
+            active_bookings = Booking.query.filter(
+                Booking.showtime_id == showtime.id,
+                Booking.booking_status == "Confirmed"
             ).all()
 
-            if existing_records:
-                for record in existing_records:
-                    taken_seats.add(record.seat_number.strip().upper())
+            for b in active_bookings:
+                if b.seats_string:
+                    seats_only = b.seats_string.split('|')[0]
+                    for s in seats_only.split(','):
+                        clean = s.strip().upper()
+                        if clean in selected_seats:
+                            taken_seats.add(clean)
 
+        if not taken_seats:
             showtime_booked = showtime.booked_seat_numbers
             for s in selected_seats:
                 if s in showtime_booked:
                     taken_seats.add(s)
 
-            if taken_seats:
-                flash(
-                    f"Seat(s) {', '.join(sorted(taken_seats))} have already been reserved by another customer. Please choose different seats.",
-                    "error"
-                )
-                return redirect(url_for("seat_selection", showtime_id=showtime_id))
+        if taken_seats:
+            flash(
+                f"Seat(s) {', '.join(sorted(taken_seats))} have already been reserved by another customer. Please choose different seats.",
+                "error"
+            )
+            return redirect(url_for("seat_selection", showtime_id=showtime_id))
 
         try:
             booking_ref = f"CNV-{uuid.uuid4().hex[:6].upper()}"
@@ -1178,6 +1324,7 @@ def checkout():
 
             new_booking = Booking(
                 booking_reference=booking_ref,
+                customer_id=customer_id_val,
                 customer_name=customer_name,
                 email=email,
                 phone=phone,
@@ -1206,14 +1353,13 @@ def checkout():
 
             db.session.commit()
 
-            if "my_booking_refs" not in session:
-                session["my_booking_refs"] = []
+            if "authorized_booking_refs" not in session or not isinstance(session["authorized_booking_refs"], list):
+                session["authorized_booking_refs"] = []
 
-            if booking_ref not in session["my_booking_refs"]:
-                session["my_booking_refs"].append(booking_ref)
+            if booking_ref not in session["authorized_booking_refs"]:
+                session["authorized_booking_refs"].append(booking_ref)
 
-            session["customer_email"] = email
-            session["customer_phone"] = phone
+            session["my_booking_refs"] = session["authorized_booking_refs"]
             session.modified = True
 
             # Clear promo code and pending carts after booking completion
@@ -1306,6 +1452,109 @@ def checkout():
 # CONFIRMATION
 # ============================================================
 
+def normalize_digits(text):
+    return "".join(filter(str.isdigit, text or ""))
+
+
+def parse_booking_verification_credentials(query_str):
+    """
+    Extracts potential verification factors from a lookup query:
+    - booking_reference (e.g. CNV-XXXXXX or alphanumeric token)
+    - email (e.g. user@domain.com)
+    - phone_digits (e.g. 10 digit phone number)
+    """
+    if not query_str or not isinstance(query_str, str):
+        return None, None, None
+
+    text = query_str.strip()
+
+    # 1. Extract email if present
+    email_match = re.search(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', text)
+    email = email_match.group(0).strip().lower() if email_match else None
+
+    # 2. Extract booking reference (e.g. CNV-XXXXXX or CNVXXXXXX)
+    ref_match = re.search(r'\b(CNV-?[A-Za-z0-9]{4,10})\b', text, re.IGNORECASE)
+    booking_ref = ref_match.group(0).strip().upper() if ref_match else None
+
+    if not booking_ref:
+        tokens = [t.strip(",;/| ") for t in text.split()]
+        for t in tokens:
+            if email and t.lower() == email:
+                continue
+            if 4 <= len(t) <= 15 and any(c.isalpha() for c in t) and any(c.isdigit() for c in t):
+                booking_ref = t.upper()
+                break
+
+    # 3. Extract phone digits (at least 10 consecutive or formatted digits)
+    cleaned_for_phone = text
+    if email_match:
+        cleaned_for_phone = cleaned_for_phone.replace(email_match.group(0), " ")
+    if ref_match:
+        cleaned_for_phone = cleaned_for_phone.replace(ref_match.group(0), " ")
+    elif booking_ref:
+        cleaned_for_phone = cleaned_for_phone.replace(booking_ref, " ")
+
+    phone_digits_all = normalize_digits(cleaned_for_phone)
+    phone = phone_digits_all[-10:] if len(phone_digits_all) >= 10 else None
+
+    return booking_ref, email, phone
+
+
+def verify_two_factor_booking(query_str):
+    """
+    Validates that the search query contains at least two verified factors
+    (Booking Ref + Email, Booking Ref + Phone, or Email + Phone)
+    that match the EXACT SAME booking record in the database.
+
+    Returns matching Booking instance if authorized, else None.
+    """
+    ref, email, phone = parse_booking_verification_credentials(query_str)
+
+    # Need at least two distinct factors
+    provided_factors = sum(1 for f in [ref, email, phone] if f is not None)
+    if provided_factors < 2:
+        return None
+
+    ref_filters = []
+    if ref:
+        clean_ref = ref.upper().strip()
+        formatted_ref = f"CNV-{clean_ref[3:]}" if clean_ref.startswith("CNV") and not clean_ref.startswith("CNV-") else clean_ref
+        ref_filters = [
+            Booking.booking_reference == formatted_ref,
+            Booking.booking_reference == clean_ref,
+            Booking.booking_reference == clean_ref.replace("-", "")
+        ]
+
+    # Check Ref + Email on SAME record
+    if ref and email:
+        match = Booking.query.filter(
+            db.or_(*ref_filters),
+            db.func.lower(Booking.email) == email.lower()
+        ).first()
+        if match:
+            return match
+
+    # Check Ref + Phone on SAME record
+    if ref and phone:
+        match = Booking.query.filter(
+            db.or_(*ref_filters),
+            Booking.phone.like(f"%{phone}%")
+        ).first()
+        if match:
+            return match
+
+    # Check Email + Phone on SAME record
+    if email and phone:
+        match = Booking.query.filter(
+            db.func.lower(Booking.email) == email.lower(),
+            Booking.phone.like(f"%{phone}%")
+        ).first()
+        if match:
+            return match
+
+    return None
+
+
 @app.route("/confirmation/<string:booking_ref>")
 def confirmation(booking_ref):
 
@@ -1321,42 +1570,30 @@ def confirmation(booking_ref):
         )
 
         return redirect(
-            url_for("home")
+            url_for("my_bookings")
         )
 
-    # Privacy Protection: only allow if staff, or if booking belongs to current customer session
-    session_refs = session.get("my_booking_refs", [])
-    session_email = (session.get("customer_email") or "").strip().lower()
-    session_phone = "".join(filter(str.isdigit, session.get("customer_phone") or ""))
-    is_staff = session.get("staff_logged_in")
+    # Staff access
+    if session.get("staff_logged_in"):
+        return render_template(
+            "confirmation.html",
+            booking=booking
+        )
 
-    is_owner = False
-    if is_staff:
-        is_owner = True
-    elif booking_ref in session_refs:
-        is_owner = True
-    elif session_email and booking.email and session_email == booking.email.strip().lower():
-        is_owner = True
-    elif session_phone and len(session_phone) >= 10 and session_phone[-10:] in "".join(filter(str.isdigit, booking.phone or "")):
-        is_owner = True
+    # Customer authentication check
+    if not session.get("customer_logged_in") or not session.get("customer_id"):
+        flash("Please sign in to view your booking.", "error")
+        return redirect(url_for("customer_login", next=url_for("confirmation", booking_ref=booking_ref)))
 
-    if not is_owner:
+    session_customer_id = session.get("customer_id")
+
+    # Authoritative Ownership Check: Must match authenticated customer_id
+    if not booking.customer_id or booking.customer_id != session_customer_id:
         flash(
-            "Access restricted: Customer boarding pass details are private to the registered reservation holder.",
+            "You are not authorized to view this booking.",
             "error"
         )
         return redirect(url_for("my_bookings"))
-
-    # Safely remember verified customer session identity
-    if "my_booking_refs" not in session or not isinstance(session["my_booking_refs"], list):
-        session["my_booking_refs"] = []
-    if booking_ref not in session["my_booking_refs"]:
-        session["my_booking_refs"].append(booking_ref)
-    if booking.email and not session.get("customer_email"):
-        session["customer_email"] = booking.email
-    if booking.phone and not session.get("customer_phone"):
-        session["customer_phone"] = booking.phone
-    session.modified = True
 
     return render_template(
         "confirmation.html",
@@ -1372,179 +1609,42 @@ def confirmation(booking_ref):
 @app.route("/bookings")
 def my_bookings():
 
+    # If customer is not signed in, redirect to login
+    if not session.get("customer_logged_in") or not session.get("customer_id"):
+        flash("Please sign in to view your bookings.", "info")
+        return redirect(url_for("customer_login", next=url_for("my_bookings")))
+
+    session_customer_id = session.get("customer_id")
+
     search_query = request.args.get(
         "search",
         ""
     ).strip()
 
-    def normalize_digits(text):
-        return "".join(filter(str.isdigit, text or ""))
+    # Query strictly the authenticated customer's bookings by customer_id
+    user_bookings = Booking.query.filter(
+        Booking.customer_id == session_customer_id
+    ).order_by(
+        Booking.created_at.desc()
+    ).all()
 
+    # Filter strictly within the customer's own bookings if search query provided
     if search_query:
-        query_lower = search_query.lower()
-        digits = normalize_digits(search_query)
+        q_lower = search_query.lower()
+        filtered = []
+        for b in user_bookings:
+            m_name = (b.movie_name or "").lower()
+            b_ref = (b.booking_reference or "").lower()
+            c_name = (b.customer_name or "").lower()
+            b_seats = (b.seats or "").lower()
+            b_cinema = (b.cinema_name or "").lower()
 
-        filters = [
-            Booking.booking_reference.ilike(f"%{search_query}%"),
-            Booking.customer_name.ilike(f"%{search_query}%"),
-            Booking.email.ilike(f"%{search_query}%"),
-            Booking.phone.ilike(f"%{search_query}%")
-        ]
-
-        if len(digits) >= 10:
-            last10 = digits[-10:]
-            filters.append(Booking.phone.like(f"%{last10}%"))
-            filters.append(Booking.phone.like(f"%{last10[:5]}%{last10[5:]}%"))
-        elif digits:
-            filters.append(Booking.phone.like(f"%{digits}%"))
-
-        candidate_bookings = Booking.query.filter(
-            db.or_(*filters)
-        ).order_by(
-            Booking.created_at.desc()
-        ).all()
-
-        if candidate_bookings:
-            # Resolve customer identity from the search result.
-            # Exact customer-name searches use the matching booking as the
-            # identity anchor, so unrelated customers are never merged.
-            exact_name_booking = next(
-                (
-                    b for b in candidate_bookings
-                    if b.customer_name
-                    and b.customer_name.strip().lower() == search_query.strip().lower()
-                ),
-                None
-            )
-
-            if exact_name_booking:
-                matched_emails = {
-                    exact_name_booking.email.strip().lower()
-                } if exact_name_booking.email else set()
-
-                matched_phones_digits = {
-                    normalize_digits(exact_name_booking.phone)
-                } if exact_name_booking.phone and len(normalize_digits(exact_name_booking.phone)) >= 10 else set()
-
-                matched_refs = {
-                    exact_name_booking.booking_reference
-                } if exact_name_booking.booking_reference else set()
-            else:
-                matched_emails = {b.email.strip().lower() for b in candidate_bookings if b.email}
-                matched_phones_digits = {normalize_digits(b.phone) for b in candidate_bookings if b.phone and len(normalize_digits(b.phone)) >= 10}
-                matched_refs = {b.booking_reference for b in candidate_bookings if b.booking_reference}
-
-            # Retrieve ALL historical bookings for this verified customer
-            expanded_filters = []
-            if matched_refs:
-                expanded_filters.append(Booking.booking_reference.in_(list(matched_refs)))
-            for em in matched_emails:
-                expanded_filters.append(db.func.lower(Booking.email) == em)
-            for p_digits in matched_phones_digits:
-                last10 = p_digits[-10:]
-                expanded_filters.append(Booking.phone.like(f"%{last10}%"))
-                expanded_filters.append(Booking.phone.like(f"%{last10[:5]}%{last10[5:]}%"))
-
-            if expanded_filters:
-                bookings = Booking.query.filter(
-                    db.or_(*expanded_filters)
-                ).order_by(
-                    Booking.created_at.desc()
-                ).all()
-            else:
-                bookings = candidate_bookings
-
-            # Establish and lock verified customer session identity
-            if "my_booking_refs" not in session or not isinstance(session["my_booking_refs"], list):
-                session["my_booking_refs"] = []
-            for b in bookings:
-                if b.booking_reference and b.booking_reference not in session["my_booking_refs"]:
-                    session["my_booking_refs"].append(b.booking_reference)
-            if matched_emails:
-                session["customer_email"] = list(matched_emails)[0]
-            if candidate_bookings[0].phone:
-                session["customer_phone"] = candidate_bookings[0].phone
-            session.modified = True
-        else:
-            bookings = []
-
+            if (q_lower in m_name or q_lower in b_ref or q_lower in c_name or
+                q_lower in b_seats or q_lower in b_cinema):
+                filtered.append(b)
+        bookings = filtered
     else:
-        session_refs = session.get("my_booking_refs", [])
-        if not isinstance(session_refs, list):
-            session_refs = [session_refs] if session_refs else []
-
-        session_email = (session.get("customer_email") or "").strip().lower()
-        session_phone = (session.get("customer_phone") or "").strip()
-
-        known_emails = set()
-        if session_email:
-            known_emails.add(session_email)
-
-        known_phones_raw = set()
-        known_phones_digits = set()
-        if session_phone:
-            known_phones_raw.add(session_phone)
-            p_digits = normalize_digits(session_phone)
-            if p_digits:
-                known_phones_digits.add(p_digits)
-
-        all_known_refs = set(session_refs)
-
-        # 1. Expand identity from any existing known session references in the database
-        if session_refs:
-            ref_bookings = Booking.query.filter(Booking.booking_reference.in_(session_refs)).all()
-            for b in ref_bookings:
-                if b.email:
-                    known_emails.add(b.email.strip().lower())
-                if b.phone:
-                    known_phones_raw.add(b.phone.strip())
-                    b_digits = normalize_digits(b.phone)
-                    if b_digits:
-                        known_phones_digits.add(b_digits)
-
-        # 2. Build multi-factor query matching all historical bookings for this customer from SQLite database
-        filters = []
-        if all_known_refs:
-            filters.append(Booking.booking_reference.in_(list(all_known_refs)))
-
-        for em in known_emails:
-            if em:
-                filters.append(db.func.lower(Booking.email) == em)
-
-        for ph in known_phones_raw:
-            if ph:
-                filters.append(Booking.phone.ilike(f"%{ph}%"))
-
-        for ph_digits in known_phones_digits:
-            if len(ph_digits) >= 10:
-                last10 = ph_digits[-10:]
-                filters.append(Booking.phone.like(f"%{last10}%"))
-                filters.append(Booking.phone.like(f"%{last10[:5]}%{last10[5:]}%"))
-            elif ph_digits:
-                filters.append(Booking.phone.like(f"%{ph_digits}%"))
-
-        if filters:
-            bookings = Booking.query.filter(
-                db.or_(*filters)
-            ).order_by(
-                Booking.created_at.desc()
-            ).all()
-
-            # Keep session booking references synchronized with all historical bookings found
-            if "my_booking_refs" not in session or not isinstance(session["my_booking_refs"], list):
-                session["my_booking_refs"] = []
-            for b in bookings:
-                if b.booking_reference and b.booking_reference not in session["my_booking_refs"]:
-                    session["my_booking_refs"].append(b.booking_reference)
-                if b.email and not session.get("customer_email"):
-                    session["customer_email"] = b.email
-                if b.phone and not session.get("customer_phone"):
-                    session["customer_phone"] = b.phone
-            session.modified = True
-
-        else:
-            # Privacy Protection: strangers with no session or lookup receive empty list
-            bookings = []
+        bookings = user_bookings
 
     return render_template(
         "my_bookings.html",
@@ -1695,6 +1795,205 @@ def staff_movies():
 
 
 # ============================================================
+# MOVIE VALIDATION HELPERS
+# ============================================================
+
+def is_search_engine_redirect(url):
+    """
+    Detects if the URL is a search engine result or redirect page
+    rather than a direct media URL.
+    """
+    if not url or not isinstance(url, str):
+        return False
+    try:
+        parsed = urllib.parse.urlparse(url.strip())
+        hostname = (parsed.hostname or "").lower()
+        path = (parsed.path or "").lower()
+        query = (parsed.query or "").lower()
+
+        # Google Search / Image redirect detection
+        if "google." in hostname or hostname == "google.com" or hostname.endswith(".google.com"):
+            if any(path.startswith(p) for p in ["/imgres", "/url", "/search", "/images"]):
+                return True
+            if any(param in query for param in ["tbnid=", "imgurl=", "sa=i", "source=images", "q="]):
+                return True
+
+        # Shortened google links / app links
+        if "goo.gl" in hostname:
+            return True
+
+        # Bing Images search
+        if "bing." in hostname and ("/images" in path or "view=detail" in query):
+            return True
+
+        # Yandex / Yahoo search results
+        if ("yandex." in hostname or "yahoo." in hostname) and ("/images" in path or "/search" in path):
+            return True
+
+        # DuckDuckGo images
+        if "duckduckgo.com" in hostname and "iax=images" in query:
+            return True
+
+    except Exception:
+        pass
+
+    return False
+
+
+def validate_image_url(url, field_label="Poster URL", max_length=500, required=True):
+    """
+    Validates an image URL (poster / backdrop).
+    Returns (is_valid: bool, error_message: str).
+    """
+    if not url or not url.strip():
+        if required:
+            return False, "Title and Poster URL are required." if field_label == "Poster URL" else f"{field_label} is required."
+        return True, ""
+
+    url = url.strip()
+
+    if len(url) > max_length:
+        return False, f"This URL is not allowed. The {field_label} exceeds the maximum allowed length of {max_length} characters. Please enter a valid direct image URL."
+
+    if any(c in url for c in ['\n', '\r', '\t', ' ']):
+        return False, "Invalid URL. Please enter a valid image URL."
+
+    try:
+        parsed = urllib.parse.urlparse(url)
+    except Exception:
+        return False, "Invalid URL. Please enter a valid image URL."
+
+    if parsed.scheme.lower() not in ('http', 'https'):
+        return False, "Invalid URL. Please enter a valid image URL starting with http:// or https://."
+
+    if not parsed.netloc or not parsed.hostname:
+        return False, "Invalid URL. Please enter a valid image URL."
+
+    hostname = parsed.hostname.lower()
+    if hostname != "localhost" and "." not in hostname:
+        return False, "Invalid URL. Please enter a valid image URL."
+
+    if is_search_engine_redirect(url):
+        return False, "This URL is not allowed. Please enter a valid direct image URL."
+
+    return True, ""
+
+
+def validate_trailer_url(url, field_label="Trailer URL", max_length=500, required=False):
+    """
+    Validates a trailer video/embed URL (e.g. YouTube, Vimeo, direct mp4, etc.).
+    Returns (is_valid: bool, error_message: str).
+    """
+    if not url or not url.strip():
+        if required:
+            return False, f"{field_label} is required."
+        return True, ""
+
+    url = url.strip()
+
+    if len(url) > max_length:
+        return False, f"This URL is not allowed. The {field_label} exceeds the maximum allowed length of {max_length} characters."
+
+    if any(c in url for c in ['\n', '\r', '\t', ' ']):
+        return False, "Invalid URL. Please enter a valid trailer URL."
+
+    try:
+        parsed = urllib.parse.urlparse(url)
+    except Exception:
+        return False, "Invalid URL. Please enter a valid trailer URL."
+
+    if parsed.scheme.lower() not in ('http', 'https'):
+        return False, "Invalid URL. Please enter a valid trailer URL starting with http:// or https://."
+
+    if not parsed.netloc or not parsed.hostname:
+        return False, "Invalid URL. Please enter a valid trailer URL."
+
+    hostname = parsed.hostname.lower()
+    if hostname != "localhost" and "." not in hostname:
+        return False, "Invalid URL. Please enter a valid trailer URL."
+
+    return True, ""
+
+
+def validate_movie_form(data, is_update=False):
+    """
+    Validates movie fields against database model column limits and constraints.
+    Returns (is_valid: bool, error_message: str).
+    """
+    title = (data.get("title") or "").strip()
+    poster = (data.get("poster") or "").strip()
+
+    if not title or not poster:
+        return False, "Title and Poster URL are required."
+
+    if len(title) > 150:
+        return False, "Movie title cannot exceed 150 characters."
+
+    valid_poster, poster_err = validate_image_url(poster, field_label="Poster URL", max_length=500, required=True)
+    if not valid_poster:
+        return False, poster_err
+
+    backdrop = (data.get("backdrop") or "").strip()
+    if backdrop:
+        valid_backdrop, backdrop_err = validate_image_url(backdrop, field_label="Backdrop URL", max_length=500, required=False)
+        if not valid_backdrop:
+            return False, backdrop_err
+
+    trailer_url = (data.get("trailer_url") or "").strip()
+    if trailer_url:
+        valid_trailer, trailer_err = validate_trailer_url(trailer_url, field_label="Trailer URL", max_length=500, required=False)
+        if not valid_trailer:
+            return False, trailer_err
+
+    genre = (data.get("genre") or "").strip()
+    if len(genre) > 100:
+        return False, "Genre cannot exceed 100 characters."
+
+    format_type = (data.get("format") or "").strip()
+    if len(format_type) > 100:
+        return False, "Format description cannot exceed 100 characters."
+
+    age_rating = (data.get("age_rating") or "").strip()
+    if len(age_rating) > 20:
+        return False, "Age rating cannot exceed 20 characters."
+
+    duration = (data.get("duration") or "").strip()
+    if len(duration) > 50:
+        return False, "Duration cannot exceed 50 characters."
+
+    category = (data.get("category") or "").strip()
+    if len(category) > 50:
+        return False, "Category cannot exceed 50 characters."
+
+    language = (data.get("language") or "").strip()
+    if len(language) > 50:
+        return False, "Language cannot exceed 50 characters."
+
+    director = (data.get("director") or "").strip()
+    if len(director) > 100:
+        return False, "Director cannot exceed 100 characters."
+
+    status = (data.get("status") or "").strip()
+    if len(status) > 30:
+        return False, "Status cannot exceed 30 characters."
+
+    rating_val = str(data.get("rating") or "").strip()
+    if rating_val:
+        try:
+            r = float(rating_val)
+            if r < 0.0 or r > 10.0:
+                return False, "Rating must be between 0.0 and 10.0."
+        except ValueError:
+            return False, "Rating must be a valid number."
+
+    description = (data.get("description") or "").strip()
+    if not description:
+        return False, "Synopsis / Description is required."
+
+    return True, ""
+
+
+# ============================================================
 # ADD MOVIE
 # ============================================================
 
@@ -1714,7 +2013,7 @@ def staff_add_movie():
 
     genre = request.form.get(
         "genre",
-        ""
+        "Action / Sci-Fi"
     ).strip()
 
     format_type = request.form.get(
@@ -1764,126 +2063,148 @@ def staff_add_movie():
 
     language = request.form.get(
         "language",
-        ""
-    ).strip()
+        "English"
+    ).strip() or "English"
 
     cast = request.form.get(
         "cast",
-        ""
-    ).strip()
+        "Ensemble Cast"
+    ).strip() or "Ensemble Cast"
 
     director = request.form.get(
         "director",
-        ""
-    ).strip()
+        "Cinevo Director"
+    ).strip() or "Cinevo Director"
 
-    if not title or not poster:
+    status = request.form.get(
+        "status",
+        "Now Showing"
+    ).strip() or "Now Showing"
 
+    form_data = {
+        "title": title,
+        "genre": genre,
+        "format": format_type,
+        "rating": rating,
+        "age_rating": age_rating,
+        "duration": duration,
+        "poster": poster,
+        "backdrop": backdrop,
+        "category": category,
+        "description": description,
+        "trailer_url": trailer_url,
+        "language": language,
+        "cast": cast,
+        "director": director,
+        "status": status
+    }
+
+    is_valid, err_msg = validate_movie_form(form_data)
+    if not is_valid:
         flash(
-            "Title and Poster URL are required.",
+            err_msg,
             "error"
         )
-
         return redirect(
             url_for("staff_movies")
         )
 
     try:
-
         rating_value = (
             float(rating)
             if rating
             else 9.0
         )
-
     except ValueError:
-
         rating_value = 9.0
 
     if not backdrop:
-
         backdrop = poster
 
-    new_movie = Movie(
-        title=title,
-        genre=genre,
-        format=format_type,
-        rating=rating_value,
-        age_rating=age_rating,
-        duration=duration,
-        poster=poster,
-        backdrop=backdrop,
-        category=category,
-        description=description,
-        trailer_url=trailer_url,
-        language=language,
-        cast=cast,
-        director=director,
-        status="Now Showing"
-    )
+    if not trailer_url:
+        trailer_url = "https://www.youtube.com/embed/TcMBFSGVi1c?autoplay=1"
 
-    db.session.add(
-        new_movie
-    )
-
-    db.session.flush()
-
-    # --------------------------------------------------------
-    # AUTO CREATE SHOWTIMES
-    # --------------------------------------------------------
-
-    cinemas = Cinema.query.filter_by(
-        status="Active"
-    ).all()
-
-    today = date.today()
-
-    times_list = [
-        "10:30 AM",
-        "02:15 PM",
-        "06:45 PM",
-        "09:30 PM"
-    ]
-
-    for day_offset in range(7):
-
-        current_date = (
-            today
-            + timedelta(days=day_offset)
+    try:
+        new_movie = Movie(
+            title=title,
+            genre=genre or "Action / Sci-Fi",
+            format=format_type or "2D • 3D • ATMOS",
+            rating=rating_value,
+            age_rating=age_rating or "UA 16+",
+            duration=duration or "2h 30m",
+            poster=poster,
+            backdrop=backdrop,
+            category=category or "now_showing",
+            description=description,
+            trailer_url=trailer_url,
+            language=language,
+            cast=cast,
+            director=director,
+            status=status
         )
 
-        for cinema in cinemas:
+        db.session.add(
+            new_movie
+        )
 
-            if "IMAX" in cinema.name:
+        db.session.flush()
 
-                price = 350.0
+        # --------------------------------------------------------
+        # AUTO CREATE SHOWTIMES
+        # --------------------------------------------------------
 
-            elif "Royal" in cinema.name:
+        cinemas = Cinema.query.filter_by(
+            status="Active"
+        ).all()
 
-                price = 450.0
+        today = date.today()
 
-            else:
+        times_list = [
+            "10:30 AM",
+            "02:15 PM",
+            "06:45 PM",
+            "09:30 PM"
+        ]
 
-                price = 250.0
+        for day_offset in range(7):
+            current_date = (
+                today
+                + timedelta(days=day_offset)
+            )
 
-            for show_time in times_list[:2]:
+            for cinema in cinemas:
+                if "IMAX" in cinema.name:
+                    price = 350.0
+                elif "Royal" in cinema.name:
+                    price = 450.0
+                else:
+                    price = 250.0
 
-                db.session.add(
-                    Showtime(
-                        movie_id=new_movie.id,
-                        cinema_id=cinema.id,
-                        date=current_date,
-                        time=show_time,
-                        base_price=price
+                for show_time in times_list[:2]:
+                    db.session.add(
+                        Showtime(
+                            movie_id=new_movie.id,
+                            cinema_id=cinema.id,
+                            date=current_date,
+                            time=show_time,
+                            base_price=price
+                        )
                     )
-                )
 
-    db.session.commit()
+        db.session.commit()
 
-    flash(
-        f"Movie '{title}' added and scheduled successfully!",
-        "success"
-    )
+        flash(
+            f"Movie '{title}' added and scheduled successfully!",
+            "success"
+        )
+
+    except Exception as exc:
+        db.session.rollback()
+        app.logger.exception("Error while adding movie: %s", exc)
+        flash(
+            "Unable to add the movie. Please check the entered information and try again.",
+            "error"
+        )
 
     return redirect(
         url_for("staff_movies")
@@ -1952,17 +2273,17 @@ def staff_update_movie(movie_id):
     # READ FORM
     # --------------------------------------------------------
 
-    movie.title = request.form.get(
+    title = request.form.get(
         "title",
         movie.title
     ).strip()
 
-    movie.genre = request.form.get(
+    genre = request.form.get(
         "genre",
         movie.genre
     ).strip()
 
-    movie.format = request.form.get(
+    format_type = request.form.get(
         "format",
         movie.format
     ).strip()
@@ -1972,64 +2293,54 @@ def staff_update_movie(movie_id):
         str(movie.rating)
     ).strip()
 
-    try:
-
-        movie.rating = float(
-            rating
-        )
-
-    except ValueError:
-
-        pass
-
-    movie.age_rating = request.form.get(
+    age_rating = request.form.get(
         "age_rating",
         movie.age_rating
     ).strip()
 
-    movie.duration = request.form.get(
+    duration = request.form.get(
         "duration",
         movie.duration
     ).strip()
 
-    movie.poster = request.form.get(
+    poster = request.form.get(
         "poster",
         movie.poster
     ).strip()
 
-    movie.backdrop = request.form.get(
+    backdrop = request.form.get(
         "backdrop",
-        movie.backdrop
+        movie.backdrop or ""
     ).strip()
 
-    movie.category = request.form.get(
+    category = request.form.get(
         "category",
         movie.category
     ).strip()
 
-    movie.description = request.form.get(
+    description = request.form.get(
         "description",
         movie.description
     ).strip()
 
-    movie.trailer_url = request.form.get(
+    trailer_url = request.form.get(
         "trailer_url",
-        movie.trailer_url
+        movie.trailer_url or ""
     ).strip()
 
-    movie.language = request.form.get(
+    language = request.form.get(
         "language",
-        movie.language
+        movie.language or ""
     ).strip()
 
-    movie.cast = request.form.get(
+    cast = request.form.get(
         "cast",
-        movie.cast
+        movie.cast or ""
     ).strip()
 
-    movie.director = request.form.get(
+    director = request.form.get(
         "director",
-        movie.director
+        movie.director or ""
     ).strip()
 
     status = request.form.get(
@@ -2037,20 +2348,75 @@ def staff_update_movie(movie_id):
         movie.status
     ).strip()
 
-    if status:
+    form_data = {
+        "title": title,
+        "genre": genre,
+        "format": format_type,
+        "rating": rating,
+        "age_rating": age_rating,
+        "duration": duration,
+        "poster": poster,
+        "backdrop": backdrop,
+        "category": category,
+        "description": description,
+        "trailer_url": trailer_url,
+        "language": language,
+        "cast": cast,
+        "director": director,
+        "status": status
+    }
 
-        movie.status = status
+    is_valid, err_msg = validate_movie_form(form_data, is_update=True)
+    if not is_valid:
+        flash(
+            err_msg,
+            "error"
+        )
+        return redirect(
+            url_for("staff_edit_movie", movie_id=movie_id)
+        )
 
-    if not movie.backdrop:
+    try:
+        movie.title = title
+        movie.genre = genre
+        movie.format = format_type
 
-        movie.backdrop = movie.poster
+        try:
+            movie.rating = float(rating) if rating else movie.rating
+        except ValueError:
+            pass
 
-    db.session.commit()
+        movie.age_rating = age_rating
+        movie.duration = duration
+        movie.poster = poster
+        movie.backdrop = backdrop or poster
+        movie.category = category
+        movie.description = description
+        movie.trailer_url = trailer_url or movie.trailer_url
+        movie.language = language
+        movie.cast = cast
+        movie.director = director
 
-    flash(
-        f"Movie '{movie.title}' updated successfully!",
-        "success"
-    )
+        if status:
+            movie.status = status
+
+        db.session.commit()
+
+        flash(
+            f"Movie '{movie.title}' updated successfully!",
+            "success"
+        )
+
+    except Exception as exc:
+        db.session.rollback()
+        app.logger.exception("Error while updating movie: %s", exc)
+        flash(
+            "Unable to update the movie. Please check the entered information and try again.",
+            "error"
+        )
+        return redirect(
+            url_for("staff_edit_movie", movie_id=movie_id)
+        )
 
     return redirect(
         url_for("staff_movies")

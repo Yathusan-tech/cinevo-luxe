@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Executive Account | Cinevo Luxe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+    <style>
+        :root {
+            --bg-body: #07090e;
+            --bg-surface: #0f131c;
+            --bg-card: #151a26;
+            --border-container: rgba(255, 255, 255, 0.1);
+            --border-gold: rgba(212, 175, 55, 0.35);
+            --gold-primary: #e5c158;
+            --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        .auth-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-gold);
+            border-radius: 18px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(229, 193, 88, 0.08);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .brand-title {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .brand-title span { color: var(--gold-primary); }
+        .auth-subtitle { font-size: 13px; color: var(--text-sub); letter-spacing: 0.5px; }
+
+        .alert-box {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-container);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 10px rgba(229, 193, 88, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .btn-auth-primary {
+            width: 100%;
+            background: var(--gold-grad);
+            color: #07090e;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-top: 12px;
+            box-shadow: 0 4px 15px rgba(184, 142, 40, 0.25);
+            transition: all 0.2s;
+        }
+        .btn-auth-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 223, 155, 0.35);
+        }
+
+        .auth-footer-links {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-sub);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .auth-link {
+            color: var(--gold-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .auth-link:hover { text-decoration: underline; }
+
+        .back-home {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.2s;
+        }
+        .back-home:hover { color: #fff; }
+
+        @media (max-width: 480px) {
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <div class="auth-header">
+        <div class="brand-title">CINEVO <span>LUXE</span></div>
+        <div class="auth-subtitle">Create Your Executive Account</div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert-box">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('customer_register') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next or '' }}">
+
+        <div class="form-group">
+            <label class="form-label" for="name">Full Name</label>
+            <input type="text" id="name" name="name" class="form-input" placeholder="Alexander Wright" value="{{ name or '' }}" required autocomplete="name" autofocus>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="email">Email Address (Primary Identity)</label>
+            <input type="email" id="email" name="email" class="form-input" placeholder="name@example.com" value="{{ email or '' }}" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+91 98840 12345" value="{{ phone or '' }}" required autocomplete="tel">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-input" placeholder="Min. 6 characters" required autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Re-enter password" required autocomplete="new-password">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-auth-primary">
+            Create Account & Continue
+        </button>
+    </form>
+
+    <div class="auth-footer-links">
+        <div>Already have an account? <a href="{{ url_for('customer_login', next=next) }}" class="auth-link">Sign In</a></div>
+        <a href="{{ url_for('home') }}" class="back-home">&larr; Return to Public Website</a>
+    </div>
+</div>
+
+</body>
+</html>

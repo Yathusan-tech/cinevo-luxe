@@ -199,17 +199,17 @@
 
                 <div class="form-group">
                     <label class="form-label" for="customer_name">Full Name *</label>
-                    <input type="text" id="customer_name" name="customer_name" class="form-input" placeholder="e.g. Lord Alexander Wright" required>
+                    <input type="text" id="customer_name" name="customer_name" class="form-input" placeholder="e.g. Lord Alexander Wright" value="{{ session.get('customer_name') or '' }}" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="email">Email Address (for e-Ticket) *</label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="e.g. alexander@executive.com" required>
+                    <label class="form-label" for="email">Email Address (Account Identity) *</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="e.g. alexander@executive.com" value="{{ session.get('customer_email') or '' }}" required {% if session.get('customer_email') %}readonly style="opacity: 0.85; cursor: not-allowed;"{% endif %}>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="phone">Contact Number (10 Digits) *</label>
-                    <input type="tel" id="phone" name="phone" class="form-input" placeholder="e.g. 9884012345" pattern="\d{10}" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required title="Please enter exactly 10 digits">
+                    <input type="tel" id="phone" name="phone" class="form-input" placeholder="e.g. 9884012345" value="{{ session.get('customer_phone') or '' }}" pattern="\d{10}" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" required title="Please enter exactly 10 digits">
                 </div>
 
                 {% if showtime %}

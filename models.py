@@ -18,6 +18,24 @@ class Staff(db.Model):
         return check_password_hash(self.password_hash, password)
 
 
+class Customer(db.Model):
+    __tablename__ = 'customers'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    bookings = db.relationship('Booking', backref='customer', lazy=True)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
 class Movie(db.Model):
     __tablename__ = 'movies'
     id = db.Column(db.Integer, primary_key=True)
@@ -163,6 +181,7 @@ class Booking(db.Model):
     email = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
 
+    customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=True)
     showtime_id = db.Column(db.Integer, db.ForeignKey('showtimes.id'), nullable=True)
 
     seat_count = db.Column(db.Integer, nullable=False, default=1)
