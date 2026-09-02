@@ -18,12 +18,7 @@
             <a href="{{ url_for('showtimings') }}" class="{% if request.endpoint == 'showtimings' %}active{% endif %}">Showtimes</a>
             <a href="{{ url_for('cinemas') }}" class="{% if request.endpoint == 'cinemas' %}active{% endif %}">Cinemas</a>
             <a href="{{ url_for('offers') }}" class="{% if request.endpoint == 'offers' %}active{% endif %}">Offers</a>
-            <a href="{{ url_for('my_bookings') }}" class="{% if request.endpoint == 'my_bookings' %}active{% endif %}">My Bookings</a>
-            {% if session.get('customer_logged_in') %}
-                <a href="{{ url_for('customer_logout') }}" style="color: #f87171;">Sign Out</a>
-            {% else %}
-                <a href="{{ url_for('customer_login') }}" class="{% if request.endpoint in ['customer_login', 'customer_register'] %}active{% endif %}">Sign In</a>
-            {% endif %}
+            <a href="{{ url_for('manage_booking') }}" class="{% if request.endpoint in ['manage_booking', 'exit_manage_booking'] %}active{% endif %}">Manage Booking</a>
         </div>
         <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
     </nav>
@@ -41,12 +36,7 @@
             <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link {% if request.endpoint == 'showtimings' %}active{% endif %}">Showtimes <span>&rarr;</span></a>
             <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link {% if request.endpoint == 'cinemas' %}active{% endif %}">Cinemas <span>&rarr;</span></a>
             <a href="{{ url_for('offers') }}" class="mobile-drawer-link {% if request.endpoint == 'offers' %}active{% endif %}">Offers <span>&rarr;</span></a>
-            <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link {% if request.endpoint == 'my_bookings' %}active{% endif %}" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
-            {% if session.get('customer_logged_in') %}
-                <a href="{{ url_for('customer_logout') }}" class="mobile-drawer-link" style="color: #f87171;">Sign Out ({{ session.get('customer_name') }}) <span>&rarr;</span></a>
-            {% else %}
-                <a href="{{ url_for('customer_login') }}" class="mobile-drawer-link {% if request.endpoint in ['customer_login', 'customer_register'] %}active{% endif %}">Sign In / Register <span>&rarr;</span></a>
-            {% endif %}
+            <a href="{{ url_for('manage_booking') }}" class="mobile-drawer-link {% if request.endpoint in ['manage_booking', 'exit_manage_booking'] %}active{% endif %}" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">Manage Booking <span>&rarr;</span></a>
         </div>
     </div>
 

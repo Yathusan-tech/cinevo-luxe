@@ -1,10 +1,17 @@
 import os
 import re
+import ssl
+import json
 import uuid
 import secrets
 import shutil
+import smtplib
 import urllib.parse
+import urllib.request
+import urllib.error
 import logging
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from functools import wraps
 from datetime import datetime, date, timedelta
 
@@ -512,156 +519,24 @@ def staff_required(view):
 
 
 # ============================================================
-# CUSTOMER AUTHENTICATION DECORATOR & HELPERS
 # ============================================================
-
-def customer_required(view):
-
-    @wraps(view)
-    def wrapped_view(*args, **kwargs):
-
-        if not session.get("customer_logged_in") or not session.get("customer_id"):
-
-            flash(
-                "Please sign in or create an account to proceed.",
-                "info"
-            )
-
-            return redirect(url_for("customer_login", next=request.url))
-
-        return view(*args, **kwargs)
-
-    return wrapped_view
-
-
-# ============================================================
-# CUSTOMER LOGIN, REGISTRATION & LOGOUT ROUTES
+# CUSTOMER AUTHENTICATION REDIRECTS (GUEST-FIRST PLATFORM)
 # ============================================================
 
 @app.route("/login", methods=["GET", "POST"])
-def customer_login():
-
-    if session.get("customer_logged_in") and session.get("customer_email"):
-        return redirect(url_for("my_bookings"))
-
-    next_url = request.args.get("next") or request.form.get("next") or ""
-
-    if request.method == "POST":
-        email = request.form.get("email", "").strip().lower()
-        password = request.form.get("password", "").strip()
-
-        if not email or not password:
-            flash("Please enter both email and password.", "error")
-            return render_template("login.html", next=next_url, email=email)
-
-        customer = Customer.query.filter(
-            db.func.lower(Customer.email) == email
-        ).first()
-
-        if customer and customer.check_password(password):
-            session["customer_logged_in"] = True
-            session["customer_id"] = customer.id
-            session["customer_email"] = customer.email.lower()
-            session["customer_name"] = customer.name
-            session["customer_phone"] = customer.phone
-            session["authorized_booking_refs"] = [b.booking_reference for b in customer.bookings]
-            session["my_booking_refs"] = session["authorized_booking_refs"]
-            session.modified = True
-
-            flash(f"Welcome back, {customer.name}!", "success")
-
-            if next_url and next_url.startswith("/") and not next_url.startswith("//"):
-                return redirect(next_url)
-            return redirect(url_for("my_bookings"))
-        else:
-            flash("Invalid email or password. Please try again.", "error")
-            return render_template("login.html", next=next_url, email=email)
-
-    return render_template("login.html", next=next_url)
-
-
 @app.route("/register", methods=["GET", "POST"])
 @app.route("/signup", methods=["GET", "POST"])
-def customer_register():
-
-    if session.get("customer_logged_in") and session.get("customer_email"):
-        return redirect(url_for("my_bookings"))
-
-    next_url = request.args.get("next") or request.form.get("next") or ""
-
-    if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        email = request.form.get("email", "").strip().lower()
-        phone = request.form.get("phone", "").strip()
-        password = request.form.get("password", "")
-        confirm_password = request.form.get("confirm_password", "")
-
-        if not name or not email or not phone or not password:
-            flash("All fields are required.", "error")
-            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
-
-        # Validate email
-        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
-            flash("Please enter a valid email address.", "error")
-            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
-
-        # Validate password length
-        if len(password) < 6:
-            flash("Password must be at least 6 characters long.", "error")
-            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
-
-        # Validate passwords match
-        if password != confirm_password:
-            flash("Passwords do not match. Please try again.", "error")
-            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
-
-        # Check existing customer
-        existing_customer = Customer.query.filter(
-            db.func.lower(Customer.email) == email
-        ).first()
-
-        if existing_customer:
-            flash("An account with this email address already exists. Please sign in.", "error")
-            return redirect(url_for("customer_login", next=next_url))
-
-        try:
-            new_customer = Customer(
-                name=name,
-                email=email,
-                phone=phone
-            )
-            new_customer.set_password(password)
-
-            db.session.add(new_customer)
-            db.session.commit()
-
-            # Auto sign in after registration
-            session["customer_logged_in"] = True
-            session["customer_id"] = new_customer.id
-            session["customer_email"] = new_customer.email.lower()
-            session["customer_name"] = new_customer.name
-            session["customer_phone"] = new_customer.phone
-            session["authorized_booking_refs"] = []
-            session["my_booking_refs"] = []
-            session.modified = True
-
-            flash(f"Account created successfully! Welcome to Cinevo Luxe, {new_customer.name}.", "success")
-
-            if next_url and next_url.startswith("/") and not next_url.startswith("//"):
-                return redirect(next_url)
-            return redirect(url_for("home"))
-
-        except Exception as e:
-            db.session.rollback()
-            flash("An error occurred while creating your account. Please try again.", "error")
-            return render_template("register.html", next=next_url, name=name, email=email, phone=phone)
-
-    return render_template("register.html", next=next_url)
+def customer_login():
+    """
+    Customer accounts have been replaced with direct guest booking.
+    Redirect any direct legacy auth visits to Manage Booking.
+    """
+    flash("Customer accounts are no longer required. You can book tickets directly as a guest or manage your booking anytime.", "info")
+    return redirect(url_for("manage_booking"))
 
 
 @app.route("/logout")
 def customer_logout():
-
     session.pop("customer_logged_in", None)
     session.pop("customer_id", None)
     session.pop("customer_email", None)
@@ -669,11 +544,12 @@ def customer_logout():
     session.pop("customer_phone", None)
     session.pop("authorized_booking_refs", None)
     session.pop("my_booking_refs", None)
+    session.pop("guest_authorized_booking_ref", None)
     session.pop("claimed_offers", None)
     session.pop("promo_code", None)
     session.modified = True
 
-    flash("You have been signed out successfully.", "success")
+    flash("You have been signed out.", "info")
     return redirect(url_for("home"))
 
 
@@ -785,39 +661,28 @@ def movie_details(movie_id):
         ""
     ).strip()
 
+    today = date.today()
     target_date = None
 
     if date_param.lower() == "today":
-
-        target_date = date.today()
-
+        target_date = today
     elif date_param.lower() == "tomorrow":
-
-        target_date = date.today() + timedelta(days=1)
-
+        target_date = today + timedelta(days=1)
     elif date_param:
-
         try:
-
             target_date = datetime.strptime(
                 date_param,
                 "%Y-%m-%d"
             ).date()
-
         except ValueError:
-
             target_date = None
 
     target_cinema_id = None
 
     if cinema_param:
-
         if cinema_param.isdigit():
-
             target_cinema_id = int(cinema_param)
-
         else:
-
             cinema_match = Cinema.query.filter(
                 Cinema.name.ilike(
                     f"%{cinema_param}%"
@@ -825,36 +690,28 @@ def movie_details(movie_id):
             ).first()
 
             if not cinema_match:
-
                 if "luxe" in cinema_param.lower():
-
                     cinema_match = Cinema.query.filter(
                         Cinema.name.ilike("%Pallas%")
                     ).first()
-
                 elif "imax" in cinema_param.lower():
-
                     cinema_match = Cinema.query.filter(
                         Cinema.name.ilike("%IMAX%")
                     ).first()
-
                 elif "royal" in cinema_param.lower():
-
                     cinema_match = Cinema.query.filter(
                         Cinema.name.ilike("%Royal%")
                     ).first()
 
             if cinema_match:
-
                 target_cinema_id = cinema_match.id
 
-    # Quick Reserve
+    # Quick Reserve direct redirect
     if (
         target_date
         and target_cinema_id
         and timing_param
     ):
-
         matching_showtime = Showtime.query.filter(
             Showtime.movie_id == movie.id,
             Showtime.cinema_id == target_cinema_id,
@@ -864,8 +721,26 @@ def movie_details(movie_id):
             )
         ).first()
 
-        if matching_showtime:
+        if not matching_showtime:
+            # Fallback to cinema + timing or cinema match
+            matching_showtime = Showtime.query.filter(
+                Showtime.movie_id == movie.id,
+                Showtime.cinema_id == target_cinema_id,
+                Showtime.time.ilike(f"%{timing_param}%")
+            ).first()
 
+        if not matching_showtime:
+            matching_showtime = Showtime.query.filter(
+                Showtime.movie_id == movie.id,
+                Showtime.cinema_id == target_cinema_id
+            ).first()
+
+        if not matching_showtime:
+            matching_showtime = Showtime.query.filter(
+                Showtime.movie_id == movie.id
+            ).first()
+
+        if matching_showtime:
             return redirect(
                 url_for(
                     "seat_selection",
@@ -873,32 +748,58 @@ def movie_details(movie_id):
                 )
             )
 
-    today = date.today()
+    # 1. If target_date is explicitly requested in URL
+    if target_date:
+        showtimes = Showtime.query.filter(
+            Showtime.movie_id == movie.id,
+            Showtime.date == target_date
+        ).order_by(
+            Showtime.time.asc()
+        ).all()
+        if not showtimes:
+            showtimes = Showtime.query.filter(
+                Showtime.movie_id == movie.id,
+                Showtime.date >= target_date
+            ).order_by(
+                Showtime.date.asc(),
+                Showtime.time.asc()
+            ).all()
+    else:
+        showtimes = []
 
-    showtimes = Showtime.query.filter(
-        Showtime.movie_id == movie.id,
-        Showtime.date >= today
-    ).order_by(
-        Showtime.date.asc(),
-        Showtime.time.asc()
-    ).all()
+    # 2. Query future/upcoming showtimes
+    if not showtimes:
+        showtimes = Showtime.query.filter(
+            Showtime.movie_id == movie.id,
+            Showtime.date >= today
+        ).order_by(
+            Showtime.date.asc(),
+            Showtime.time.asc()
+        ).all()
+
+    # 3. If no future showtimes found in database, retrieve all existing showtimes for this movie
+    if not showtimes:
+        showtimes = Showtime.query.filter(
+            Showtime.movie_id == movie.id
+        ).order_by(
+            Showtime.date.desc(),
+            Showtime.time.asc()
+        ).all()
 
     grouped_showtimes = {}
 
     for showtime in showtimes:
-
-        cinema_name = showtime.cinema.name
+        cinema_name = showtime.cinema.name if (showtime.cinema and showtime.cinema.name) else "CINEVO LUXE Screen"
 
         if cinema_name not in grouped_showtimes:
-
             grouped_showtimes[cinema_name] = {}
 
-        date_string = showtime.date.strftime(
-            "%Y-%m-%d"
-        )
+        if hasattr(showtime.date, 'strftime'):
+            date_string = showtime.date.strftime("%Y-%m-%d")
+        else:
+            date_string = str(showtime.date)
 
         if date_string not in grouped_showtimes[cinema_name]:
-
             grouped_showtimes[cinema_name][date_string] = []
 
         grouped_showtimes[cinema_name][date_string].append(
@@ -931,30 +832,62 @@ def showtimings():
     )
 
     try:
-
         selected_date = datetime.strptime(
             selected_date_string,
             "%Y-%m-%d"
         ).date()
-
     except ValueError:
-
         selected_date = today
 
     cinemas = Cinema.query.filter_by(
         status="Active"
     ).all()
+    if not cinemas:
+        cinemas = Cinema.query.all()
 
+    # Query showtimes for the selected date
     showtimes = Showtime.query.filter(
         Showtime.date == selected_date
     ).order_by(
         Showtime.time.asc()
     ).all()
 
+    # If no showtimes for today and no date explicitly requested in URL:
+    if not showtimes and not request.args.get("date"):
+        upcoming = Showtime.query.filter(
+            Showtime.date >= today
+        ).order_by(
+            Showtime.date.asc(),
+            Showtime.time.asc()
+        ).all()
+        if upcoming:
+            showtimes = upcoming
+            selected_date = upcoming[0].date
+        else:
+            all_st = Showtime.query.order_by(
+                Showtime.date.desc(),
+                Showtime.time.asc()
+            ).all()
+            if all_st:
+                showtimes = all_st
+                selected_date = all_st[0].date
+    elif not showtimes and request.args.get("date"):
+        closest = Showtime.query.filter(
+            Showtime.date >= selected_date
+        ).order_by(
+            Showtime.date.asc(),
+            Showtime.time.asc()
+        ).all()
+        if closest:
+            showtimes = closest
+            selected_date = closest[0].date
+
     date_tabs = [
         today + timedelta(days=i)
         for i in range(7)
     ]
+    if selected_date and selected_date not in date_tabs:
+        date_tabs = [selected_date] + [d for d in date_tabs if d != selected_date][:6]
 
     return render_template(
         "showtimings.html",
@@ -975,12 +908,17 @@ def cinemas():
     all_cinemas = Cinema.query.filter_by(
         status="Active"
     ).all()
+    if not all_cinemas:
+        all_cinemas = Cinema.query.all()
 
     today = date.today()
 
     showtimes = Showtime.query.filter(
-        Showtime.date == today
+        Showtime.date >= today
     ).all()
+
+    if not showtimes:
+        showtimes = Showtime.query.all()
 
     return render_template(
         "cinemas.html",
@@ -1028,10 +966,6 @@ def apply_offer(promo_code):
 
 @app.route("/seat-selection/<int:showtime_id>")
 def seat_selection(showtime_id):
-
-    if not session.get("customer_logged_in") or not session.get("customer_id"):
-        flash("Please sign in or create an account to select your seats.", "info")
-        return redirect(url_for("customer_login", next=request.url))
 
     showtime = Showtime.query.get(
         showtime_id
@@ -1204,10 +1138,6 @@ def checkout():
 
     import json
 
-    if not session.get("customer_logged_in") or not session.get("customer_id"):
-        flash("Please sign in or create an account to complete your booking.", "info")
-        return redirect(url_for("customer_login", next=request.url))
-
     if request.method == "POST":
 
         showtime_id = request.form.get(
@@ -1224,10 +1154,12 @@ def checkout():
             seats_list = request.form.getlist("seats")
             seats_raw = ", ".join(seats_list)
 
-        customer_id_val = session.get("customer_id")
-        customer_name = request.form.get("customer_name", "").strip() or session.get("customer_name", "Valued Guest")
-        email = session.get("customer_email") or request.form.get("email", "").strip().lower()
-        phone = session.get("customer_phone") or request.form.get("phone", "").strip()
+        customer_name = request.form.get("customer_name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        confirm_booking = request.form.get("confirm_booking", "").strip()
+        apply_promo_code = request.form.get("apply_promo_code", "").strip()
+        customer_id_val = None
 
         food_items_raw = request.form.get("food_items", "").strip() or request.form.get("food_items_backup", "").strip()
         try:
@@ -1255,10 +1187,155 @@ def checkout():
             return redirect(url_for("seat_selection", showtime_id=showtime_id))
 
         # Handle Promo Code application from Checkout form
-        apply_promo_code = request.form.get("apply_promo_code", "").strip()
         if apply_promo_code:
             session["promo_code"] = apply_promo_code
             session.modified = True
+
+        # If this is NOT the final booking payment submit (e.g. user just arrived from seat selection or applied promo):
+        if not confirm_booking:
+            is_first_booking = check_first_booking_eligibility(email=email or None, phone=phone or None)
+            claimed_offers = session.get("claimed_offers", [])
+            applied_promo = session.get("promo_code")
+
+            totals = calculate_checkout_pricing(
+                showtime=showtime,
+                selected_seats=selected_seats,
+                food_dict=food_dict,
+                applied_promo=applied_promo,
+                is_first_booking=is_first_booking
+            )
+
+            seats_string = ", ".join(selected_seats)
+            pricing_type = showtime.pricing_breakdown["type"] if showtime else "ATMOS"
+
+            return render_template(
+                "checkout.html",
+                showtime=showtime,
+                seats_string=seats_string,
+                seats=selected_seats,
+                food_items_raw=food_items_raw,
+                food_dict=food_dict,
+                ticket_amount=totals["ticket_amount"],
+                convenience_fee=totals["convenience_fee"],
+                taxes=totals["taxes"],
+                food_total=totals["food_total"],
+                food_summary_str=totals["food_summary_str"],
+                discount=totals["discount"],
+                applied_promo=totals["applied_promo"],
+                final_amount=totals["final_amount"],
+                claimed_offers=claimed_offers,
+                is_first_booking=is_first_booking,
+                pricing_type=pricing_type
+            )
+
+        # ----------------------------------------------------
+        # FINAL PAYMENT CONFIRMATION (from checkout.html form)
+        # ----------------------------------------------------
+        if not customer_name or not email or not phone:
+            flash("Please provide your full name, email address, and contact number to complete your reservation.", "error")
+            is_first_booking = check_first_booking_eligibility(email=email or None, phone=phone or None)
+            claimed_offers = session.get("claimed_offers", [])
+            applied_promo = session.get("promo_code")
+            totals = calculate_checkout_pricing(
+                showtime=showtime,
+                selected_seats=selected_seats,
+                food_dict=food_dict,
+                applied_promo=applied_promo,
+                is_first_booking=is_first_booking
+            )
+            seats_string = ", ".join(selected_seats)
+            pricing_type = showtime.pricing_breakdown["type"] if showtime else "ATMOS"
+            return render_template(
+                "checkout.html",
+                showtime=showtime,
+                seats_string=seats_string,
+                seats=selected_seats,
+                food_items_raw=food_items_raw,
+                food_dict=food_dict,
+                ticket_amount=totals["ticket_amount"],
+                convenience_fee=totals["convenience_fee"],
+                taxes=totals["taxes"],
+                food_total=totals["food_total"],
+                food_summary_str=totals["food_summary_str"],
+                discount=totals["discount"],
+                applied_promo=totals["applied_promo"],
+                final_amount=totals["final_amount"],
+                claimed_offers=claimed_offers,
+                is_first_booking=is_first_booking,
+                pricing_type=pricing_type
+            )
+
+        if not is_valid_email(email):
+            flash("Please enter a valid email address.", "error")
+            is_first_booking = check_first_booking_eligibility(email=email, phone=phone)
+            claimed_offers = session.get("claimed_offers", [])
+            applied_promo = session.get("promo_code")
+            totals = calculate_checkout_pricing(
+                showtime=showtime,
+                selected_seats=selected_seats,
+                food_dict=food_dict,
+                applied_promo=applied_promo,
+                is_first_booking=is_first_booking
+            )
+            seats_string = ", ".join(selected_seats)
+            pricing_type = showtime.pricing_breakdown["type"] if showtime else "ATMOS"
+            return render_template(
+                "checkout.html",
+                showtime=showtime,
+                seats_string=seats_string,
+                seats=selected_seats,
+                food_items_raw=food_items_raw,
+                food_dict=food_dict,
+                ticket_amount=totals["ticket_amount"],
+                convenience_fee=totals["convenience_fee"],
+                taxes=totals["taxes"],
+                food_total=totals["food_total"],
+                food_summary_str=totals["food_summary_str"],
+                discount=totals["discount"],
+                applied_promo=totals["applied_promo"],
+                final_amount=totals["final_amount"],
+                claimed_offers=claimed_offers,
+                is_first_booking=is_first_booking,
+                pricing_type=pricing_type
+            )
+
+        clean_phone_digits, e164_phone = normalize_phone_e164(phone)
+        if not clean_phone_digits:
+            flash("Please enter a valid 10-digit mobile number.", "error")
+            is_first_booking = check_first_booking_eligibility(email=email, phone=phone)
+            claimed_offers = session.get("claimed_offers", [])
+            applied_promo = session.get("promo_code")
+            totals = calculate_checkout_pricing(
+                showtime=showtime,
+                selected_seats=selected_seats,
+                food_dict=food_dict,
+                applied_promo=applied_promo,
+                is_first_booking=is_first_booking
+            )
+            seats_string = ", ".join(selected_seats)
+            pricing_type = showtime.pricing_breakdown["type"] if showtime else "ATMOS"
+            return render_template(
+                "checkout.html",
+                showtime=showtime,
+                seats_string=seats_string,
+                seats=selected_seats,
+                food_items_raw=food_items_raw,
+                food_dict=food_dict,
+                ticket_amount=totals["ticket_amount"],
+                convenience_fee=totals["convenience_fee"],
+                taxes=totals["taxes"],
+                food_total=totals["food_total"],
+                food_summary_str=totals["food_summary_str"],
+                discount=totals["discount"],
+                applied_promo=totals["applied_promo"],
+                final_amount=totals["final_amount"],
+                claimed_offers=claimed_offers,
+                is_first_booking=is_first_booking,
+                pricing_type=pricing_type
+            )
+
+        # Store normalized clean phone
+        phone = clean_phone_digits
 
         # Determine First Booking Eligibility with Email & Phone & Session
         is_first_booking = check_first_booking_eligibility(email=email, phone=phone)
@@ -1353,6 +1430,8 @@ def checkout():
 
             db.session.commit()
 
+            # Authorize this newly created booking for guest access
+            session["guest_authorized_booking_ref"] = booking_ref
             if "authorized_booking_refs" not in session or not isinstance(session["authorized_booking_refs"], list):
                 session["authorized_booking_refs"] = []
 
@@ -1360,12 +1439,34 @@ def checkout():
                 session["authorized_booking_refs"].append(booking_ref)
 
             session["my_booking_refs"] = session["authorized_booking_refs"]
-            session.modified = True
 
             # Clear promo code and pending carts after booking completion
             session.pop("promo_code", None)
             session.pop("pending_food_items", None)
             session.pop("pending_food_cart", None)
+
+            # ----------------------------------------------------
+            # DIGITAL TICKET DISPATCH (EMAIL & WHATSAPP)
+            # ----------------------------------------------------
+            delivery_status = {}
+            try:
+                delivery_status["email"] = send_booking_email(new_booking, base_url=request.host_url)
+            except Exception as e:
+                logging.getLogger("cinevo").error("Email delivery exception for %s: %s", booking_ref, type(e).__name__)
+                delivery_status["email"] = {"success": False, "status": "failed", "message": "Email delivery unavailable."}
+
+            try:
+                delivery_status["whatsapp"] = send_booking_whatsapp(new_booking, base_url=request.host_url)
+            except Exception as e:
+                logging.getLogger("cinevo").error("WhatsApp delivery exception for %s: %s", booking_ref, type(e).__name__)
+                delivery_status["whatsapp"] = {"success": False, "status": "failed", "message": "WhatsApp delivery unavailable."}
+
+            # Save delivery results in session for anti-duplication display
+            if "booking_delivery_status" not in session or not isinstance(session["booking_delivery_status"], dict):
+                session["booking_delivery_status"] = {}
+
+            session["booking_delivery_status"][booking_ref] = delivery_status
+            session.modified = True
 
             return redirect(url_for("confirmation", booking_ref=booking_ref))
 
@@ -1555,102 +1656,570 @@ def verify_two_factor_booking(query_str):
     return None
 
 
+# ============================================================
+# DIGITAL TICKET NOTIFICATIONS (EMAIL & WHATSAPP)
+# ============================================================
+
+def normalize_phone_e164(raw_phone):
+    """
+    Normalizes an Indian mobile phone number:
+    - Accepts 10 digits starting with 6, 7, 8, or 9
+    - Accepts standard prefixes: '0' (11 digits) or '91' / '+91' (12 digits)
+    - Returns (clean_10_digits, e164_destination) -> ('9876543210', '+919876543210')
+    - Returns (None, None) if invalid
+    """
+    if not raw_phone or not isinstance(raw_phone, str):
+        return None, None
+
+    digits = "".join(filter(str.isdigit, raw_phone.strip()))
+
+    # Handle leading 0 (e.g. 09876543210 -> 9876543210)
+    if len(digits) == 11 and digits.startswith("0"):
+        digits = digits[1:]
+    # Handle country code 91 (e.g. 919876543210 or +919876543210 -> 9876543210)
+    elif len(digits) == 12 and digits.startswith("91"):
+        digits = digits[2:]
+
+    # MUST be exactly 10 digits AND begin with 6, 7, 8, or 9
+    if len(digits) == 10 and digits[0] in "6789":
+        return digits, f"+91{digits}"
+
+    return None, None
+
+
+def is_valid_email(raw_email):
+    """Validates an email address against standard format."""
+    if not raw_email or not isinstance(raw_email, str):
+        return False
+    clean = raw_email.strip().lower()
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(pattern, clean) and ".." not in clean)
+
+
+def build_email_html(booking, base_url="https://cinevo-luxe.onrender.com"):
+    """Generates a luxury black + gold HTML email for booking confirmation."""
+    ticket_url = f"{base_url.rstrip('/')}/confirmation/{booking.booking_reference}"
+    qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={booking.booking_reference}&color=07090e"
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CINEVO LUXE — Executive Boarding Pass</title>
+</head>
+<body style="margin:0; padding:0; background-color:#07090e; font-family:'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color:#f8fafc;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#07090e; padding:30px 15px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="100%" style="max-width:600px; background-color:#0f131c; border:1px solid rgba(229,193,88,0.35); border-radius:16px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.8);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding:28px 30px; background:linear-gradient(135deg, rgba(229,193,88,0.18) 0%, rgba(15,19,28,0.98) 100%); border-bottom:1px solid rgba(229,193,88,0.25);">
+                            <table width="100%" role="presentation">
+                                <tr>
+                                    <td>
+                                        <div style="font-size:22px; font-weight:800; letter-spacing:2px; color:#ffffff;">
+                                            CINEVO <span style="color:#e5c158;">LUXE</span>
+                                        </div>
+                                        <div style="font-size:11px; color:#e5c158; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-top:4px;">
+                                            Executive Cinema Reservation
+                                        </div>
+                                    </td>
+                                    <td align="right">
+                                        <div style="background:rgba(229,193,88,0.12); border:1px solid #e5c158; color:#f4df9b; padding:6px 14px; border-radius:6px; font-size:13px; font-weight:800; font-family:monospace; letter-spacing:1px;">
+                                            {booking.booking_reference}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Body Content -->
+                    <tr>
+                        <td style="padding:30px;">
+                            <div style="font-size:16px; color:#f8fafc; font-weight:700; margin-bottom:8px;">
+                                Dear {booking.customer_name},
+                            </div>
+                            <div style="font-size:13px; color:#94a3b8; line-height:1.5; margin-bottom:24px;">
+                                Your executive reservation has been authorized and guaranteed. Present this digital boarding pass at the usher pedestal for priority check-in.
+                            </div>
+
+                            <!-- Reservation Details Card -->
+                            <table width="100%" role="presentation" style="background-color:#151a26; border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:18px; margin-bottom:24px;">
+                                <tr>
+                                    <td colspan="2" style="padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.06);">
+                                        <div style="font-size:11px; color:#e5c158; text-transform:uppercase; font-weight:800; letter-spacing:0.8px;">Movie Presentation</div>
+                                        <div style="font-size:18px; font-weight:800; color:#ffffff; margin-top:2px;">{booking.movie_name}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); width:50%;">
+                                        <div style="font-size:11px; color:#94a3b8; text-transform:uppercase;">Cinema Venue</div>
+                                        <div style="font-size:13px; font-weight:600; color:#ffffff; margin-top:2px;">{booking.cinema_name}</div>
+                                    </td>
+                                    <td style="padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); width:50%;">
+                                        <div style="font-size:11px; color:#94a3b8; text-transform:uppercase;">Date & Showtime</div>
+                                        <div style="font-size:13px; font-weight:600; color:#ffffff; margin-top:2px;">{booking.date_str} at {booking.time}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:10px 0; width:50%;">
+                                        <div style="font-size:11px; color:#94a3b8; text-transform:uppercase;">Confirmed Seats</div>
+                                        <div style="font-size:15px; font-weight:800; color:#e5c158; margin-top:2px;">{booking.seats}</div>
+                                    </td>
+                                    <td style="padding:10px 0; width:50%;">
+                                        <div style="font-size:11px; color:#94a3b8; text-transform:uppercase;">Total Paid</div>
+                                        <div style="font-size:15px; font-weight:800; color:#e5c158; margin-top:2px;">{booking.price}</div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- QR Code Block -->
+                            <table width="100%" role="presentation" style="background:rgba(229,193,88,0.04); border:1px solid rgba(229,193,88,0.2); border-radius:12px; padding:18px; margin-bottom:24px;">
+                                <tr>
+                                    <td style="vertical-align:middle;">
+                                        <div style="font-size:13px; font-weight:800; color:#ffffff; text-transform:uppercase;">Digital Admission QR</div>
+                                        <div style="font-size:12px; color:#94a3b8; margin-top:4px;">Scan at the lounge entry pedestal for expedited admission.</div>
+                                    </td>
+                                    <td align="right" style="vertical-align:middle; width:110px;">
+                                        <div style="background:#ffffff; padding:6px; border-radius:8px; display:inline-block;">
+                                            <img src="{qr_url}" alt="Booking QR" width="90" height="90" style="display:block;">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Call to action button -->
+                            <div style="text-align:center; margin-top:28px;">
+                                <a href="{ticket_url}" style="display:inline-block; background:linear-gradient(135deg, #eed285 0%, #b88e28 100%); color:#07090e; text-decoration:none; padding:14px 32px; border-radius:8px; font-size:13px; font-weight:800; letter-spacing:1px; text-transform:uppercase;">
+                                    View Digital Boarding Pass &rarr;
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding:20px 30px; background-color:#090c12; border-top:1px solid rgba(255,255,255,0.06); text-align:center; font-size:11px; color:#64748b;">
+                            &copy; 2026 CINEVO LUXE Cinema Inc. &bull; Save your booking reference ({booking.booking_reference}) to manage your reservation online.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+"""
+
+
+def build_email_text(booking, base_url="https://cinevo-luxe.onrender.com"):
+    """Generates plain text fallback for email confirmation."""
+    ticket_url = f"{base_url.rstrip('/')}/confirmation/{booking.booking_reference}"
+    return f"""CINEVO LUXE — BOOKING CONFIRMED
+
+Dear {booking.customer_name},
+
+Your executive cinema reservation has been confirmed.
+
+RESERVATION DETAILS:
+• Booking Reference: {booking.booking_reference}
+• Movie: {booking.movie_name}
+• Cinema: {booking.cinema_name}
+• Date & Showtime: {booking.date_str} at {booking.time}
+• Confirmed Seats: {booking.seats}
+• Total Amount Paid: {booking.price}
+
+View your full digital boarding pass and QR code:
+{ticket_url}
+
+Thank you for choosing CINEVO LUXE.
+"""
+
+
+def send_booking_email(booking, base_url=None):
+    """
+    Sends a booking confirmation email using SMTP.
+    Returns: {"success": bool, "status": str, "message": str}
+    """
+    if not booking or not getattr(booking, "email", None):
+        return {"success": False, "status": "failed", "message": "Invalid booking recipient email."}
+
+    recipient_email = booking.email.strip().lower()
+    if not is_valid_email(recipient_email):
+        return {"success": False, "status": "failed", "message": "Invalid recipient email address format."}
+
+    smtp_host = os.environ.get("SMTP_HOST") or os.environ.get("SMTP_SERVER")
+    smtp_user = os.environ.get("SMTP_USER") or os.environ.get("SMTP_USERNAME")
+    smtp_pass = os.environ.get("SMTP_PASSWORD") or os.environ.get("SMTP_PASS")
+    smtp_port = int(os.environ.get("SMTP_PORT", 587))
+    from_addr = os.environ.get("MAIL_FROM_ADDRESS") or os.environ.get("SMTP_FROM_EMAIL") or smtp_user or "concierge@cinevoluxe.com"
+    from_name = os.environ.get("MAIL_FROM_NAME", "CINEVO LUXE Concierge")
+
+    # If SMTP is not configured in environment, safely return not_configured
+    if not smtp_host or not smtp_user or not smtp_pass:
+        return {
+            "success": False,
+            "status": "not_configured",
+            "message": "Email delivery service not configured in environment."
+        }
+
+    app_base = base_url or os.environ.get("APP_BASE_URL", "https://cinevo-luxe.onrender.com")
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"CINEVO LUXE — Booking Confirmed | {booking.booking_reference}"
+    msg["From"] = f"{from_name} <{from_addr}>"
+    msg["To"] = recipient_email
+
+    text_part = MIMEText(build_email_text(booking, app_base), "plain")
+    html_part = MIMEText(build_email_html(booking, app_base), "html")
+    msg.attach(text_part)
+    msg.attach(html_part)
+
+    try:
+        if smtp_port == 465:
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL(smtp_host, smtp_port, context=context, timeout=10) as server:
+                server.login(smtp_user, smtp_pass)
+                server.send_message(msg)
+        else:
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+                server.ehlo()
+                context = ssl.create_default_context()
+                server.starttls(context=context)
+                server.ehlo()
+                server.login(smtp_user, smtp_pass)
+                server.send_message(msg)
+
+        return {
+            "success": True,
+            "status": "delivered",
+            "message": f"Ticket sent to your email ({recipient_email})"
+        }
+
+    except smtplib.SMTPAuthenticationError as e:
+        return {
+            "success": False,
+            "status": "failed",
+            "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "status": "failed",
+            "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+        }
+
+
+def build_whatsapp_message(booking, base_url="https://cinevo-luxe.onrender.com"):
+    """Formats the official WhatsApp notification text message."""
+    ticket_url = f"{base_url.rstrip('/')}/confirmation/{booking.booking_reference}"
+    return (
+        f"🎬 *CINEVO LUXE — BOOKING CONFIRMED*\n\n"
+        f"Dear *{booking.customer_name}*,\n\n"
+        f"Your executive cinema reservation has been confirmed.\n\n"
+        f"🎟️ *Booking Reference:* `{booking.booking_reference}`\n"
+        f"🍿 *Movie:* {booking.movie_name}\n"
+        f"📍 *Cinema:* {booking.cinema_name}\n"
+        f"📅 *Date & Showtime:* {booking.date_str} at {booking.time}\n"
+        f"🪑 *Confirmed Seats:* {booking.seats}\n"
+        f"💳 *Total Paid:* {booking.price}\n\n"
+        f"📲 *Digital Boarding Pass & QR:* \n{ticket_url}\n\n"
+        f"Thank you for choosing CINEVO LUXE."
+    )
+
+
+def send_booking_whatsapp(booking, base_url=None):
+    """
+    Sends a WhatsApp booking confirmation using Meta Cloud API or Twilio WhatsApp API.
+    Returns: {"success": bool, "status": str, "message": str}
+    """
+    if not booking or not getattr(booking, "phone", None):
+        return {"success": False, "status": "failed", "message": "Invalid booking recipient phone."}
+
+    raw_phone = booking.phone
+    clean_digits, e164_phone = normalize_phone_e164(raw_phone)
+
+    if not clean_digits or not e164_phone:
+        return {"success": False, "status": "failed", "message": "Invalid recipient phone number format."}
+
+    meta_token = os.environ.get("WHATSAPP_API_TOKEN") or os.environ.get("META_WHATSAPP_TOKEN")
+    meta_phone_id = os.environ.get("WHATSAPP_PHONE_NUMBER_ID") or os.environ.get("META_PHONE_ID")
+
+    twilio_sid = os.environ.get("TWILIO_ACCOUNT_SID")
+    twilio_token = os.environ.get("TWILIO_AUTH_TOKEN")
+    twilio_from = os.environ.get("TWILIO_WHATSAPP_FROM", "whatsapp:+14155238886")
+
+    app_base = base_url or os.environ.get("APP_BASE_URL", "https://cinevo-luxe.onrender.com")
+    message_text = build_whatsapp_message(booking, app_base)
+
+    # 1. Meta WhatsApp Cloud API Provider
+    if meta_token and meta_phone_id:
+        url = f"https://graph.facebook.com/v19.0/{meta_phone_id}/messages"
+        headers = {
+            "Authorization": f"Bearer {meta_token}",
+            "Content-Type": "application/json"
+        }
+        dest_number = e164_phone.replace("+", "")
+        payload = {
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": dest_number,
+            "type": "text",
+            "text": {
+                "preview_url": True,
+                "body": message_text
+            }
+        }
+
+        try:
+            req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res_body = json.loads(response.read().decode("utf-8"))
+                if "messages" in res_body:
+                    return {
+                        "success": True,
+                        "status": "accepted",
+                        "message": "WhatsApp notification accepted for delivery."
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "status": "failed",
+                        "message": "We couldn't deliver the ticket to WhatsApp. Please use the confirmation below."
+                    }
+        except urllib.error.HTTPError as e:
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to WhatsApp. Please use the confirmation below."
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to WhatsApp. Please use the confirmation below."
+            }
+
+    # 2. Twilio WhatsApp Provider
+    elif twilio_sid and twilio_token:
+        url = f"https://api.twilio.com/2010-04-01/Accounts/{twilio_sid}/Messages.json"
+        data = urllib.parse.urlencode({
+            "From": twilio_from if twilio_from.startswith("whatsapp:") else f"whatsapp:{twilio_from}",
+            "To": f"whatsapp:{e164_phone}",
+            "Body": message_text
+        }).encode("utf-8")
+
+        import base64
+        auth_header = "Basic " + base64.b64encode(f"{twilio_sid}:{twilio_token}".encode("utf-8")).decode("utf-8")
+        headers = {
+            "Authorization": auth_header,
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+
+        try:
+            req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res_body = json.loads(response.read().decode("utf-8"))
+                twilio_status = res_body.get("status")
+                if twilio_status == "delivered":
+                    return {
+                        "success": True,
+                        "status": "delivered",
+                        "message": f"Ticket sent to your WhatsApp ({e164_phone})"
+                    }
+                elif twilio_status in ["queued", "sent", "accepted"]:
+                    return {
+                        "success": True,
+                        "status": "accepted",
+                        "message": "WhatsApp notification accepted for delivery."
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "status": "failed",
+                        "message": "We couldn't deliver the ticket to WhatsApp. Please use the confirmation below."
+                    }
+        except Exception as e:
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to WhatsApp. Please use the confirmation below."
+            }
+
+    # 3. Not configured
+    else:
+        return {
+            "success": False,
+            "status": "not_configured",
+            "message": "WhatsApp delivery service not configured in environment."
+        }
+
+
+# ============================================================
+# CONFIRMATION & GUEST MANAGE BOOKING
+# ============================================================
+
+GENERIC_BOOKING_VERIFY_ERROR = "We couldn't verify those booking details. Please check your booking reference and email and try again."
+
+
 @app.route("/confirmation/<string:booking_ref>")
 def confirmation(booking_ref):
-
-    booking = Booking.query.filter_by(
-        booking_reference=booking_ref
+    clean_ref = (booking_ref or "").strip().upper()
+    booking = Booking.query.filter(
+        db.or_(
+            Booking.booking_reference == clean_ref,
+            db.func.upper(Booking.booking_reference) == clean_ref
+        )
     ).first()
 
     if not booking:
+        flash("Booking reference not found.", "error")
+        return redirect(url_for("manage_booking"))
 
-        flash(
-            "Booking reference not found.",
-            "error"
-        )
-
-        return redirect(
-            url_for("my_bookings")
-        )
+    delivery_status = session.get("booking_delivery_status", {}).get(booking.booking_reference)
 
     # Staff access
     if session.get("staff_logged_in"):
         return render_template(
             "confirmation.html",
-            booking=booking
+            booking=booking,
+            delivery_status=delivery_status
         )
 
-    # Customer authentication check
-    if not session.get("customer_logged_in") or not session.get("customer_id"):
-        flash("Please sign in to view your booking.", "error")
-        return redirect(url_for("customer_login", next=url_for("confirmation", booking_ref=booking_ref)))
-
-    session_customer_id = session.get("customer_id")
-
-    # Authoritative Ownership Check: Must match authenticated customer_id
-    if not booking.customer_id or booking.customer_id != session_customer_id:
-        flash(
-            "You are not authorized to view this booking.",
-            "error"
+    # Guest session authorization check for this specific booking
+    guest_auth_ref = session.get("guest_authorized_booking_ref")
+    if guest_auth_ref and guest_auth_ref.upper() == booking.booking_reference.upper():
+        return render_template(
+            "confirmation.html",
+            booking=booking,
+            delivery_status=delivery_status
         )
-        return redirect(url_for("my_bookings"))
 
-    return render_template(
-        "confirmation.html",
-        booking=booking
-    )
+    # Block unauthorized access and redirect to secure Manage Booking
+    flash("Please enter your booking reference and email to view your booking details.", "error")
+    return redirect(url_for("manage_booking"))
+
+
+GENERIC_RECOVERY_ERROR = "We couldn't find a booking matching those details. Please check your email and contact number and try again."
+
+
+@app.route("/manage-booking", methods=["GET", "POST"])
+def manage_booking():
+    if request.method == "POST":
+        raw_ref = request.form.get("booking_ref", "").strip()
+        raw_email = request.form.get("email", "").strip()
+
+        if not raw_ref or not raw_email:
+            flash(GENERIC_BOOKING_VERIFY_ERROR, "error")
+            return render_template("manage_booking.html", view_mode="form", booking_ref=raw_ref, email=raw_email)
+
+        # Validate email format
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", raw_email):
+            flash(GENERIC_BOOKING_VERIFY_ERROR, "error")
+            return render_template("manage_booking.html", view_mode="form", booking_ref=raw_ref, email=raw_email)
+
+        # Normalize reference and email
+        clean_ref = raw_ref.upper().replace(" ", "")
+        formatted_ref = f"CNV-{clean_ref[3:]}" if clean_ref.startswith("CNV") and not clean_ref.startswith("CNV-") else clean_ref
+        normalized_email = raw_email.lower().strip()
+
+        # Query database strictly for the matching booking reference
+        booking = Booking.query.filter(
+            db.or_(
+                Booking.booking_reference == clean_ref,
+                Booking.booking_reference == formatted_ref,
+                db.func.upper(Booking.booking_reference) == clean_ref
+            )
+        ).first()
+
+        # Authoritative server-side verification: MUST match both booking reference and stored email
+        if not booking or not booking.email or booking.email.strip().lower() != normalized_email:
+            flash(GENERIC_BOOKING_VERIFY_ERROR, "error")
+            return render_template("manage_booking.html", view_mode="form", booking_ref=raw_ref, email=raw_email)
+
+        # Successfully verified: authorize ONLY this specific booking reference in session
+        session["guest_authorized_booking_ref"] = booking.booking_reference
+        session.modified = True
+
+        return redirect(url_for("manage_booking"))
+
+    # GET Request Handling
+    if request.args.get("action") == "exit":
+        session.pop("guest_authorized_booking_ref", None)
+        session.modified = True
+        flash("You have exited your booking view.", "info")
+        return redirect(url_for("manage_booking"))
+
+    # Mode: Forgot Booking Reference Recovery Form
+    if request.args.get("mode") == "recover":
+        return render_template("manage_booking.html", view_mode="recover")
+
+    guest_auth_ref = session.get("guest_authorized_booking_ref")
+    if guest_auth_ref:
+        booking = Booking.query.filter(
+            db.func.upper(Booking.booking_reference) == guest_auth_ref.upper()
+        ).first()
+        if booking:
+            return render_template("manage_booking.html", view_mode="booking", booking=booking)
+        else:
+            session.pop("guest_authorized_booking_ref", None)
+            session.modified = True
+
+    return render_template("manage_booking.html", view_mode="form")
+
+
+@app.route("/manage-booking/recover", methods=["GET", "POST"])
+def recover_booking_reference():
+    if request.method == "POST":
+        raw_email = request.form.get("recover_email", "").strip().lower()
+        raw_phone = request.form.get("recover_phone", "").strip()
+        clean_phone_digits, _ = normalize_phone_e164(raw_phone)
+
+        # Strict dual-factor validation: MUST provide BOTH valid email AND 10-digit phone (starting with 6-9)
+        if not raw_email or not is_valid_email(raw_email) or not clean_phone_digits:
+            flash(GENERIC_RECOVERY_ERROR, "error")
+            return render_template("manage_booking.html", view_mode="recover", recover_email=raw_email, recover_phone=raw_phone)
+
+        # Database Query: Matches BOTH email AND phone on the SAME record
+        booking = Booking.query.filter(
+            db.func.lower(Booking.email) == raw_email,
+            Booking.phone.like(f"%{clean_phone_digits}%")
+        ).order_by(
+            Booking.created_at.desc(),
+            Booking.id.desc()
+        ).first()
+
+        if not booking:
+            flash(GENERIC_RECOVERY_ERROR, "error")
+            return render_template("manage_booking.html", view_mode="recover", recover_email=raw_email, recover_phone=raw_phone)
+
+        # Return single verified recovered booking card
+        return render_template("manage_booking.html", view_mode="recovered", recovered_booking=booking)
+
+    # GET returns recover form
+    return render_template("manage_booking.html", view_mode="recover")
+
+
+@app.route("/manage-booking/exit", methods=["POST", "GET"])
+def exit_manage_booking():
+    session.pop("guest_authorized_booking_ref", None)
+    session.modified = True
+    flash("You have exited your booking view.", "info")
+    return redirect(url_for("manage_booking"))
 
 
 # ============================================================
-# MY BOOKINGS
+# LEGACY MY BOOKINGS ROUTE REDIRECT
 # ============================================================
 
 @app.route("/my-bookings")
 @app.route("/bookings")
 def my_bookings():
-
-    # If customer is not signed in, redirect to login
-    if not session.get("customer_logged_in") or not session.get("customer_id"):
-        flash("Please sign in to view your bookings.", "info")
-        return redirect(url_for("customer_login", next=url_for("my_bookings")))
-
-    session_customer_id = session.get("customer_id")
-
-    search_query = request.args.get(
-        "search",
-        ""
-    ).strip()
-
-    # Query strictly the authenticated customer's bookings by customer_id
-    user_bookings = Booking.query.filter(
-        Booking.customer_id == session_customer_id
-    ).order_by(
-        Booking.created_at.desc()
-    ).all()
-
-    # Filter strictly within the customer's own bookings if search query provided
-    if search_query:
-        q_lower = search_query.lower()
-        filtered = []
-        for b in user_bookings:
-            m_name = (b.movie_name or "").lower()
-            b_ref = (b.booking_reference or "").lower()
-            c_name = (b.customer_name or "").lower()
-            b_seats = (b.seats or "").lower()
-            b_cinema = (b.cinema_name or "").lower()
-
-            if (q_lower in m_name or q_lower in b_ref or q_lower in c_name or
-                q_lower in b_seats or q_lower in b_cinema):
-                filtered.append(b)
-        bookings = filtered
-    else:
-        bookings = user_bookings
-
-    return render_template(
-        "my_bookings.html",
-        bookings=bookings,
-        search_query=search_query
-    )
+    return redirect(url_for("manage_booking"))
 
 
 # ============================================================
@@ -1728,6 +2297,13 @@ def staff_logout():
         "staff_username",
         None
     )
+
+    session.pop(
+        "guest_authorized_booking_ref",
+        None
+    )
+
+    session.modified = True
 
     flash(
         "You have been securely logged out.",

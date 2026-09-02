@@ -192,6 +192,7 @@
             <div class="card-heading">Passenger / Guest Information</div>
             <form action="{{ url_for('checkout') }}" method="POST" id="checkoutForm">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="confirm_booking" value="1">
                 <input type="hidden" name="showtime_id" value="{{ showtime.id if showtime else '' }}">
                 <input type="hidden" name="seats" value="{{ seats_string }}">
                 <input type="hidden" name="food_items" id="food_items_input" value="{{ food_items_raw | e }}">
@@ -203,8 +204,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="email">Email Address (Account Identity) *</label>
-                    <input type="email" id="email" name="email" class="form-input" placeholder="e.g. alexander@executive.com" value="{{ session.get('customer_email') or '' }}" required {% if session.get('customer_email') %}readonly style="opacity: 0.85; cursor: not-allowed;"{% endif %}>
+                    <label class="form-label" for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" class="form-input" placeholder="e.g. alexander@executive.com" value="{{ session.get('customer_email') or session.get('guest_email') or '' }}" required>
                 </div>
 
                 <div class="form-group">
@@ -319,20 +320,44 @@
                 </div>
 
                 <div style="font-size: 11px; color: var(--text-sub); line-height: 1.5; margin-top: 10px;">
-                    🔒 All seat allocations and transactions are verified server-side with atomic reservation locks.
+                    &#128274; All seat allocations and transactions are verified server-side with atomic reservation locks.
                 </div>
 
-                <button type="submit" class="btn-confirm-pay" id="payButton" onclick="return validatePhone()">
+                <button type="submit" class="btn-confirm-pay" id="payButton" onclick="return validateCheckoutForm()">
                     Complete Payment & Confirm Reservation &rarr;
                 </button>
                 <script>
-                    function validatePhone() {
-                        const phoneInput = document.getElementById('phone');
-                        if (phoneInput.value.length !== 10 || !/^\d{10}$/.test(phoneInput.value)) {
-                            alert('Please enter a valid 10-digit mobile number.');
-                            phoneInput.focus();
+                    function validateCheckoutForm() {
+                        const nameInput = document.getElementById('customer_name');
+                        if (!nameInput || !nameInput.value.trim()) {
+                            alert('Please enter your full name.');
+                            if (nameInput) nameInput.focus();
                             return false;
                         }
+
+                        const emailInput = document.getElementById('email');
+                        const emailVal = emailInput ? emailInput.value.trim() : '';
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailVal || !emailRegex.test(emailVal) || emailVal.includes('..')) {
+                            alert('Please enter a valid email address.');
+                            if (emailInput) emailInput.focus();
+                            return false;
+                        }
+
+                        const phoneInput = document.getElementById('phone');
+                        let phoneVal = phoneInput ? phoneInput.value.trim().replace(/\D/g, '') : '';
+                        if (phoneVal.length === 11 && phoneVal.startsWith('0')) {
+                            phoneVal = phoneVal.substring(1);
+                        } else if (phoneVal.length === 12 && phoneVal.startsWith('91')) {
+                            phoneVal = phoneVal.substring(2);
+                        }
+
+                        if (phoneVal.length !== 10 || !/^[6-9]\d{9}$/.test(phoneVal)) {
+                            alert('Please enter a valid 10-digit mobile number.');
+                            if (phoneInput) phoneInput.focus();
+                            return false;
+                        }
+
                         return true;
                     }
                 </script>

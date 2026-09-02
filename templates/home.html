@@ -1799,32 +1799,16 @@
 
         </button>
 
-        <!-- My Bookings -->
+        <!-- Manage Booking -->
 
         <a
-            href="{{ url_for('my_bookings') }}"
+            href="{{ url_for('manage_booking') }}"
             class="btn-gold"
             style="padding: 8px 16px; font-size: 12px;">
 
-            My Bookings
+            Manage Booking
 
         </a>
-
-        {% if session.get('customer_logged_in') %}
-            <a
-                href="{{ url_for('customer_logout') }}"
-                class="btn-gold"
-                style="padding: 8px 14px; font-size: 12px; background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #fca5a5;">
-                Sign Out
-            </a>
-        {% else %}
-            <a
-                href="{{ url_for('customer_login') }}"
-                class="btn-gold"
-                style="padding: 8px 14px; font-size: 12px; background: var(--bg-card); border: 1px solid var(--border-gold); color: var(--gold-light);">
-                Sign In
-            </a>
-        {% endif %}
 
         <button
             class="mobile-menu-toggle"
@@ -1892,31 +1876,13 @@
     </a>
 
     <a
-        href="{{ url_for('my_bookings') }}"
-        class="nav-item">
+        href="{{ url_for('manage_booking') }}"
+        class="nav-item"
+        style="color: var(--gold-light);">
 
-        My Bookings
+        Manage Booking
 
     </a>
-
-    {% if session.get('customer_logged_in') %}
-        <a
-            href="{{ url_for('customer_logout') }}"
-            class="nav-item"
-            style="color: #f87171;">
-
-            Sign Out ({{ session.get('customer_name') }})
-
-        </a>
-    {% else %}
-        <a
-            href="{{ url_for('customer_login') }}"
-            class="nav-item">
-
-            Sign In / Register
-
-        </a>
-    {% endif %}
 
 </div>
 

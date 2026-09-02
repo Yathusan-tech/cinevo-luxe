@@ -303,7 +303,7 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                {% if category == 'error' and 'confirmed' not in message.lower() %}
+                {% if category == 'error' and 'confirmed' not in message.lower() and 'full name' not in message.lower() and 'email address' not in message.lower() and 'contact number' not in message.lower() %}
                     <div class="flash-alert">{{ message }}</div>
                 {% endif %}
             {% endfor %}
@@ -378,8 +378,7 @@
                 <span id="display-total">₹0</span>
             </div>
 
-            <form action="{{ url_for('checkout') }}" method="POST" id="checkoutForm">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <form action="{{ url_for('checkout') }}" method="GET" id="checkoutForm">
                 <input type="hidden" name="showtime_id" value="{{ showtime.id }}">
                 <input type="hidden" name="seats" id="input-seats" value="">
                 <input type="hidden" name="food_items" id="input-food" value="{}">
@@ -689,7 +688,7 @@
     </div>
     <div>
         <a href="{{ url_for('home') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none; margin-right: 15px;">Home</a>
-        <a href="{{ url_for('my_bookings') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none;">My Bookings</a>
+        <a href="{{ url_for('manage_booking') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none;">Manage Booking</a>
     </div>
 </footer>
 

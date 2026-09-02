@@ -207,12 +207,7 @@
         </div>
     </div>
     <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
-        <a href="{{ url_for('my_bookings') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">My Bookings</a>
-        {% if session.get('customer_logged_in') %}
-            <a href="{{ url_for('customer_logout') }}" class="btn-gold" style="padding: 8px 14px; font-size: 12px; background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #fca5a5;">Sign Out</a>
-        {% else %}
-            <a href="{{ url_for('customer_login') }}" class="btn-gold" style="padding: 8px 14px; font-size: 12px; background: var(--bg-card); border: 1px solid var(--border-gold); color: var(--gold-light);">Sign In</a>
-        {% endif %}
+        <a href="{{ url_for('manage_booking') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">Manage Booking</a>
         <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
     </div>
 </nav>
@@ -230,12 +225,7 @@
         <a href="{{ url_for('showtimings') }}" class="mobile-drawer-link">Showtimes <span>&rarr;</span></a>
         <a href="{{ url_for('cinemas') }}" class="mobile-drawer-link">Cinemas <span>&rarr;</span></a>
         <a href="{{ url_for('offers') }}" class="mobile-drawer-link">Offers <span>&rarr;</span></a>
-        <a href="{{ url_for('my_bookings') }}" class="mobile-drawer-link active" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">My Bookings <span>&rarr;</span></a>
-        {% if session.get('customer_logged_in') %}
-            <a href="{{ url_for('customer_logout') }}" class="mobile-drawer-link" style="color: #f87171;">Sign Out ({{ session.get('customer_name') }}) <span>&rarr;</span></a>
-        {% else %}
-            <a href="{{ url_for('customer_login') }}" class="mobile-drawer-link">Sign In / Register <span>&rarr;</span></a>
-        {% endif %}
+        <a href="{{ url_for('manage_booking') }}" class="mobile-drawer-link active" style="margin-top: 12px; background: rgba(229,193,88,0.15); border-color: var(--border-gold); color: var(--gold-light);">Manage Booking <span>&rarr;</span></a>
     </div>
 </div>
 

@@ -610,25 +610,37 @@ The project is maintained using Git and GitHub, allowing changes to be tracked a
 
 ---
 
-# 🔮 Future Roadmap
+# 📲 Digital Ticket Delivery (Email & WhatsApp)
 
-CINEVO LUXE provides a foundation for additional production-oriented features.
+CINEVO LUXE supports automated digital ticket delivery directly to the guest's **Email** and **WhatsApp** upon confirmed booking without storing hard-coded credentials.
 
-Potential future improvements include:
+### Environment Configuration
 
-* Online payment gateway integration
-* Email booking confirmations
-* SMS notifications
-* QR-based ticket verification
-* Customer accounts
-* Advanced staff analytics
-* Role-based staff permissions
-* Automated testing
-* Continuous Integration / Continuous Deployment
-* PostgreSQL production database support
-* Cloud-based movie poster storage
-* Personalized movie recommendations
-* Advanced reporting and reservation analytics
+To enable live delivery, set the following environment variables in your deployment environment or `.env` file:
+
+#### 1. Email Delivery (SMTP)
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=concierge@cinevoluxe.com
+SMTP_PASSWORD=your_secure_app_password
+MAIL_FROM_ADDRESS=concierge@cinevoluxe.com
+MAIL_FROM_NAME=CINEVO LUXE Concierge
+```
+
+#### 2. WhatsApp Delivery (Meta Cloud API / Twilio)
+```env
+# Meta WhatsApp Cloud API (Recommended)
+WHATSAPP_API_TOKEN=your_meta_access_token
+WHATSAPP_PHONE_NUMBER_ID=your_meta_phone_number_id
+
+# Alternative: Twilio WhatsApp
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+```
+
+> **Note:** If notification credentials are not configured in the environment, the system gracefully generates the on-screen digital boarding pass and QR admission code without blocking or disrupting bookings.
 
 ---
 
