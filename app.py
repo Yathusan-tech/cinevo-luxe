@@ -1901,17 +1901,26 @@ def send_booking_email(booking, base_url=None):
         }
 
     except smtplib.SMTPAuthenticationError as e:
-        return {
-            "success": False,
-            "status": "failed",
-            "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "status": "failed",
-            "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
-        }
+    app.logger.error(
+        "BOOKING EMAIL AUTH ERROR: SMTP code=%s",
+        getattr(e, "smtp_code", "unknown")
+    )
+    return {
+        "success": False,
+        "status": "failed",
+        "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+    }
+
+except Exception as e:
+    app.logger.error(
+        "BOOKING EMAIL ERROR: %s",
+        type(e).__name__
+    )
+    return {
+        "success": False,
+        "status": "failed",
+        "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+    }
 
 
 def build_whatsapp_message(booking, base_url="https://cinevo-luxe.onrender.com"):
