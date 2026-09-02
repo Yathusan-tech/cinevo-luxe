@@ -1846,20 +1846,38 @@ def send_booking_email(booking, base_url=None):
     Returns: {"success": bool, "status": str, "message": str}
     """
     if not booking or not getattr(booking, "email", None):
-        return {"success": False, "status": "failed", "message": "Invalid booking recipient email."}
+        return {
+            "success": False,
+            "status": "failed",
+            "message": "Invalid booking recipient email."
+        }
 
     recipient_email = booking.email.strip().lower()
+
     if not is_valid_email(recipient_email):
-        return {"success": False, "status": "failed", "message": "Invalid recipient email address format."}
+        return {
+            "success": False,
+            "status": "failed",
+            "message": "Invalid recipient email address format."
+        }
 
     smtp_host = os.environ.get("SMTP_HOST") or os.environ.get("SMTP_SERVER")
     smtp_user = os.environ.get("SMTP_USER") or os.environ.get("SMTP_USERNAME")
     smtp_pass = os.environ.get("SMTP_PASSWORD") or os.environ.get("SMTP_PASS")
     smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    from_addr = os.environ.get("MAIL_FROM_ADDRESS") or os.environ.get("SMTP_FROM_EMAIL") or smtp_user or "concierge@cinevoluxe.com"
-    from_name = os.environ.get("MAIL_FROM_NAME", "CINEVO LUXE Concierge")
 
-    # If SMTP is not configured in environment, safely return not_configured
+    from_addr = (
+        os.environ.get("MAIL_FROM_ADDRESS")
+        or os.environ.get("SMTP_FROM_EMAIL")
+        or smtp_user
+        or "concierge@cinevoluxe.com"
+    )
+
+    from_name = os.environ.get(
+        "MAIL_FROM_NAME",
+        "CINEVO LUXE Concierge"
+    )
+
     if not smtp_host or not smtp_user or not smtp_pass:
         return {
             "success": False,
@@ -1867,29 +1885,59 @@ def send_booking_email(booking, base_url=None):
             "message": "Email delivery service not configured in environment."
         }
 
-    app_base = base_url or os.environ.get("APP_BASE_URL", "https://cinevo-luxe.onrender.com")
+    app_base = (
+        base_url
+        or os.environ.get(
+            "APP_BASE_URL",
+            "https://cinevo-luxe.onrender.com"
+        )
+    )
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"CINEVO LUXE — Booking Confirmed | {booking.booking_reference}"
+    msg["Subject"] = (
+        f"CINEVO LUXE — Booking Confirmed | "
+        f"{booking.booking_reference}"
+    )
     msg["From"] = f"{from_name} <{from_addr}>"
     msg["To"] = recipient_email
 
-    text_part = MIMEText(build_email_text(booking, app_base), "plain")
-    html_part = MIMEText(build_email_html(booking, app_base), "html")
+    text_part = MIMEText(
+        build_email_text(booking, app_base),
+        "plain"
+    )
+
+    html_part = MIMEText(
+        build_email_html(booking, app_base),
+        "html"
+    )
+
     msg.attach(text_part)
     msg.attach(html_part)
 
     try:
         if smtp_port == 465:
             context = ssl.create_default_context()
-            with smtplib.SMTP_SSL(smtp_host, smtp_port, context=context, timeout=10) as server:
+
+            with smtplib.SMTP_SSL(
+                smtp_host,
+                smtp_port,
+                context=context,
+                timeout=10
+            ) as server:
                 server.login(smtp_user, smtp_pass)
                 server.send_message(msg)
+
         else:
-            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+            with smtplib.SMTP(
+                smtp_host,
+                smtp_port,
+                timeout=10
+            ) as server:
                 server.ehlo()
+
                 context = ssl.create_default_context()
                 server.starttls(context=context)
+
                 server.ehlo()
                 server.login(smtp_user, smtp_pass)
                 server.send_message(msg)
@@ -1901,28 +1949,29 @@ def send_booking_email(booking, base_url=None):
         }
 
     except smtplib.SMTPAuthenticationError as e:
-    app.logger.error(
-        "BOOKING EMAIL AUTH ERROR: SMTP code=%s",
-        getattr(e, "smtp_code", "unknown")
-    )
-    return {
-        "success": False,
-        "status": "failed",
-        "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
-    }
+        app.logger.error(
+            "BOOKING EMAIL AUTH ERROR: SMTP code=%s",
+            getattr(e, "smtp_code", "unknown")
+        )
 
-except Exception as e:
-    app.logger.error(
-        "BOOKING EMAIL ERROR: %s",
-        type(e).__name__
-    )
-    return {
-        "success": False,
-        "status": "failed",
-        "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
-    }
+        return {
+            "success": False,
+            "status": "failed",
+            "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+        }
 
+    except Exception as e:
+        app.logger.error(
+            "BOOKING EMAIL ERROR: %s",
+            type(e).__name__
+        )
 
+        return {
+            "success": False,
+            "status": "failed",
+            "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+        }
+    
 def build_whatsapp_message(booking, base_url="https://cinevo-luxe.onrender.com"):
     """Formats the official WhatsApp notification text message."""
     ticket_url = f"{base_url.rstrip('/')}/confirmation/{booking.booking_reference}"
