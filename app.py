@@ -1842,7 +1842,8 @@ Thank you for choosing CINEVO LUXE.
 
 def send_booking_email(booking, base_url=None):
     """
-    Sends a booking confirmation email using SMTP.
+    Sends a booking confirmation email using an HTTPS email API (Resend / Brevo / SendGrid)
+    or SMTP (SSL port 465 / STARTTLS port 587).
     Returns: {"success": bool, "status": str, "message": str}
     """
     if not booking or not getattr(booking, "email", None):
@@ -1861,29 +1862,13 @@ def send_booking_email(booking, base_url=None):
             "message": "Invalid recipient email address format."
         }
 
-    smtp_host = os.environ.get("SMTP_HOST") or os.environ.get("SMTP_SERVER")
-    smtp_user = os.environ.get("SMTP_USER") or os.environ.get("SMTP_USERNAME")
-    smtp_pass = os.environ.get("SMTP_PASSWORD") or os.environ.get("SMTP_PASS")
-    smtp_port = int(os.environ.get("SMTP_PORT", 587))
-
+    from_name = os.environ.get("MAIL_FROM_NAME", "CINEVO LUXE Concierge")
     from_addr = (
         os.environ.get("MAIL_FROM_ADDRESS")
         or os.environ.get("SMTP_FROM_EMAIL")
-        or smtp_user
+        or os.environ.get("SMTP_USER")
         or "concierge@cinevoluxe.com"
     )
-
-    from_name = os.environ.get(
-        "MAIL_FROM_NAME",
-        "CINEVO LUXE Concierge"
-    )
-
-    if not smtp_host or not smtp_user or not smtp_pass:
-        return {
-            "success": False,
-            "status": "not_configured",
-            "message": "Email delivery service not configured in environment."
-        }
 
     app_base = (
         base_url
@@ -1893,31 +1878,224 @@ def send_booking_email(booking, base_url=None):
         )
     )
 
+    email_subject = f"CINEVO LUXE — Booking Confirmed | {booking.booking_reference}"
+    html_content = build_email_html(booking, app_base)
+    text_content = build_email_text(booking, app_base)
+
+    # ------------------------------------------------------------
+    # 1. HTTPS Email Providers (Recommended for Render, uses port 443)
+    # ------------------------------------------------------------
+    resend_api_key = os.environ.get("RESEND_API_KEY")
+    brevo_api_key = os.environ.get("BREVO_API_KEY") or os.environ.get("SENDINBLUE_API_KEY")
+    sendgrid_api_key = os.environ.get("SENDGRID_API_KEY")
+
+    # A. Resend Provider (https://resend.com)
+    if resend_api_key:
+        try:
+            url = "https://api.resend.com/emails"
+            payload = {
+                "from": f"{from_name} <{from_addr}>",
+                "to": [recipient_email],
+                "subject": email_subject,
+                "html": html_content,
+                "text": text_content
+            }
+            headers = {
+                "Authorization": f"Bearer {resend_api_key.strip()}",
+                "Content-Type": "application/json",
+                "User-Agent": "CinevoLuxe/1.0"
+            }
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res_body = json.loads(response.read().decode("utf-8"))
+                if res_body.get("id"):
+                    app.logger.info("BOOKING EMAIL DELIVERED via Resend: id=%s ref=%s", res_body.get("id"), booking.booking_reference)
+                    return {
+                        "success": True,
+                        "status": "delivered",
+                        "message": f"Ticket sent to your email ({recipient_email})"
+                    }
+                else:
+                    app.logger.error("BOOKING EMAIL ERROR: Resend response missing message ID: %s", res_body)
+                    return {
+                        "success": False,
+                        "status": "failed",
+                        "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+                    }
+        except urllib.error.HTTPError as e:
+            err_msg = ""
+            try:
+                err_msg = e.read().decode("utf-8", errors="replace")[:200]
+            except Exception:
+                pass
+            app.logger.error("BOOKING EMAIL RESEND HTTP ERROR: code=%s reason=%s details=%s", e.code, e.reason, err_msg)
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+            }
+        except Exception as e:
+            app.logger.error("BOOKING EMAIL RESEND ERROR: %s: %s", type(e).__name__, str(e))
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+            }
+
+    # B. Brevo / Sendinblue Provider (https://brevo.com)
+    if brevo_api_key:
+        try:
+            url = "https://api.brevo.com/v3/smtp/email"
+            customer_display_name = getattr(booking, "customer_name", "Guest")
+            payload = {
+                "sender": {"name": from_name, "email": from_addr},
+                "to": [{"email": recipient_email, "name": customer_display_name}],
+                "subject": email_subject,
+                "htmlContent": html_content,
+                "textContent": text_content
+            }
+            headers = {
+                "api-key": brevo_api_key.strip(),
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=10) as response:
+                res_body = json.loads(response.read().decode("utf-8"))
+                if res_body.get("messageId"):
+                    app.logger.info("BOOKING EMAIL DELIVERED via Brevo: id=%s ref=%s", res_body.get("messageId"), booking.booking_reference)
+                    return {
+                        "success": True,
+                        "status": "delivered",
+                        "message": f"Ticket sent to your email ({recipient_email})"
+                    }
+                else:
+                    app.logger.error("BOOKING EMAIL ERROR: Brevo response missing messageId: %s", res_body)
+                    return {
+                        "success": False,
+                        "status": "failed",
+                        "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+                    }
+        except urllib.error.HTTPError as e:
+            err_msg = ""
+            try:
+                err_msg = e.read().decode("utf-8", errors="replace")[:200]
+            except Exception:
+                pass
+            app.logger.error("BOOKING EMAIL BREVO HTTP ERROR: code=%s reason=%s details=%s", e.code, e.reason, err_msg)
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+            }
+        except Exception as e:
+            app.logger.error("BOOKING EMAIL BREVO ERROR: %s: %s", type(e).__name__, str(e))
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+            }
+
+    # C. SendGrid Provider (https://sendgrid.com)
+    if sendgrid_api_key:
+        try:
+            url = "https://api.sendgrid.com/v3/mail/send"
+            payload = {
+                "personalizations": [{"to": [{"email": recipient_email}]}],
+                "from": {"email": from_addr, "name": from_name},
+                "subject": email_subject,
+                "content": [
+                    {"type": "text/plain", "value": text_content},
+                    {"type": "text/html", "value": html_content}
+                ]
+            }
+            headers = {
+                "Authorization": f"Bearer {sendgrid_api_key.strip()}",
+                "Content-Type": "application/json"
+            }
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=10) as response:
+                if response.status in (200, 201, 202):
+                    app.logger.info("BOOKING EMAIL DELIVERED via SendGrid: ref=%s", booking.booking_reference)
+                    return {
+                        "success": True,
+                        "status": "delivered",
+                        "message": f"Ticket sent to your email ({recipient_email})"
+                    }
+                else:
+                    app.logger.error("BOOKING EMAIL ERROR: SendGrid returned status %s", response.status)
+                    return {
+                        "success": False,
+                        "status": "failed",
+                        "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+                    }
+        except urllib.error.HTTPError as e:
+            err_msg = ""
+            try:
+                err_msg = e.read().decode("utf-8", errors="replace")[:200]
+            except Exception:
+                pass
+            app.logger.error("BOOKING EMAIL SENDGRID HTTP ERROR: code=%s reason=%s details=%s", e.code, e.reason, err_msg)
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+            }
+        except Exception as e:
+            app.logger.error("BOOKING EMAIL SENDGRID ERROR: %s: %s", type(e).__name__, str(e))
+            return {
+                "success": False,
+                "status": "failed",
+                "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+            }
+
+    # ------------------------------------------------------------
+    # 2. SMTP Provider (Fallback for environments with open SMTP)
+    # ------------------------------------------------------------
+    smtp_host = os.environ.get("SMTP_HOST") or os.environ.get("SMTP_SERVER")
+    smtp_user = os.environ.get("SMTP_USER") or os.environ.get("SMTP_USERNAME")
+    smtp_pass = os.environ.get("SMTP_PASSWORD") or os.environ.get("SMTP_PASS")
+    smtp_port_raw = os.environ.get("SMTP_PORT", "587")
+    try:
+        smtp_port = int(smtp_port_raw)
+    except (ValueError, TypeError):
+        smtp_port = 587
+
+    if not smtp_host or not smtp_user or not smtp_pass:
+        return {
+            "success": False,
+            "status": "not_configured",
+            "message": "Email delivery service not configured in environment."
+        }
+
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = (
-        f"CINEVO LUXE — Booking Confirmed | "
-        f"{booking.booking_reference}"
-    )
+    msg["Subject"] = email_subject
     msg["From"] = f"{from_name} <{from_addr}>"
     msg["To"] = recipient_email
 
-    text_part = MIMEText(
-        build_email_text(booking, app_base),
-        "plain"
-    )
-
-    html_part = MIMEText(
-        build_email_html(booking, app_base),
-        "html"
-    )
-
+    text_part = MIMEText(text_content, "plain")
+    html_part = MIMEText(html_content, "html")
     msg.attach(text_part)
     msg.attach(html_part)
 
     try:
         if smtp_port == 465:
             context = ssl.create_default_context()
-
             with smtplib.SMTP_SSL(
                 smtp_host,
                 smtp_port,
@@ -1926,7 +2104,6 @@ def send_booking_email(booking, base_url=None):
             ) as server:
                 server.login(smtp_user, smtp_pass)
                 server.send_message(msg)
-
         else:
             with smtplib.SMTP(
                 smtp_host,
@@ -1934,14 +2111,13 @@ def send_booking_email(booking, base_url=None):
                 timeout=10
             ) as server:
                 server.ehlo()
-
                 context = ssl.create_default_context()
                 server.starttls(context=context)
-
                 server.ehlo()
                 server.login(smtp_user, smtp_pass)
                 server.send_message(msg)
 
+        app.logger.info("BOOKING EMAIL DELIVERED via SMTP (host=%s, port=%s) for ref=%s", smtp_host, smtp_port, booking.booking_reference)
         return {
             "success": True,
             "status": "delivered",
@@ -1950,10 +2126,21 @@ def send_booking_email(booking, base_url=None):
 
     except smtplib.SMTPAuthenticationError as e:
         app.logger.error(
-            "BOOKING EMAIL AUTH ERROR: SMTP code=%s",
+            "BOOKING EMAIL AUTH ERROR: SMTP code=%s (check your SMTP_USER and SMTP_PASSWORD / App Password)",
             getattr(e, "smtp_code", "unknown")
         )
+        return {
+            "success": False,
+            "status": "failed",
+            "message": "We couldn't deliver the ticket to your email. Please use the confirmation below."
+        }
 
+    except OSError as e:
+        app.logger.error(
+            "BOOKING EMAIL NETWORK ERROR: %s (%s). NOTE: Render blocks outbound SMTP ports 25/465/587 by default. Set RESEND_API_KEY or BREVO_API_KEY to send via HTTPS REST API (port 443).",
+            type(e).__name__,
+            str(e)
+        )
         return {
             "success": False,
             "status": "failed",
@@ -1963,9 +2150,9 @@ def send_booking_email(booking, base_url=None):
     except Exception as e:
         app.logger.error(
             "BOOKING EMAIL ERROR: %s: %s",
-            type(e).__name__
+            type(e).__name__,
+            str(e)
         )
-
         return {
             "success": False,
             "status": "failed",
