@@ -1962,7 +1962,7 @@ def send_booking_email(booking, base_url=None):
 
     except Exception as e:
         app.logger.error(
-            "BOOKING EMAIL ERROR: %s",
+            "BOOKING EMAIL ERROR: %s: %s",
             type(e).__name__
         )
 
