@@ -56,7 +56,7 @@ def create_app():
     # CONFIGURATION
     # --------------------------------------------------------
 
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "[REMOVED-SECRET]")
+    app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
     app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "False").lower() in ["true", "1", "t"]
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
