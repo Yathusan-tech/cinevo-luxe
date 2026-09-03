@@ -1742,13 +1742,43 @@ def normalize_phone_e164(raw_phone):
 
 
 def is_valid_email(raw_email):
-    """Validates an email address against standard format."""
+    """Validates an email address using bounded, regex-free checks."""
     if not raw_email or not isinstance(raw_email, str):
         return False
-    clean = raw_email.strip().lower()
-    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(pattern, clean) and ".." not in clean)
 
+    clean = raw_email.strip().lower()
+
+    if len(clean) > 254 or clean.count("@") != 1:
+        return False
+
+    local, domain = clean.rsplit("@", 1)
+
+    if not local or len(local) > 64 or not domain or len(domain) > 253:
+        return False
+
+    if local.startswith(".") or local.endswith(".") or ".." in local:
+        return False
+
+    allowed_local = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.+-")
+    if any(char not in allowed_local for char in local):
+        return False
+
+    if ".." in domain or domain.startswith(".") or domain.endswith("."):
+        return False
+
+    labels = domain.split(".")
+    if len(labels) < 2:
+        return False
+
+    for label in labels:
+        if not label or len(label) > 63:
+            return False
+        if label.startswith("-") or label.endswith("-"):
+            return False
+        if not all(char.isalnum() or char == "-" for char in label):
+            return False
+
+    return all(char.isalpha() for char in labels[-1])
 
 def build_email_html(booking, base_url="https://cinevo-luxe.onrender.com"):
     """Generates a luxury black + gold HTML email for booking confirmation."""
@@ -2417,7 +2447,7 @@ def manage_booking():
             return render_template("manage_booking.html", view_mode="form", booking_ref=raw_ref, email=raw_email)
 
         # Validate email format
-        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", raw_email):
+        if not is_valid_email(raw_email):
             flash(GENERIC_BOOKING_VERIFY_ERROR, "error")
             return render_template("manage_booking.html", view_mode="form", booking_ref=raw_ref, email=raw_email)
 
@@ -2687,26 +2717,28 @@ def is_search_engine_redirect(url):
         query = (parsed.query or "").lower()
 
         # Google Search / Image redirect detection
-        if "google." in hostname or hostname == "google.com" or hostname.endswith(".google.com"):
+        if hostname == "google.com" or hostname.endswith(".google.com") or (hostname.startswith("google.") and hostname.count(".") == 1):
             if any(path.startswith(p) for p in ["/imgres", "/url", "/search", "/images"]):
                 return True
             if any(param in query for param in ["tbnid=", "imgurl=", "sa=i", "source=images", "q="]):
                 return True
 
         # Shortened google links / app links
-        if "goo.gl" in hostname:
+        if hostname == "goo.gl":
             return True
 
         # Bing Images search
-        if "bing." in hostname and ("/images" in path or "view=detail" in query):
-            return True
-
+                # Bing Images search
+        if hostname == "bing.com" or hostname.endswith(".bing.com"):
+            if "/images" in path or "view=detail" in query:
+                return True
         # Yandex / Yahoo search results
-        if ("yandex." in hostname or "yahoo." in hostname) and ("/images" in path or "/search" in path):
+        if ((hostname == "yandex.com" or hostname.endswith(".yandex.com") or
+             hostname == "yahoo.com" or hostname.endswith(".yahoo.com"))
+                and ("/images" in path or "/search" in path)):
             return True
-
         # DuckDuckGo images
-        if "duckduckgo.com" in hostname and "iax=images" in query:
+        if (hostname == "duckduckgo.com" or hostname.endswith(".duckduckgo.com")) and "iax=images" in query:
             return True
 
     except Exception:
