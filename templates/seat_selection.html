@@ -36,13 +36,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 54px;
+            padding: 0 clamp(16px, 4vw, 54px);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
-        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; justify-content: center; line-height: 1; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.6px; color: var(--text-main); line-height: 1; }
         .brand-name span { color: var(--gold-primary); }
 
         .booking-wrapper {
@@ -233,6 +233,12 @@
             font-size: 12px;
             color: var(--text-sub);
         }
+        .footer-brand { font-weight: 800; color: #FFFFFF; letter-spacing: 1.5px; font-size: 14px; }
+        .footer-brand span { color: #D4AF37; }
+        .footer-links-group { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .footer-link { color: #A0AEC0; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s ease; }
+        .footer-link:hover { color: #D4AF37; }
+        .footer-link.active { color: #E5A93C; }
 
         @media (max-width: 900px) {
             .top-nav { padding: 0 24px; }
@@ -400,143 +406,143 @@
 
         <!-- POPCORN -->
         <h4 style="color: var(--gold-primary); margin-top: 15px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Popcorn</h4>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1585647347384-2593bc35786b?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Small Popcorn" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Small Popcorn" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🍿</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Small Popcorn</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹120</span>
-                <button type="button" onclick="addFoodItem('Small Popcorn', 120)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Small Popcorn', 120)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1585647347384-2593bc35786b?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Large Popcorn" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Large Popcorn" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🍿</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Large Popcorn</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹180</span>
-                <button type="button" onclick="addFoodItem('Large Popcorn', 180)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Large Popcorn', 180)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1585647347384-2593bc35786b?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Jumbo Popcorn" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1505686994434-e3cc5abf1330?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Jumbo Popcorn" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🍿</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Jumbo Popcorn</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹240</span>
-                <button type="button" onclick="addFoodItem('Jumbo Popcorn', 240)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Jumbo Popcorn', 240)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
 
         <!-- PIZZA -->
         <h4 style="color: var(--gold-primary); margin-top: 20px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Pizza</h4>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Classic Cheese Pizza" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Classic Cheese Pizza" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🍕</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Classic Cheese Pizza</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹299</span>
-                <button type="button" onclick="addFoodItem('Classic Cheese Pizza', 299)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Classic Cheese Pizza', 299)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Premium Veggie Pizza" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Premium Veggie Pizza" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🍕</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Premium Veggie Pizza</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹349</span>
-                <button type="button" onclick="addFoodItem('Premium Veggie Pizza', 349)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Premium Veggie Pizza', 349)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
 
         <!-- BEVERAGES -->
         <h4 style="color: var(--gold-primary); margin-top: 20px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Beverages</h4>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Coca-Cola" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Coca-Cola" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🥤</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Coca-Cola</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹100</span>
-                <button type="button" onclick="addFoodItem('Coca-Cola', 100)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Coca-Cola', 100)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Pepsi_can.png/150px-Pepsi_can.png" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Pepsi" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Pepsi" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🥤</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Pepsi</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹100</span>
-                <button type="button" onclick="addFoodItem('Pepsi', 100)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Pepsi', 100)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/RedBullEnergyDrink.svg/150px-RedBullEnergyDrink.svg.png" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Red Bull" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <span style="display: none; font-size: 20px;">🥤</span>
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1543253687-c931c8e01820?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Red Bull" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <span style="display: none; font-size: 20px;">⚡</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Red Bull</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹160</span>
-                <button type="button" onclick="addFoodItem('Red Bull', 160)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Red Bull', 160)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
 
         <!-- SNACKS -->
         <h4 style="color: var(--gold-primary); margin-top: 20px; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Snacks</h4>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1619860860504-6447833cc177?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="Gourmet Sandwich" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="Gourmet Sandwich" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🥪</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">Gourmet Sandwich</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹220</span>
-                <button type="button" onclick="addFoodItem('Gourmet Sandwich', 220)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('Gourmet Sandwich', 220)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
-        <div class="fb-item" style="display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
-            <div style="width: 50px; height: 50px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center;">
-                <img src="https://images.unsplash.com/photo-1576107232684-1279f3908594?q=80&w=150&auto=format&fit=crop" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;" alt="French Fries" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="fb-item" style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+            <div style="width: 56px; height: 56px; min-width: 56px; min-height: 56px; flex-shrink: 0; border-radius: 8px; overflow: hidden; background: #151a26; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.08);">
+                <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=300&q=80" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: block;" alt="French Fries" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <span style="display: none; font-size: 20px;">🍟</span>
             </div>
-            <div style="flex-grow: 1;">
+            <div style="flex-grow: 1; min-width: 0;">
                 <div class="fb-title" style="font-size: 14px; font-weight: 700; color: #ffffff;">French Fries</div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0;">
                 <span class="fb-price" style="font-size: 14px; color: var(--gold-primary); font-weight: 700;">₹160</span>
-                <button type="button" onclick="addFoodItem('French Fries', 160)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
+                <button type="button" onclick="addFoodItem('French Fries', 160)" style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Add</button>
             </div>
         </div>
 
@@ -683,12 +689,15 @@
 <!-- Footer -->
 <footer class="site-footer">
     <div>
-        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
-        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+        <span class="footer-brand">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc. All rights reserved.</div>
     </div>
-    <div>
-        <a href="{{ url_for('home') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none; margin-right: 15px;">Home</a>
-        <a href="{{ url_for('manage_booking') }}" class="nav-item" style="color: var(--text-sub); text-decoration: none;">Manage Booking</a>
+    <div class="footer-links-group">
+        <a href="{{ url_for('home') }}" class="footer-link">Home</a>
+        <a href="{{ url_for('movies') }}" class="footer-link">Explore Movies</a>
+        <a href="{{ url_for('showtimings') }}" class="footer-link">Showtimes</a>
+        <a href="{{ url_for('cinemas') }}" class="footer-link">Cinemas</a>
+        <a href="{{ url_for('offers') }}" class="footer-link">Offers</a>
     </div>
 </footer>
 

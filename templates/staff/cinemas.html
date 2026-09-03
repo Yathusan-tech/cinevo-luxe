@@ -7,6 +7,60 @@
     <h1>Partner Luxury Cinemas</h1>
 </div>
 
+<!-- Add Cinema Module -->
+<div class="section-box">
+    <div class="section-title">Add New Luxury Venue</div>
+    <form action="{{ url_for('staff_add_cinema') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- Row 1: Venue Name, Location, City, Status -->
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Venue Name *</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g. CINEVO LUXE Grand Cinema" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Location *</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Phoenix Marketcity, Velachery" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">City *</label>
+                <input type="text" name="city" class="form-control" placeholder="e.g. Chennai" value="Chennai" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-control">
+                    <option value="Active" selected>Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Row 2: Address, Screen Name, Formats & Acoustics -->
+        <div class="form-row">
+            <div class="form-group" style="grid-column: span 2;">
+                <label class="form-label">Full Address *</label>
+                <input type="text" name="address" class="form-control" placeholder="e.g. 142 Velachery Main Road, Chennai 600042" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Screen Name *</label>
+                <input type="text" name="screen_name" class="form-control" placeholder="e.g. LUXE Screen 1" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Formats & Acoustics</label>
+                <input type="text" name="formats" class="form-control" placeholder="e.g. IMAX 4K Laser, Dolby Atmos 12-Channel">
+            </div>
+        </div>
+
+        <!-- Action Row -->
+        <div style="margin-top: 24px;">
+            <button type="submit" class="btn-gold" style="height: 44px; padding: 0 28px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 8px;">
+                + Add Venue
+            </button>
+        </div>
+    </form>
+</div>
+
 <!-- Partner Cinemas Module -->
 <div class="section-box">
     <div class="section-title">Active Venues & Projection Systems</div>
@@ -19,20 +73,33 @@
                     <th>Screen Name</th>
                     <th>Formats & Acoustics</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for cinema in cinemas %}
                 <tr>
-                    <td><strong style="color: #fff;">{{ cinema.name }}</strong></td>
-                    <td>{{ cinema.location }}<br><span style="font-size: 11px; color: var(--text-sub);">{{ cinema.address }}</span></td>
+                    <td><span style="font-weight: 600; color: #FFFFFF;">{{ cinema.name }}</span></td>
+                    <td>{{ cinema.location }}<br><span style="font-size: 0.75rem; color: #A0AEC0;">{{ cinema.address }}</span></td>
                     <td>{{ cinema.screen_name }}</td>
-                    <td>{{ cinema.screen_type }}</td>
-                    <td><span style="color: #4ade80; font-weight: 700; font-size: 11px;">{{ cinema.status }}</span></td>
+                    <td><span style="font-size: 0.75rem; color: #A0AEC0;">{{ cinema.formats or cinema.screen_type }}</span></td>
+                    <td>
+                        {% if cinema.status == 'Active' %}
+                        <span style="color: #4ade80; font-weight: 700; font-size: 0.75rem;">Active</span>
+                        {% else %}
+                        <span style="color: #ef4444; font-weight: 700; font-size: 0.75rem;">{{ cinema.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('staff_delete_cinema', cinema_id=cinema.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this venue?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn-delete">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" style="text-align: center; color: var(--text-sub); padding: 30px;">
+                    <td colspan="6" style="text-align: center; color: var(--text-sub); padding: 30px;">
                         No partner venues recorded in database.
                     </td>
                 </tr>

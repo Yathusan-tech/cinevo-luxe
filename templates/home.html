@@ -99,7 +99,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 54px;
+            padding: 0 clamp(16px, 4vw, 54px);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -108,26 +108,38 @@
         .nav-left {
             display: flex;
             align-items: center;
-            gap: 36px;
+            gap: 32px;
         }
 
         .brand-logo {
             text-decoration: none;
-            display: flex;
+            display: inline-flex;
             flex-direction: column;
-            transition: opacity 0.2s;
+            align-items: flex-start;
+            justify-content: center;
+            width: max-content;
+            line-height: 1;
+            padding: 0;
+            margin: 0;
+            flex-shrink: 0;
+            transition: opacity 0.2s ease;
         }
 
         .brand-logo:hover {
-            opacity: 0.85;
+            opacity: 0.88;
         }
 
         .brand-name {
-            font-size: 24px;
+            font-size: 19px;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             color: var(--text-main);
             line-height: 1;
+            display: block;
+            text-align: left;
+            margin: 0;
+            padding: 0;
+            white-space: nowrap;
         }
 
         .brand-name span {
@@ -135,18 +147,35 @@
         }
 
         .brand-tagline {
-            font-size: 8px;
+            font-size: 8.5px;
             color: var(--text-sub);
-            letter-spacing: 2px;
             font-weight: 700;
-            margin-top: 4px;
+            margin-top: 3px;
             text-transform: uppercase;
+            line-height: 1;
+            opacity: 0.85;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        .brand-tagline span {
+            display: inline-block;
+            line-height: 1;
+        }
+
+        .brand-tagline .tagline-space {
+            width: 4px;
+            display: inline-block;
         }
 
         .nav-menu {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
         .nav-item {
@@ -154,29 +183,38 @@
             color: var(--text-sub);
             font-size: 13px;
             font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 0 16px;
+            height: 38px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            border: 1px solid transparent;
         }
 
         .nav-item:hover {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
+            border-color: rgba(255, 255, 255, 0.08);
         }
 
         .nav-item.active {
             color: var(--gold-light);
             background: rgba(229, 193, 88, 0.08);
+            border-color: rgba(229, 193, 88, 0.22);
         }
 
         .nav-item.active::after {
             content: '';
             position: absolute;
-            bottom: 2px;
-            left: 16px;
-            right: 16px;
+            bottom: 3px;
+            left: 14px;
+            right: 14px;
             height: 2px;
             background: var(--gold-primary);
             border-radius: 2px;
@@ -186,7 +224,7 @@
         .nav-right {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         /* ============================================================
@@ -200,7 +238,8 @@
         .search-box {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-container);
-            padding: 8px 14px;
+            padding: 0 14px;
+            height: 38px;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -220,7 +259,8 @@
             outline: none;
             color: #fff;
             font-size: 13px;
-            width: 210px;
+            width: 195px;
+            height: 100%;
         }
 
         .search-dropdown {
@@ -292,20 +332,33 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-container);
             color: var(--text-main);
-            padding: 8px 14px;
+            padding: 0 14px;
+            height: 38px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .city-btn:hover {
             border-color: var(--gold-primary);
             background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-manage-btn {
+            height: 38px;
+            padding: 0 18px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .mobile-menu-toggle {
@@ -350,8 +403,8 @@
 
         .hero-section {
             position: relative;
-            min-height: 480px;
-            padding: 50px 54px;
+            min-height: 520px;
+            padding: 56px clamp(16px, 4vw, 54px) 82px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -366,15 +419,15 @@
             background: linear-gradient(
                 90deg,
                 #07090e 0%,
-                #07090e 50%,
-                rgba(7, 9, 14, 0.75) 75%,
-                rgba(7, 9, 14, 0.25) 100%
+                #07090e 52%,
+                rgba(7, 9, 14, 0.78) 75%,
+                rgba(7, 9, 14, 0.28) 100%
             );
             z-index: 1;
         }
 
         .hero-left {
-            max-width: 620px;
+            max-width: 640px;
             z-index: 2;
             position: relative;
         }
@@ -386,40 +439,41 @@
             border: 1px solid rgba(229, 193, 88, 0.35);
             color: var(--gold-primary);
             font-size: 11px;
-            font-weight: 700;
-            padding: 5px 12px;
-            border-radius: 4px;
-            margin-bottom: 16px;
-            letter-spacing: 1px;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 6px;
+            margin-bottom: 18px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
         }
 
         .hero-title {
-            font-size: 48px;
+            font-size: clamp(32px, 4.2vw, 48px);
             font-weight: 800;
-            margin-bottom: 14px;
-            letter-spacing: -0.5px;
-            line-height: 1.1;
+            margin-bottom: 18px;
+            letter-spacing: -0.3px;
+            line-height: 1.22;
             color: #ffffff;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
         }
 
         .hero-meta {
             display: flex;
             gap: 10px;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 22px;
             flex-wrap: wrap;
         }
 
         .meta-tag {
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid var(--border-container);
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 5px 12px;
+            border-radius: 6px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-sub);
+            letter-spacing: 0.3px;
         }
 
         .meta-tag.gold {
@@ -431,9 +485,23 @@
         .hero-desc {
             font-size: 14px;
             color: var(--text-sub);
+            line-height: 1.7;
+            margin-bottom: 22px;
+            max-width: 580px;
+        }
+
+        .hero-details-row {
+            font-size: 12px;
+            color: var(--text-sub);
             line-height: 1.6;
-            margin-bottom: 28px;
-            max-width: 560px;
+            margin-bottom: 30px;
+        }
+
+        .hero-cta-btn {
+            padding: 13px 30px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
         }
 
         .hero-right {
@@ -505,8 +573,8 @@
            ============================================================ */
 
         .quick-book-container {
-            padding: 0 54px;
-            margin-top: -30px;
+            padding: 0 clamp(16px, 4vw, 54px);
+            margin-top: -34px;
             position: relative;
             z-index: 10;
             max-width: 1400px;
@@ -578,7 +646,7 @@
 
         .main-content {
             margin: 0 auto;
-            padding: 32px 54px;
+            padding: 32px clamp(16px, 4vw, 54px);
             max-width: 1400px;
             width: 100%;
         }
@@ -943,9 +1011,13 @@
 
         .footer-brand {
             font-weight: 800;
-            color: var(--text-main);
+            color: #FFFFFF;
             letter-spacing: 1.5px;
             font-size: 14px;
+        }
+
+        .footer-brand span {
+            color: #D4AF37;
         }
 
         .footer-copy {
@@ -956,20 +1028,24 @@
         .footer-center {
             display: flex;
             align-items: center;
-            gap: 22px;
+            gap: 24px;
             flex-wrap: wrap;
         }
 
         .footer-link {
-            color: var(--text-sub);
+            color: #A0AEC0;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 12px;
-            transition: color 0.2s;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s ease;
         }
 
         .footer-link:hover {
-            color: var(--gold-primary);
+            color: #D4AF37;
+        }
+
+        .footer-link.active {
+            color: #E5A93C;
         }
 
         .footer-admin-link {
@@ -1365,16 +1441,16 @@
             }
 
             .hero-section {
-                padding: 30px 24px;
+                padding: 36px 24px 58px 24px;
                 flex-direction: column-reverse;
                 align-items: flex-start;
-                gap: 24px;
+                gap: 28px;
                 min-height: auto;
             }
 
             .quick-book-container {
                 padding: 0 24px;
-                margin-top: -20px;
+                margin-top: -24px;
             }
 
             .main-content {
@@ -1535,18 +1611,35 @@
                 height: 64px;
             }
 
+            .brand-name {
+                font-size: 17px;
+                letter-spacing: 1.2px;
+            }
+
+            .brand-tagline {
+                font-size: 8px;
+                letter-spacing: 2.3px;
+            }
+
             .hero-section {
-                padding: 24px 16px;
-                gap: 16px;
+                padding: 28px 16px 46px 16px;
+                gap: 20px;
             }
 
             .hero-title {
-                font-size: clamp(22px, 5.5vw, 28px);
+                font-size: clamp(24px, 6vw, 30px);
+                line-height: 1.25;
+                margin-bottom: 14px;
             }
 
             .hero-desc {
                 font-size: 13px;
-                margin-bottom: 18px;
+                line-height: 1.6;
+                margin-bottom: 16px;
+            }
+
+            .hero-details-row {
+                margin-bottom: 22px;
             }
 
             .hero-poster-card {
@@ -1557,7 +1650,7 @@
 
             .quick-book-container {
                 padding: 0 16px;
-                margin-top: -15px;
+                margin-top: -18px;
             }
 
             .quick-book-bar {
@@ -1627,27 +1720,28 @@
             }
 
             .brand-name {
-                font-size: 17px;
+                font-size: 15px;
                 letter-spacing: 1px;
             }
 
             .brand-tagline {
                 font-size: 7px;
-                letter-spacing: 1px;
+                letter-spacing: 1.9px;
             }
 
             .city-btn {
-                padding: 5px 8px;
+                padding: 0 8px;
+                height: 32px;
                 font-size: 11px;
                 gap: 3px;
             }
 
             .hero-section {
-                padding: 18px 12px;
+                padding: 22px 12px 38px 12px;
             }
 
             .hero-title {
-                font-size: 20px;
+                font-size: 22px;
             }
 
             .hero-poster-card {
@@ -1655,7 +1749,7 @@
             }
 
             .meta-tag {
-                padding: 3px 5px;
+                padding: 3px 6px;
                 font-size: 9px;
             }
 
@@ -1674,6 +1768,7 @@
 
             .quick-book-container {
                 padding: 0 12px;
+                margin-top: -14px;
             }
 
             .city-grid {
@@ -1694,15 +1789,14 @@
     <div class="nav-left">
 
         <a href="{{ url_for('home') }}" class="brand-logo">
-
             <span class="brand-name">
                 CINEVO <span>LUXE</span>
             </span>
-
-            <span class="brand-tagline">
-                EXECUTIVE CINEMA
+            <span class="brand-tagline" aria-label="EXECUTIVE CINEMA">
+                <span>E</span><span>X</span><span>E</span><span>C</span><span>U</span><span>T</span><span>I</span><span>V</span><span>E</span>
+                <span class="tagline-space">&nbsp;</span>
+                <span>C</span><span>I</span><span>N</span><span>E</span><span>M</span><span>A</span>
             </span>
-
         </a>
 
         <div class="nav-menu">
@@ -1803,11 +1897,8 @@
 
         <a
             href="{{ url_for('manage_booking') }}"
-            class="btn-gold"
-            style="padding: 8px 16px; font-size: 12px;">
-
+            class="btn-gold nav-manage-btn">
             Manage Booking
-
         </a>
 
         <button
@@ -1935,13 +2026,13 @@
                     {{ hero_movie.description }}
                 </p>
 
-                <div id="heroDetails" style="font-size: 12px; color: var(--text-sub); margin-bottom: 24px;">
+                <div id="heroDetails" class="hero-details-row">
                     <strong>Genre:</strong> <span id="heroGenre">{{ hero_movie.genre or 'Action' }}</span> &bull;
                     <strong>Language:</strong> <span id="heroLanguage">{{ hero_movie.language or 'English' }}</span> &bull;
                     <strong>Director:</strong> <span id="heroDirector">{{ hero_movie.director or 'Unknown' }}</span>
                 </div>
 
-                <a id="heroBookBtn" href="{{ url_for('movie_details', movie_id=hero_movie.id) }}" class="btn-gold">
+                <a id="heroBookBtn" href="{{ url_for('movie_details', movie_id=hero_movie.id) }}" class="btn-gold hero-cta-btn">
                     <span>
                         Reserve Tickets
                     </span>
@@ -2553,7 +2644,7 @@
     <div class="footer-left">
 
         <span class="footer-brand">
-            CINEVO LUXE
+            CINEVO <span>LUXE</span>
         </span>
 
         <span class="footer-copy">

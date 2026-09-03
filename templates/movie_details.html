@@ -37,13 +37,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 54px;
+            padding: 0 clamp(16px, 4vw, 54px);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
-        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; line-height: 1; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: left; }
         .brand-name span { color: var(--gold-primary); }
         .nav-links { display: flex; align-items: center; gap: 4px; }
         .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
@@ -54,7 +54,7 @@
         .movie-backdrop {
             position: relative;
             min-height: 440px;
-            padding: 50px 54px;
+            padding: 50px clamp(16px, 4vw, 54px);
             background-size: cover;
             background-position: center;
             border-bottom: 1px solid var(--border-container);
@@ -164,6 +164,12 @@
             font-size: 12px;
             color: var(--text-sub);
         }
+        .footer-brand { font-weight: 800; color: #FFFFFF; letter-spacing: 1.5px; font-size: 14px; }
+        .footer-brand span { color: #D4AF37; }
+        .footer-links-group { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .footer-link { color: #A0AEC0; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s ease; }
+        .footer-link:hover { color: #D4AF37; }
+        .footer-link.active { color: #E5A93C; }
 
         /* Trailer Modal */
         .modal-overlay {
@@ -379,12 +385,15 @@
 <!-- Footer -->
 <footer class="site-footer">
     <div>
-        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
-        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+        <span class="footer-brand">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc. All rights reserved.</div>
     </div>
-    <div>
-        <a href="{{ url_for('home') }}" class="nav-item">Home</a>
-        <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+    <div class="footer-links-group">
+        <a href="{{ url_for('home') }}" class="footer-link">Home</a>
+        <a href="{{ url_for('movies') }}" class="footer-link">Explore Movies</a>
+        <a href="{{ url_for('showtimings') }}" class="footer-link">Showtimes</a>
+        <a href="{{ url_for('cinemas') }}" class="footer-link">Cinemas</a>
+        <a href="{{ url_for('offers') }}" class="footer-link">Offers</a>
     </div>
 </footer>
 

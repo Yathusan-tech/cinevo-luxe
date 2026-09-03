@@ -249,10 +249,12 @@ img, video, iframe {
         padding: 10px 16px;
         font-size: 12px;
         letter-spacing: 0.3px;
+        min-height: 44px;
     }
     .btn-gold-outline {
         padding: 8px 14px;
         font-size: 11px;
+        min-height: 40px;
     }
 }
 
@@ -349,7 +351,7 @@ img, video, iframe {
     padding: 0 16px;
 }
 
-footer {
+footer, .site-footer {
     border-top: 1px solid var(--border-container);
     padding: 40px 24px;
     margin-top: 60px;
@@ -358,6 +360,11 @@ footer {
     color: var(--text-sub);
     width: 100%;
 }
+.footer-brand { font-weight: 800; color: #FFFFFF; letter-spacing: 1.5px; font-size: 14px; }
+.footer-brand span { color: #D4AF37; }
+.footer-link { color: #A0AEC0; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s ease; }
+.footer-link:hover { color: #D4AF37; }
+.footer-link.active { color: #E5A93C; }
 
 @media (max-width: 480px) {
     .navbar-cinevo {
@@ -373,6 +380,63 @@ footer {
     .navbar-cinevo {
         height: 58px;
     }
+}
+
+/* ============================================================
+   CROSS-DEVICE ULTRA-WIDE & SMART TV OPTIMIZATIONS
+   ============================================================ */
+.container,
+.catalog-container,
+.main-container,
+.booking-wrapper,
+.checkout-wrapper,
+.page-wrapper,
+.confirmation-wrapper,
+.main-content {
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ============================================================
+   RESPONSIVE MODAL & OVERLAY CONSTRAINTS
+   ============================================================ */
+.modal-overlay {
+    padding: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-card {
+    width: 90% !important;
+    max-width: 500px !important;
+    max-height: 85vh !important;
+    margin: auto;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 480px) {
+    .modal-card {
+        width: 95% !important;
+        padding: 18px 14px !important;
+        border-radius: 12px !important;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE GRID ADAPTATION MATRIX (Mobile, Tablet, Desktop)
+   ============================================================ */
+@media (min-width: 1025px) {
+    .movies-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .cinemas-grid { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+    .offers-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .movies-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
+    .cinemas-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+    .offers-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
 }
 
 /* Custom Scrollbar */

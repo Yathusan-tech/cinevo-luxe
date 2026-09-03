@@ -36,12 +36,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 54px;
+            padding: 0 clamp(16px, 4vw, 54px);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; text-decoration: none; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.6px; color: var(--text-main); line-height: 1; text-decoration: none; }
         .brand-name span { color: var(--gold-primary); }
 
         .confirmation-wrapper {
@@ -62,25 +62,150 @@
         }
 
         .ticket-header {
-            background: linear-gradient(135deg, rgba(229, 193, 88, 0.15) 0%, rgba(15, 19, 28, 0.95) 100%);
-            padding: clamp(18px, 3vw, 28px) clamp(16px, 3.5vw, 36px);
+            background: linear-gradient(180deg, rgba(229, 193, 88, 0.14) 0%, rgba(15, 19, 28, 0.96) 100%);
+            padding: clamp(26px, 4vw, 38px) clamp(18px, 4vw, 36px);
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            text-align: center;
             border-bottom: 1px solid var(--border-gold);
-            flex-wrap: wrap;
-            gap: 14px;
+            position: relative;
         }
-        .success-title { font-size: clamp(18px, 3.5vw, 22px); font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
-        .booking-ref-badge {
-            background: var(--gold-grad);
-            color: #07090e;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-size: 14px;
+
+        .header-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--gold-primary);
             font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .header-status-badge .status-icon {
+            color: #4ade80;
+            font-weight: 900;
+        }
+
+        .success-title {
+            font-size: clamp(20px, 3.8vw, 26px);
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
             letter-spacing: 1px;
+            margin: 0 0 8px 0;
+            line-height: 1.25;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: var(--gold-light);
+            font-weight: 500;
+            max-width: 520px;
+            line-height: 1.5;
+            margin: 0 0 20px 0;
+            opacity: 0.92;
+        }
+
+        /* Refined Booking Reference Credential Block */
+        .booking-ref-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .booking-ref-credential {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(11, 15, 22, 0.95);
+            border: 1px solid var(--border-gold);
+            border-radius: 10px;
+            padding: 5px 8px 5px 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(229, 193, 88, 0.1);
+            transition: all 0.2s ease;
+            gap: 12px;
+        }
+
+        .booking-ref-credential:hover {
+            border-color: var(--gold-primary);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.7), 0 0 25px rgba(229, 193, 88, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .booking-ref-code {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--gold-primary);
+            user-select: all;
+            -webkit-user-select: all;
             white-space: nowrap;
+        }
+
+        .copy-ref-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(229, 193, 88, 0.12);
+            border: 1px solid rgba(229, 193, 88, 0.3);
+            color: var(--gold-light);
+            border-radius: 7px;
+            padding: 6px 11px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            position: relative;
+            line-height: 1;
+        }
+
+        .copy-ref-btn:hover {
+            background: rgba(229, 193, 88, 0.24);
+            border-color: var(--gold-primary);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .copy-ref-btn:active {
+            transform: translateY(0);
+            background: rgba(229, 193, 88, 0.32);
+        }
+
+        .copy-ref-btn:focus-visible {
+            outline: 2px solid var(--gold-primary);
+            outline-offset: 2px;
+        }
+
+        .copy-ref-btn svg {
+            width: 13px;
+            height: 13px;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .copy-ref-btn.copied {
+            background: rgba(74, 222, 128, 0.18);
+            border-color: #4ade80;
+            color: #4ade80;
+        }
+
+        .booking-ref-hint {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: 500;
+            line-height: 1.4;
+            text-align: center;
+            max-width: 440px;
         }
 
         .ticket-body { padding: clamp(18px, 3.5vw, 36px); }
@@ -131,11 +256,17 @@
             font-size: 12px;
             color: var(--text-sub);
         }
+        .footer-brand { font-weight: 800; color: #FFFFFF; letter-spacing: 1.5px; font-size: 14px; }
+        .footer-brand span { color: #D4AF37; }
+        .footer-links-group { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .footer-link { color: #A0AEC0; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s ease; }
+        .footer-link:hover { color: #D4AF37; }
+        .footer-link.active { color: #E5A93C; }
 
         @media (max-width: 768px) {
             .top-nav { padding: 0 24px; }
             .confirmation-wrapper { width: 94%; margin: 24px auto; }
-            .ticket-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .ticket-header { padding: 26px 18px; }
             .ticket-movie-row { flex-direction: row; align-items: center; gap: 16px; }
             .ticket-details-grid { grid-template-columns: 1fr; }
             .ticket-actions { flex-direction: column; margin-top: 28px; }
@@ -145,27 +276,38 @@
         @media (max-width: 480px) {
             .top-nav { padding: 0 16px; height: 64px; }
             .confirmation-wrapper { width: 100%; padding: 0 14px; margin: 18px auto; }
-            .ticket-header { padding: 18px 14px; }
+            .ticket-header { padding: 22px 14px; }
+            .header-status-badge { font-size: 10px; letter-spacing: 1px; }
+            .success-title { font-size: 19px; }
+            .header-subtitle { font-size: 12px; margin-bottom: 16px; }
             .ticket-body { padding: 18px 14px; }
             .ticket-poster { width: 75px; height: 110px; }
             .ticket-movie-info h2 { font-size: 18px; }
             .ticket-details-grid { padding: 16px 12px; gap: 14px; }
+            .booking-ref-credential { padding: 5px 8px 5px 14px; gap: 10px; }
+            .booking-ref-code { font-size: 14px; letter-spacing: 1.5px; }
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
             .top-nav { padding: 0 10px; height: 60px; }
             .brand-name { font-size: 17px; letter-spacing: 1px; }
-            .booking-ref-badge { font-size: 12px; padding: 5px 10px; }
+            .booking-ref-code { font-size: 13px; letter-spacing: 1px; }
             .ticket-movie-row { flex-direction: column; align-items: flex-start; }
+        }
+
         /* Print Styles */
         @media print {
             body { background: #fff !important; color: #000 !important; }
-            .top-nav, .ticket-actions, .site-footer { display: none !important; }
+            .top-nav, .ticket-actions, .site-footer, .copy-ref-btn { display: none !important; }
             .confirmation-wrapper { margin: 0 !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }
             .ticket-pass { border: 2px solid #000 !important; box-shadow: none !important; background: #fff !important; color: #000 !important; }
-            .ticket-header { background: #eee !important; color: #000 !important; border-bottom: 2px solid #000 !important; }
+            .ticket-header { background: #eee !important; color: #000 !important; border-bottom: 2px solid #000 !important; padding: 20px !important; text-align: center !important; }
+            .header-status-badge { color: #000 !important; }
             .success-title { color: #000 !important; }
-            .booking-ref-badge { background: #000 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .header-subtitle { color: #333 !important; }
+            .booking-ref-credential { border: 1px solid #000 !important; background: #fff !important; box-shadow: none !important; padding: 4px 10px !important; }
+            .booking-ref-code { color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .booking-ref-hint { color: #555 !important; }
             .ticket-details-grid { background: #f9f9f9 !important; border: 1px solid #ccc !important; }
             .detail-cell .label { color: #555 !important; }
             .detail-cell .value { color: #000 !important; }
@@ -186,20 +328,30 @@
 <main class="confirmation-wrapper">
     <div class="ticket-pass">
         <div class="ticket-header">
-            <div>
-                <div style="font-size: 11px; color: var(--gold-primary); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">
-                    &#10003; PAYMENT SUCCESSFUL & BOOKING CONFIRMED
-                </div>
-                <div class="success-title">
-                    Executive Boarding Pass
-                </div>
-                <div style="font-size: 13px; color: var(--gold-light); margin-top: 4px; font-weight: 600;">
-                    Your payment has been completed successfully and your reservation is guaranteed.
-                </div>
+            <div class="header-status-badge">
+                <span class="status-icon">&#10003;</span> PAYMENT SUCCESSFUL &amp; BOOKING CONFIRMED
             </div>
-            <div style="text-align: right;">
-                <div class="booking-ref-badge">{{ booking.booking_reference }}</div>
-                <div style="font-size: 11px; color: var(--text-sub); margin-top: 5px; font-weight: 500;">Save your booking reference to manage your reservation later.</div>
+            <div class="success-title">
+                Executive Boarding Pass
+            </div>
+            <div class="header-subtitle">
+                Your payment has been completed successfully and your reservation is guaranteed.
+            </div>
+            <div class="booking-ref-group">
+                <div class="booking-ref-credential">
+                    <span class="booking-ref-code" id="bookingRefCode">{{ booking.booking_reference }}</span>
+                    <button type="button" class="copy-ref-btn" id="copyRefBtn" onclick="copyBookingReference()" aria-label="Copy booking reference" title="Copy booking reference">
+                        <svg id="copyIconDefault" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <svg id="copyIconCheck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: none;">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span id="copyText">Copy</span>
+                    </button>
+                </div>
+                <div class="booking-ref-hint">Save your booking reference to manage your reservation later.</div>
             </div>
         </div>
 
@@ -333,13 +485,75 @@
 
 <footer class="site-footer">
     <div>
-        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
-        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+        <span class="footer-brand">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc. All rights reserved.</div>
     </div>
-    <div>
-        <a href="{{ url_for('home') }}" style="color: var(--text-sub); text-decoration: none;">Home</a>
+    <div class="footer-links-group">
+        <a href="{{ url_for('home') }}" class="footer-link">Home</a>
+        <a href="{{ url_for('movies') }}" class="footer-link">Explore Movies</a>
+        <a href="{{ url_for('showtimings') }}" class="footer-link">Showtimes</a>
+        <a href="{{ url_for('cinemas') }}" class="footer-link">Cinemas</a>
+        <a href="{{ url_for('offers') }}" class="footer-link">Offers</a>
     </div>
 </footer>
+
+<script>
+function copyBookingReference() {
+    var refEl = document.getElementById('bookingRefCode');
+    var btn = document.getElementById('copyRefBtn');
+    var textEl = document.getElementById('copyText');
+    var defaultIcon = document.getElementById('copyIconDefault');
+    var checkIcon = document.getElementById('copyIconCheck');
+    if (!refEl || !btn) return;
+
+    var textToCopy = refEl.innerText.trim();
+
+    function setCopiedState() {
+        btn.classList.add('copied');
+        if (textEl) textEl.textContent = 'Copied!';
+        if (defaultIcon) defaultIcon.style.display = 'none';
+        if (checkIcon) checkIcon.style.display = 'inline-block';
+        btn.setAttribute('aria-label', 'Booking reference copied');
+
+        setTimeout(function() {
+            btn.classList.remove('copied');
+            if (textEl) textEl.textContent = 'Copy';
+            if (defaultIcon) defaultIcon.style.display = 'inline-block';
+            if (checkIcon) checkIcon.style.display = 'none';
+            btn.setAttribute('aria-label', 'Copy booking reference');
+        }, 2000);
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(function() {
+            setCopiedState();
+        }).catch(function() {
+            fallbackCopy(textToCopy);
+        });
+    } else {
+        fallbackCopy(textToCopy);
+    }
+
+    function fallbackCopy(text) {
+        try {
+            var tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            tempInput.setAttribute('readonly', '');
+            tempInput.style.position = 'absolute';
+            tempInput.style.left = '-9999px';
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            var success = document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            if (success) {
+                setCopiedState();
+            }
+        } catch (e) {
+            // Graceful silent fallback
+        }
+    }
+}
+</script>
 
 </body>
 </html>

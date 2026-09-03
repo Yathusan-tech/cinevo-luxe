@@ -73,11 +73,12 @@
             color: var(--text-sub);
         }
         .footer-left { display: flex; flex-direction: column; gap: 6px; }
-        .footer-brand { font-weight: 800; color: var(--text-main); letter-spacing: 1.5px; font-size: 14px; }
-
-        .footer-center { display: flex; align-items: center; gap: 22px; }
-        .footer-link { color: var(--text-sub); text-decoration: none; font-weight: 600; transition: color 0.2s; }
-        .footer-link:hover { color: var(--gold-primary); }
+        .footer-brand { font-weight: 800; color: #FFFFFF; letter-spacing: 1.5px; font-size: 14px; }
+        .footer-brand span { color: #D4AF37; }
+        .footer-center { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .footer-link { color: #A0AEC0; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s ease; }
+        .footer-link:hover { color: #D4AF37; }
+        .footer-link.active { color: #E5A93C; }
 
         /* Updated Staff Portal Link with smooth hover arrow */
         .footer-admin-link {
@@ -121,7 +122,7 @@
     <!-- Updated Footer -->
     <footer class="site-footer">
         <div class="footer-left">
-            <span class="footer-brand">CINEVO LUXE</span>
+            <span class="footer-brand">CINEVO <span>LUXE</span></span>
             <span class="footer-copy">&copy; 2026 Cinevo Luxe. All rights reserved.</span>
         </div>
 

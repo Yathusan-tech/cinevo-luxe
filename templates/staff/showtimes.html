@@ -33,33 +33,48 @@
     </form>
 </div>
 
+<style>
+    .showtimes-table {
+        table-layout: fixed;
+        width: 100%;
+        min-width: 700px;
+    }
+    .showtimes-table th:nth-child(1), .showtimes-table td:nth-child(1) { width: 24%; text-align: left; }
+    .showtimes-table th:nth-child(2), .showtimes-table td:nth-child(2) { width: 20%; text-align: left; }
+    .showtimes-table th:nth-child(3), .showtimes-table td:nth-child(3) { width: 14%; text-align: left; }
+    .showtimes-table th:nth-child(4), .showtimes-table td:nth-child(4) { width: 12%; text-align: left; }
+    .showtimes-table th:nth-child(5), .showtimes-table td:nth-child(5) { width: 14%; text-align: left; }
+    .showtimes-table th:nth-child(6), .showtimes-table td:nth-child(6) { width: 10%; text-align: center; }
+    .showtimes-table th:nth-child(7), .showtimes-table td:nth-child(7) { width: 140px; text-align: right; white-space: nowrap; }
+</style>
+
 <!-- Active Showtimes List Module -->
 <div class="section-box">
     <div class="section-title">Scheduled Showtimes</div>
     <div class="data-table-wrapper">
-        <table>
+        <table class="showtimes-table">
             <thead>
                 <tr>
-                    <th>Movie</th>
-                    <th>Cinema Venue</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Base Ticket Price</th>
-                    <th>Reservations</th>
-                    <th>Actions</th>
+                    <th style="text-align: left;">Movie</th>
+                    <th style="text-align: left;">Cinema Venue</th>
+                    <th style="text-align: left;">Date</th>
+                    <th style="text-align: left;">Time</th>
+                    <th style="text-align: left;">Base Ticket Price</th>
+                    <th style="text-align: center;">Reservations</th>
+                    <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for st in showtimes %}
                 <tr>
-                    <td><strong style="color: #fff;">{{ st.movie.title }}</strong></td>
-                    <td>{{ st.cinema.name }}</td>
-                    <td>{{ st.date.strftime('%d %b %Y') }}</td>
-                    <td>{{ st.time }}</td>
-                    <td>₹{{ st.base_price|int }}</td>
-                    <td>{{ st.bookings|length }}</td>
-                    <td>
-                        <a href="{{ url_for('staff_edit_showtime', showtime_id=st.id) }}" class="btn-gold" style="display: inline-block; text-decoration: none; padding: 8px 14px; margin-right: 6px;">Edit</a>
+                    <td style="text-align: left;"><span style="font-weight: 600; color: #FFFFFF;">{{ st.movie.title }}</span></td>
+                    <td style="text-align: left;">{{ st.cinema.name }}</td>
+                    <td style="text-align: left;">{{ st.date.strftime('%d %b %Y') }}</td>
+                    <td style="text-align: left;">{{ st.time }}</td>
+                    <td style="text-align: left;"><strong style="color: var(--gold-primary);">₹{{ st.base_price|int }}</strong></td>
+                    <td style="text-align: center;"><span style="color: #FFFFFF; font-weight: 600;">{{ st.bookings|length }}</span></td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <a href="{{ url_for('staff_edit_showtime', showtime_id=st.id) }}" class="btn-edit" style="margin-right: 6px;">Edit</a>
                         <form action="{{ url_for('staff_delete_showtime', showtime_id=st.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Remove this unbooked showtime?');">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="btn-delete">Delete</button>

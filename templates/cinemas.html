@@ -35,35 +35,43 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 54px;
+            padding: 0 clamp(16px, 4vw, 54px);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
-        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .nav-left { display: flex; align-items: center; gap: 32px; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: left; margin: 0; padding: 0; white-space: nowrap; }
         .brand-name span { color: var(--gold-primary); }
-        .nav-links { display: flex; align-items: center; gap: 4px; }
-        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
-        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
+        .brand-tagline { font-size: 8.5px; color: var(--text-sub); font-weight: 700; margin-top: 3px; text-transform: uppercase; line-height: 1; opacity: 0.85; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; padding: 0; }
+        .brand-tagline span { display: inline-block; line-height: 1; }
+        .brand-tagline .tagline-space { width: 4px; display: inline-block; }
+        .nav-menu { display: flex; align-items: center; gap: 6px; }
+        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 0 16px; height: 38px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; position: relative; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1; border: 1px solid transparent; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border-color: rgba(255, 255, 255, 0.08); }
+        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); border-color: rgba(229, 193, 88, 0.22); }
+        .nav-item.active::after { content: ''; position: absolute; bottom: 3px; left: 14px; right: 14px; height: 2px; background: var(--gold-primary); border-radius: 2px; box-shadow: 0 0 8px rgba(229, 193, 88, 0.6); }
 
-        .container { max-width: 1200px; margin: 0 auto; width: 100%; padding: 40px clamp(14px, 4vw, 54px); flex: 1; }
-        .page-header { margin-bottom: 36px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; }
-        .page-header h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; text-transform: uppercase; color: #fff; margin-bottom: 6px; }
+        .container { max-width: 1400px; margin: 0 auto; width: 100%; padding: 40px clamp(16px, 4vw, 54px); flex: 1; }
+        .page-header { margin-bottom: 32px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; }
+        .page-header h1 { font-size: clamp(22px, 4vw, 32px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; color: #ffffff; margin-bottom: 6px; }
         .page-header p { font-size: 14px; color: var(--text-sub); }
 
-        .cinemas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+        .cinemas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 24px; }
         .cinema-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-container);
             border-radius: 16px;
-            padding: clamp(18px, 3.5vw, 30px);
-            transition: transform 0.25s ease, border-color 0.25s ease;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
         .cinema-card:hover {
             transform: translateY(-4px);
             border-color: var(--gold-primary);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
         .cinema-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 6px; }
         .cinema-address { font-size: 13px; color: var(--text-sub); margin-bottom: 16px; line-height: 1.5; }
@@ -81,20 +89,69 @@
 
         .active-shows-box {
             border-top: 1px solid var(--border-subtle);
-            padding-top: 16px;
+            padding-top: 18px;
+            margin-top: auto;
         }
-        .active-shows-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-sub); margin-bottom: 12px; }
+        .active-shows-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-sub); margin-bottom: 14px; }
+        .active-shows-list {
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 6px;
+            scrollbar-width: thin;
+            scrollbar-color: #D4AF37 rgba(255, 255, 255, 0.05);
+        }
+        .active-shows-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .active-shows-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+        }
+        .active-shows-list::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 4px;
+        }
+        .active-shows-list::-webkit-scrollbar-thumb:hover {
+            background: #f4df9b;
+        }
         .show-slot-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 13px;
-            gap: 8px;
-            flex-wrap: wrap;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 14px;
         }
         .show-slot-row:last-child { border-bottom: none; }
+        .screening-movie-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.35;
+            min-width: 0;
+            flex: 1;
+            word-break: break-word;
+        }
+        .showtime-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            white-space: nowrap;
+            background: var(--gold-grad);
+            color: #07090e;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            flex-shrink: 0;
+        }
+        .showtime-pill:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(229, 193, 88, 0.35);
+            filter: brightness(1.08);
+        }
 
         .site-footer {
             border-top: 1px solid var(--border-container);
@@ -107,12 +164,18 @@
             font-size: 12px;
             color: var(--text-sub);
         }
+        .footer-brand { font-weight: 800; color: #FFFFFF; letter-spacing: 1.5px; font-size: 14px; }
+        .footer-brand span { color: #D4AF37; }
+        .footer-links-group { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .footer-link { color: #A0AEC0; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s ease; }
+        .footer-link:hover { color: #D4AF37; }
+        .footer-link.active { color: #E5A93C; }
 
         @media (max-width: 900px) {
             .top-nav { padding: 0 24px; }
             .nav-menu { display: none; }
             .container { padding: 30px 24px; }
-            .cinemas-grid { grid-template-columns: 1fr; gap: 20px; }
+            .cinemas-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 20px; }
             .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
         }
         @media (max-width: 480px) {
@@ -120,7 +183,11 @@
             .nav-right > a.btn-gold { display: none; }
             .container { padding: 24px 16px; }
             .page-header h1 { font-size: 22px; }
-            .cinema-card { padding: 18px 14px; border-radius: 12px; }
+            .cinemas-grid { grid-template-columns: 1fr; gap: 16px; }
+            .cinema-card { padding: 20px 16px; border-radius: 14px; }
+            .active-shows-list { max-height: 300px; }
+            .screening-movie-title { font-size: 15px; }
+            .showtime-pill { font-size: 13px; padding: 7px 14px; }
             .site-footer { padding: 28px 16px; }
         }
         @media (max-width: 360px) {
@@ -128,8 +195,8 @@
             .brand-name { font-size: 17px; letter-spacing: 1px; }
             .container { padding: 20px 12px; }
             .cinema-title { font-size: 18px; }
-            .show-slot-row { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .show-slot-row a { width: 100%; text-align: center; }
+            .show-slot-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .showtime-pill { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -139,6 +206,7 @@
     <div class="nav-left">
         <a href="{{ url_for('home') }}" class="brand-logo">
             <span class="brand-name">CINEVO <span>LUXE</span></span>
+            <span class="brand-tagline" aria-label="EXECUTIVE CINEMA"><span>E</span><span>X</span><span>E</span><span>C</span><span>U</span><span>T</span><span>I</span><span>V</span><span>E</span><span class="tagline-space">&nbsp;</span><span>C</span><span>I</span><span>N</span><span>E</span><span>M</span><span>A</span></span>
         </a>
         <div class="nav-menu">
             <a href="{{ url_for('home') }}" class="nav-item">Home</a>
@@ -190,17 +258,25 @@
 
                 <div class="active-shows-box">
                     <div class="active-shows-title">Today's Featured Screenings</div>
-                    {% set active_shows = [] %}
-                    {% for st in showtimes %}
-                        {% if st.cinema_id == cinema.id %}
-                            <div class="show-slot-row">
-                                <span style="font-weight: 700; color: #fff;">{{ st.movie.title }}</span>
-                                <a href="{{ url_for('seat_selection', showtime_id=st.id) }}" class="btn-gold" style="padding: 6px 12px; font-size: 11px;">
-                                    {{ st.time }} &rarr;
-                                </a>
+                    <div class="active-shows-list">
+                        {% set ns = namespace(found=false) %}
+                        {% for st in showtimes %}
+                            {% if st.cinema_id == cinema.id %}
+                                {% set ns.found = true %}
+                                <div class="show-slot-row">
+                                    <span class="screening-movie-title">{{ st.movie.title }}</span>
+                                    <a href="{{ url_for('seat_selection', showtime_id=st.id) }}" class="showtime-pill">
+                                        {{ st.time }} &rarr;
+                                    </a>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not ns.found %}
+                            <div style="font-size: 12px; color: var(--text-sub); padding: 12px 0; font-style: italic;">
+                                No screenings scheduled for today.
                             </div>
                         {% endif %}
-                    {% endfor %}
+                    </div>
                 </div>
             </div>
         {% endfor %}
@@ -209,12 +285,15 @@
 
 <footer class="site-footer">
     <div>
-        <span class="brand-name" style="font-size: 16px;">CINEVO <span>LUXE</span></span>
-        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc.</div>
+        <span class="footer-brand">CINEVO <span>LUXE</span></span>
+        <div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc. All rights reserved.</div>
     </div>
-    <div>
-        <a href="{{ url_for('home') }}" class="nav-item">Home</a>
-        <a href="{{ url_for('showtimings') }}" class="nav-item">Showtimes</a>
+    <div class="footer-links-group">
+        <a href="{{ url_for('home') }}" class="footer-link">Home</a>
+        <a href="{{ url_for('movies') }}" class="footer-link">Explore Movies</a>
+        <a href="{{ url_for('showtimings') }}" class="footer-link">Showtimes</a>
+        <a href="{{ url_for('cinemas') }}" class="footer-link active">Cinemas</a>
+        <a href="{{ url_for('offers') }}" class="footer-link">Offers</a>
     </div>
 </footer>
 

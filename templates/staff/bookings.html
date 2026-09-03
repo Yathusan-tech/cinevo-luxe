@@ -39,26 +39,26 @@
                 <tr>
                     <td><strong style="color: var(--gold-primary);">{{ b.booking_reference }}</strong></td>
                     <td>
-                        <div style="font-weight: 600; color: #fff;">{{ b.customer_name }}</div>
-                        <div style="font-size: 11px; color: var(--text-sub);">{{ b.email }} &bull; {{ b.phone }}</div>
+                        <div style="font-weight: 600; color: #FFFFFF;">{{ b.customer_name }}</div>
+                        <div style="font-size: 0.75rem; color: #A0AEC0;">{{ b.email }} &bull; {{ b.phone }}</div>
                     </td>
-                    <td>{{ b.movie_name }}</td>
+                    <td><span style="font-weight: 600; color: #FFFFFF;">{{ b.movie_name }}</span></td>
                     <td>{{ b.cinema_name }}</td>
                     <td>{{ b.date_str }} at {{ b.time }}</td>
                     <td><span style="color: var(--gold-light); font-weight: 700;">{{ b.seats }}</span></td>
-                    <td><strong>{{ b.price }}</strong></td>
+                    <td><strong style="color: #FFFFFF;">{{ b.price }}</strong></td>
                     <td>
                         {% if b.booking_status == 'Confirmed' %}
-                            <span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ Confirmed</span>
+                            <span style="color: #4ade80; font-weight: 700; font-size: 0.75rem;">✓ Confirmed</span>
                         {% else %}
-                            <span style="color: var(--text-sub); font-weight: 600; font-size: 11px;">{{ b.booking_status }}</span>
+                            <span style="color: var(--text-sub); font-weight: 600; font-size: 0.75rem;">{{ b.booking_status }}</span>
                         {% endif %}
                     </td>
                     <td>
                         {% if b.payment_status == 'Paid' %}
-                            <span style="color: #4ade80; font-weight: 700; font-size: 11px;">✓ Paid</span>
+                            <span style="color: #4ade80; font-weight: 700; font-size: 0.75rem;">✓ Paid</span>
                         {% else %}
-                            <span style="color: #facc15; font-weight: 600; font-size: 11px;">{{ b.payment_status }}</span>
+                            <span style="color: #facc15; font-weight: 600; font-size: 0.75rem;">{{ b.payment_status }}</span>
                         {% endif %}
                     </td>
                 </tr>

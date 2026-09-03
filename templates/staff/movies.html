@@ -12,26 +12,100 @@
     <div class="section-title">Schedule New Title & Screenings</div>
     <form action="{{ url_for('staff_add_movie') }}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- Row 1: Primary Identity & Ratings -->
         <div class="form-row">
-            <input type="text" name="title" class="form-control" placeholder="Movie Title *" required>
-            <input type="text" name="genre" class="form-control" placeholder="Genre (e.g. Action / Sci-Fi) *" required>
-            <input type="text" name="format" class="form-control" placeholder="Format (e.g. IMAX 70mm • LASER 4K)" required>
-            <input type="text" name="rating" class="form-control" placeholder="Rating (e.g. 9.2)" required>
+            <div class="form-group">
+                <label class="form-label">Movie Title *</label>
+                <input type="text" name="title" class="form-control" placeholder="Movie Title *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Genre *</label>
+                <input type="text" name="genre" class="form-control" placeholder="Genre (e.g. Action / Sci-Fi) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Format *</label>
+                <input type="text" name="format" class="form-control" placeholder="Format (e.g. IMAX 70mm • LASER 4K) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Rating</label>
+                <input type="number" name="rating" class="form-control" min="0" max="10" step="0.1" placeholder="Rating (e.g. 9.0)">
+            </div>
         </div>
+
+        <!-- Row 2: Specifications & Media -->
         <div class="form-row">
-            <input type="text" name="age_rating" class="form-control" placeholder="Age Rating (e.g. UA 16+)" required>
-            <input type="text" name="duration" class="form-control" placeholder="Duration (e.g. 2h 45m)" required>
-            <input type="url" name="poster" class="form-control" placeholder="Poster Image URL *" required>
-            <input type="url" name="trailer_url" class="form-control" placeholder="Trailer URL">
-            <select name="category" class="form-control">
-                <option value="now_showing">Now Showing</option>
-                <option value="premiere">Premiere Screening</option>
-                <option value="imax">IMAX Experience</option>
-            </select>
+            <div class="form-group">
+                <label class="form-label">Age Rating *</label>
+                <input type="text" name="age_rating" class="form-control" placeholder="Age Rating (e.g. UA 16+) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Duration *</label>
+                <input type="text" name="duration" class="form-control" placeholder="Duration (e.g. 2h 30m) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Poster Image URL *</label>
+                <input type="url" name="poster" class="form-control" placeholder="Poster Image URL *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Trailer URL</label>
+                <input type="url" name="trailer_url" class="form-control" placeholder="Trailer URL">
+            </div>
         </div>
+
+        <!-- Row 3: Status, Category, Language & Director -->
         <div class="form-row">
-            <input type="text" name="description" class="form-control" placeholder="Synopsis / Description" style="grid-column: 1 / -1;" required>
-            <button type="submit" class="btn-gold" style="height: 44px; width: 100%; grid-column: 1 / -1;">
+            <div class="form-group">
+                <label class="form-label">Release Status</label>
+                <select name="status" class="form-control">
+                    <option value="" selected>Select Status</option>
+                    <option value="Now Showing">Now Showing</option>
+                    <option value="Coming Soon">Coming Soon</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-control">
+                    <option value="" selected>Select Category</option>
+                    <option value="now_showing">Now Showing</option>
+                    <option value="premiere">Premiere Screening</option>
+                    <option value="imax">IMAX Experience</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Language</label>
+                <input type="text" name="language" class="form-control" placeholder="Language (e.g. English, Hindi)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Director</label>
+                <input type="text" name="director" class="form-control" placeholder="Director (e.g. Christopher Nolan)">
+            </div>
+        </div>
+
+        <!-- Row 4: Cast & Backdrop URL -->
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Cast</label>
+                <input type="text" name="cast" class="form-control" placeholder="Cast (e.g. Timothée Chalamet, Zendaya)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Backdrop Image URL</label>
+                <input type="url" name="backdrop" class="form-control" placeholder="Backdrop Image URL">
+            </div>
+        </div>
+
+        <!-- Row 5: Full-Width Synopsis / Description -->
+        <div class="form-row">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">Synopsis / Description *</label>
+                <textarea name="description" class="form-control" rows="5" placeholder="Synopsis / Description" style="width: 100%; resize: vertical;" required></textarea>
+            </div>
+        </div>
+
+        <!-- Action Row -->
+        <div style="margin-top: 24px;">
+            <button type="submit" class="btn-gold" style="height: 44px; padding: 0 28px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 8px;">
                 + Add Movie & Schedule
             </button>
         </div>
@@ -56,13 +130,13 @@
             <tbody>
                 {% for m in movies %}
                 <tr>
-                    <td><strong style="color: #fff;">{{ m.title }}</strong></td>
+                    <td><span style="font-weight: 600; color: #FFFFFF;">{{ m.title }}</span></td>
                     <td>{{ m.genre }}</td>
-                    <td>{{ m.format }}</td>
+                    <td><span style="font-size: 0.75rem; color: #A0AEC0;">{{ m.format }}</span></td>
                     <td style="color: var(--gold-primary); font-weight: 700;">★ {{ m.formatted_rating }}</td>
-                    <td><span style="text-transform: uppercase; font-size: 11px; color: var(--text-sub);">{{ m.category }}</span></td>
+                    <td><span style="text-transform: uppercase; font-size: 0.75rem; color: #A0AEC0;">{{ m.category }}</span></td>
                     <td>
-                        <a href="{{ url_for('staff_edit_movie', movie_id=m.id) }}" class="btn-gold" style="display: inline-block; text-decoration: none; padding: 8px 14px; margin-right: 6px;">
+                        <a href="{{ url_for('staff_edit_movie', movie_id=m.id) }}" class="btn-edit" style="margin-right: 6px;">
                             Edit
                         </a>
                         <form action="{{ url_for('staff_delete_movie', movie_id=m.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Remove movie and its showtimes?');">

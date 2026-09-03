@@ -12,17 +12,20 @@
         :root { --bg-body: #07090e; --bg-surface: #0f131c; --bg-card: #151a26; --border-subtle: rgba(255, 255, 255, 0.07); --border-container: rgba(255, 255, 255, 0.1); --border-gold: rgba(212, 175, 55, 0.35); --gold-primary: #e5c158; --gold-light: #f4df9b; --gold-grad: linear-gradient(135deg, #eed285 0%, #b88e28 100%); --gold-grad-hover: linear-gradient(135deg, #f7e099 0%, #c99d31 100%); --text-main: #f8fafc; --text-sub: #94a3b8; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
-        .top-nav { background: rgba(7, 9, 14, 0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-container); height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 54px; position: sticky; top: 0; z-index: 100; }
-        .nav-left { display: flex; align-items: center; gap: 36px; }
-        .brand-logo { text-decoration: none; display: flex; flex-direction: column; }
-        .brand-name { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); line-height: 1; }
+        .top-nav { background: rgba(7, 9, 14, 0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-container); height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(16px, 4vw, 54px); position: sticky; top: 0; z-index: 100; }
+        .nav-left { display: flex; align-items: center; gap: 32px; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: left; margin: 0; padding: 0; white-space: nowrap; }
         .brand-name span { color: var(--gold-primary); }
-        .brand-tagline { font-size: 8px; color: var(--text-sub); letter-spacing: 2px; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
-        .nav-menu { display: flex; align-items: center; gap: 4px; }
-        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
-        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
-        .catalog-container { max-width: 1400px; margin: 0 auto; width: 100%; padding: 40px 54px; flex: 1; }
+        .brand-tagline { font-size: 8.5px; color: var(--text-sub); font-weight: 700; margin-top: 3px; text-transform: uppercase; line-height: 1; opacity: 0.85; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; padding: 0; }
+        .brand-tagline span { display: inline-block; line-height: 1; }
+        .brand-tagline .tagline-space { width: 4px; display: inline-block; }
+        .nav-menu { display: flex; align-items: center; gap: 6px; }
+        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 0 16px; height: 38px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; position: relative; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1; border: 1px solid transparent; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border-color: rgba(255, 255, 255, 0.08); }
+        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); border-color: rgba(229, 193, 88, 0.22); }
+        .nav-item.active::after { content: ''; position: absolute; bottom: 3px; left: 14px; right: 14px; height: 2px; background: var(--gold-primary); border-radius: 2px; box-shadow: 0 0 8px rgba(229, 193, 88, 0.6); }
+        .catalog-container { max-width: 1400px; margin: 0 auto; width: 100%; padding: 40px clamp(16px, 4vw, 54px); flex: 1; }
         .catalog-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--border-container); padding-bottom: 20px; flex-wrap: wrap; gap: 20px; }
         .catalog-title h1 { font-size: clamp(22px, 4vw, 32px); font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; color: #ffffff; margin-bottom: 6px; }
         .catalog-title p { font-size: 14px; color: var(--text-sub); }
@@ -46,9 +49,12 @@
         .card-tags { font-size: 10px; font-weight: 700; color: var(--gold-primary); letter-spacing: 0.5px; text-transform: uppercase; }
         .empty-state { text-align: center; padding: 80px 20px; background: var(--bg-surface); border: 1px solid var(--border-container); border-radius: 16px; }
         .site-footer { border-top: 1px solid var(--border-container); padding: 40px 54px; margin-top: 60px; display: flex; justify-content: space-between; align-items: center; background: rgba(7, 9, 14, 0.6); font-size: 12px; color: var(--text-sub); }
-        .footer-brand { font-weight: 800; color: var(--text-main); letter-spacing: 1.5px; font-size: 14px; }
-        .footer-link { color: var(--text-sub); text-decoration: none; font-weight: 600; transition: color 0.2s; }
-        .footer-link:hover { color: var(--gold-primary); }
+        .footer-brand { font-weight: 800; color: #FFFFFF; letter-spacing: 1.5px; font-size: 14px; }
+        .footer-brand span { color: #D4AF37; }
+        .footer-links-group { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .footer-link { color: #A0AEC0; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s ease; }
+        .footer-link:hover { color: #D4AF37; }
+        .footer-link.active { color: #E5A93C; }
         @media (max-width: 900px) {
             .top-nav { padding: 0 24px; }
             .nav-menu { display: none; }
@@ -92,7 +98,7 @@
 <body>
 <nav class="top-nav">
     <div class="nav-left">
-        <a href="{{ url_for('home') }}" class="brand-logo"><span class="brand-name">CINEVO <span>LUXE</span></span><span class="brand-tagline">EXECUTIVE CINEMA</span></a>
+        <a href="{{ url_for('home') }}" class="brand-logo"><span class="brand-name">CINEVO <span>LUXE</span></span><span class="brand-tagline" aria-label="EXECUTIVE CINEMA"><span>E</span><span>X</span><span>E</span><span>C</span><span>U</span><span>T</span><span>I</span><span>V</span><span>E</span><span class="tagline-space">&nbsp;</span><span>C</span><span>I</span><span>N</span><span>E</span><span>M</span><span>A</span></span></a>
         <div class="nav-menu">
             <a href="{{ url_for('home') }}" class="nav-item">Home</a>
             <a href="{{ url_for('movies') }}" class="nav-item active">Explore Movies</a>
@@ -148,8 +154,8 @@
     {% endif %}
 </main>
 <footer class="site-footer">
-    <div><span class="footer-brand">CINEVO LUXE</span><div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc. All rights reserved.</div></div>
-    <div><a href="{{ url_for('home') }}" class="footer-link" style="margin-right: 20px;">Home</a><a href="{{ url_for('showtimings') }}" class="footer-link" style="margin-right: 20px;">Showtimes</a><a href="{{ url_for('cinemas') }}" class="footer-link" style="margin-right: 20px;">Cinemas</a></div>
+    <div><span class="footer-brand">CINEVO <span>LUXE</span></span><div style="font-size: 11px; margin-top: 4px; color: var(--text-sub);">&copy; 2026 Cinevo Entertainment Inc. All rights reserved.</div></div>
+    <div class="footer-links-group"><a href="{{ url_for('home') }}" class="footer-link">Home</a><a href="{{ url_for('movies') }}" class="footer-link active">Explore Movies</a><a href="{{ url_for('showtimings') }}" class="footer-link">Showtimes</a><a href="{{ url_for('cinemas') }}" class="footer-link">Cinemas</a><a href="{{ url_for('offers') }}" class="footer-link">Offers</a></div>
 </footer>
 
 <script>

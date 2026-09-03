@@ -3565,6 +3565,85 @@ def staff_cinemas():
     )
 
 
+@app.route(
+    "/staff/add-cinema",
+    methods=["POST"]
+)
+@staff_required
+def staff_add_cinema():
+
+    name = request.form.get("name", "").strip()
+    location = request.form.get("location", "").strip()
+    address = request.form.get("address", "").strip()
+    city = request.form.get("city", "Chennai").strip() or "Chennai"
+    screen_name = request.form.get("screen_name", "LUXE Screen 1").strip() or "LUXE Screen 1"
+    formats = request.form.get("formats", "IMAX 4K Laser, Dolby Atmos 12-Channel").strip() or "IMAX 4K Laser, Dolby Atmos 12-Channel"
+    screen_type = formats
+    status = request.form.get("status", "Active").strip() or "Active"
+    facilities = "VIP Lounge, Gourmet Dining, Valet"
+    seat_capacity = 40
+
+    if not name or not location or not address:
+        flash("Venue name, location, and full address are required.", "error")
+        return redirect(url_for("staff_cinemas"))
+
+    try:
+        new_cinema = Cinema(
+            name=name,
+            location=location,
+            address=address,
+            city=city,
+            screen_name=screen_name,
+            screen_type=screen_type,
+            formats=formats,
+            facilities=facilities,
+            seat_capacity=seat_capacity,
+            status=status
+        )
+        db.session.add(new_cinema)
+        db.session.commit()
+        flash("Luxury venue added successfully.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error adding venue: {str(e)}", "error")
+
+    return redirect(url_for("staff_cinemas"))
+
+
+@app.route(
+    "/staff/delete-cinema/<int:cinema_id>",
+    methods=["POST"]
+)
+@staff_required
+def staff_delete_cinema(cinema_id):
+
+    cinema = Cinema.query.get(cinema_id)
+
+    if not cinema:
+        flash("Cinema venue not found.", "error")
+        return redirect(url_for("staff_cinemas"))
+
+    # Relationship Protection: Check if this venue is associated with existing showtimes/screenings
+    showtimes = Showtime.query.filter_by(cinema_id=cinema.id).all()
+    if showtimes:
+        flash(
+            "This venue cannot be deleted because it is associated with existing screenings or bookings.",
+            "error"
+        )
+        return redirect(url_for("staff_cinemas"))
+
+    try:
+        cinema_name = cinema.name
+        db.session.delete(cinema)
+        db.session.commit()
+        flash(f"Luxury venue '{cinema_name}' removed successfully.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("This venue cannot be deleted because it is associated with existing screenings or bookings.", "error")
+
+    return redirect(url_for("staff_cinemas"))
+
+
 # ============================================================
 # STAFF BOOKINGS
 # ============================================================

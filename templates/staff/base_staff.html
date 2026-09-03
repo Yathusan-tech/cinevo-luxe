@@ -28,23 +28,45 @@
         body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
         .top-nav {
-            background: rgba(7, 9, 14, 0.92);
+            background: rgba(7, 9, 14, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-container);
             height: 72px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 54px;
+            padding: 0 clamp(18px, 4vw, 54px);
             position: sticky;
             top: 0;
             z-index: 100;
         }
-        .brand-name { font-size: 22px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); text-decoration: none; }
+        .brand-name { font-size: 22px; font-weight: 800; letter-spacing: 2px; color: var(--text-main); text-decoration: none; flex-shrink: 0; }
         .brand-name span { color: var(--gold-primary); }
 
-        .main-container { padding: 40px clamp(14px, 4vw, 54px); max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 14px; }
-        .dashboard-header h1 { font-size: clamp(20px, 4vw, 28px); font-weight: 800; text-transform: uppercase; color: #fff; }
+        .main-container {
+            padding: 36px clamp(18px, 4vw, 54px) 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .dashboard-header h1 {
+            font-size: clamp(22px, 3.5vw, 28px);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+            line-height: 1.2;
+        }
 
         /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 20px; margin-bottom: 40px; }
@@ -57,7 +79,7 @@
             min-width: 0;
         }
         .stat-label { font-size: 11px; color: var(--text-sub); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-        .stat-num { font-size: clamp(24px, 4vw, 32px); color: var(--gold-primary); font-weight: 800; margin-top: 6px; }
+        .stat-num { font-size: clamp(1.35rem, 2vw, 1.75rem); color: var(--gold-primary); font-weight: 800; margin-top: 6px; white-space: nowrap; line-height: 1.2; }
 
         /* Section Box */
         .section-box {
@@ -72,6 +94,8 @@
 
         /* Forms */
         .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; margin-bottom: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+        .form-label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-sub); letter-spacing: 0.5px; }
         .form-control {
             background: var(--bg-card);
             border: 1px solid var(--border-container);
@@ -82,8 +106,9 @@
             outline: none;
             width: 100%;
             min-width: 0;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .form-control:focus { border-color: var(--gold-primary); }
+        .form-control:focus { border-color: var(--gold-primary); box-shadow: 0 0 0 3px rgba(229, 193, 88, 0.12); }
 
         /* Tables */
         .data-table-wrapper {
@@ -94,21 +119,68 @@
             border-radius: 8px;
         }
         table { width: 100%; min-width: 600px; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-container); font-size: 13px; }
-        th { color: var(--gold-primary); font-weight: 800; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; background: rgba(229, 193, 88, 0.04); white-space: nowrap; }
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-container);
+            color: #D4AF37;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            background: rgba(229, 193, 88, 0.04);
+            white-space: nowrap;
+            line-height: 1.4;
+            vertical-align: middle;
+        }
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-container);
+            font-size: 0.875rem;
+            line-height: 1.4;
+            vertical-align: middle;
+        }
         tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+        .btn-edit {
+            color: var(--gold-primary);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-gold);
+            background: rgba(229, 193, 88, 0.1);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            vertical-align: middle;
+        }
+        .btn-edit:hover { background: var(--gold-primary); color: #07090e; }
 
         .btn-delete {
             color: #f87171;
             text-decoration: none;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
             padding: 4px 10px;
             border-radius: 4px;
             border: 1px solid rgba(239, 68, 68, 0.3);
             background: rgba(239, 68, 68, 0.1);
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             cursor: pointer;
             touch-action: manipulation;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            vertical-align: middle;
         }
         .btn-delete:hover { background: #ef4444; color: #fff; }
 
@@ -125,13 +197,42 @@
 
         .staff-nav-links {
             display: flex;
-            gap: 20px;
+            gap: 6px;
             align-items: center;
+        }
+
+        .staff-nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: var(--text-sub);
+            text-decoration: none;
+            transition: color 0.2s ease, background-color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .staff-nav-link:hover {
+            color: #ffffff;
+        }
+
+        .staff-nav-link.active {
+            color: var(--gold-primary);
+            font-weight: 600;
+        }
+
+        .staff-nav-divider {
+            height: 20px;
+            width: 1px;
+            background: var(--border-container);
+            margin: 0 6px;
         }
 
         @media (max-width: 900px) {
             .top-nav { padding: 0 24px; }
-            .main-container { padding: 30px 24px; }
+            .staff-nav-link { font-size: 14px; padding: 6px 10px; }
+            .main-container { padding: 30px 24px 50px; }
             .site-footer { padding: 20px 24px; flex-direction: column; gap: 14px; text-align: center; }
         }
 
@@ -146,21 +247,24 @@
             }
             .staff-nav-links {
                 width: 100%;
-                gap: 14px;
+                gap: 6px;
                 overflow-x: auto;
                 white-space: nowrap;
                 padding-bottom: 4px;
                 -webkit-overflow-scrolling: touch;
             }
+            .staff-nav-link { font-size: 14px; padding: 6px 10px; }
+            .main-container { padding: 24px 18px 40px; }
             .form-row { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 480px) {
             .top-nav { padding: 12px 14px; }
             .brand-name { font-size: 18px; }
-            .main-container { padding: 18px 12px; }
+            .main-container { padding: 20px 14px 36px; }
+            .dashboard-header { margin-bottom: 24px; }
             .dashboard-header h1 { font-size: 20px; }
-            .section-box { padding: 16px 12px; border-radius: 12px; }
+            .section-box { padding: 18px 14px; border-radius: 12px; margin-bottom: 24px; }
             .stats-grid { grid-template-columns: 1fr; }
             .form-row { grid-template-columns: 1fr; }
         }
@@ -180,13 +284,14 @@
         CINEVO <span>LUXE STAFF</span>
     </a>
     <div class="staff-nav-links">
-        <a href="{{ url_for('staff_dashboard') }}" style="color: {% if request.endpoint == 'staff_dashboard' %}var(--gold-primary){% else %}var(--text-sub){% endif %}; text-decoration: none; font-size: 13px; font-weight: 600;">Dashboard</a>
-        <a href="{{ url_for('staff_movies') }}" style="color: {% if request.endpoint == 'staff_movies' %}var(--gold-primary){% else %}var(--text-sub){% endif %}; text-decoration: none; font-size: 13px; font-weight: 600;">Movies</a>
-        <a href="{{ url_for('staff_showtimes') }}" style="color: {% if request.endpoint == 'staff_showtimes' %}var(--gold-primary){% else %}var(--text-sub){% endif %}; text-decoration: none; font-size: 13px; font-weight: 600;">Showtimes</a>
-        <a href="{{ url_for('staff_cinemas') }}" style="color: {% if request.endpoint == 'staff_cinemas' %}var(--gold-primary){% else %}var(--text-sub){% endif %}; text-decoration: none; font-size: 13px; font-weight: 600;">Cinemas</a>
-        <a href="{{ url_for('staff_bookings') }}" style="color: {% if request.endpoint == 'staff_bookings' %}var(--gold-primary){% else %}var(--text-sub){% endif %}; text-decoration: none; font-size: 13px; font-weight: 600;">Bookings</a>
-        <a href="{{ url_for('home') }}" target="_blank" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600; border-left: 1px solid var(--border-container); padding-left: 15px;">View Site ↗</a>
-        <a href="{{ url_for('staff_logout') }}" class="btn-gold" style="padding: 6px 16px; font-size: 11px;">Logout</a>
+        <a href="{{ url_for('staff_dashboard') }}" class="staff-nav-link {% if request.endpoint == 'staff_dashboard' %}active{% endif %}">Dashboard</a>
+        <a href="{{ url_for('staff_movies') }}" class="staff-nav-link {% if request.endpoint in ['staff_movies', 'staff_edit_movie', 'staff_add_movie', 'staff_update_movie'] %}active{% endif %}">Movies</a>
+        <a href="{{ url_for('staff_showtimes') }}" class="staff-nav-link {% if request.endpoint in ['staff_showtimes', 'staff_edit_showtime', 'staff_add_showtime', 'staff_update_showtime'] %}active{% endif %}">Showtimes</a>
+        <a href="{{ url_for('staff_cinemas') }}" class="staff-nav-link {% if request.endpoint in ['staff_cinemas', 'staff_add_cinema'] %}active{% endif %}">Cinemas</a>
+        <a href="{{ url_for('staff_bookings') }}" class="staff-nav-link {% if request.endpoint == 'staff_bookings' %}active{% endif %}">Bookings</a>
+        <span class="staff-nav-divider"></span>
+        <a href="{{ url_for('home') }}" target="_blank" class="staff-nav-link">View Site ↗</a>
+        <a href="{{ url_for('staff_logout') }}" class="btn-gold" style="padding: 8px 18px; font-size: 12px; font-weight: 700; margin-left: 6px;">Logout</a>
     </div>
 </nav>
 

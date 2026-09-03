@@ -12,42 +12,103 @@
     <div class="section-title">Update {{ movie.title }}</div>
     <form action="{{ url_for('staff_update_movie', movie_id=movie.id) }}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- Row 1: Primary Identity & Ratings -->
         <div class="form-row">
-            <input type="text" name="title" class="form-control" value="{{ movie.title }}" placeholder="Movie Title *" required>
-            <input type="text" name="genre" class="form-control" value="{{ movie.genre }}" placeholder="Genre *" required>
-            <input type="text" name="format" class="form-control" value="{{ movie.format }}" placeholder="Format *" required>
-            <input type="number" name="rating" class="form-control" value="{{ movie.rating }}" min="0" max="10" step="0.1" placeholder="Rating">
+            <div class="form-group">
+                <label class="form-label">Movie Title *</label>
+                <input type="text" name="title" class="form-control" value="{{ movie.title }}" placeholder="Movie Title *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Genre *</label>
+                <input type="text" name="genre" class="form-control" value="{{ movie.genre }}" placeholder="Genre (e.g. Action / Sci-Fi) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Format *</label>
+                <input type="text" name="format" class="form-control" value="{{ movie.format }}" placeholder="Format (e.g. IMAX 70mm • LASER 4K) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Rating</label>
+                <input type="number" name="rating" class="form-control" value="{{ movie.rating }}" min="0" max="10" step="0.1" placeholder="Rating (e.g. 9.2)">
+            </div>
         </div>
+
+        <!-- Row 2: Specifications & Media -->
         <div class="form-row">
-            <input type="text" name="age_rating" class="form-control" value="{{ movie.age_rating }}" placeholder="Age Rating *" required>
-            <input type="text" name="duration" class="form-control" value="{{ movie.duration }}" placeholder="Duration *" required>
-            <input type="url" name="poster" class="form-control" value="{{ movie.poster }}" placeholder="Poster URL *" required>
-            <input type="url" name="backdrop" class="form-control" value="{{ movie.backdrop or '' }}" placeholder="Backdrop URL">
+            <div class="form-group">
+                <label class="form-label">Age Rating *</label>
+                <input type="text" name="age_rating" class="form-control" value="{{ movie.age_rating }}" placeholder="Age Rating (e.g. UA 16+) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Duration *</label>
+                <input type="text" name="duration" class="form-control" value="{{ movie.duration }}" placeholder="Duration (e.g. 2h 45m) *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Poster Image URL *</label>
+                <input type="url" name="poster" class="form-control" value="{{ movie.poster }}" placeholder="Poster Image URL *" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Trailer URL</label>
+                <input type="url" name="trailer_url" class="form-control" value="{{ movie.trailer_url or '' }}" placeholder="Trailer URL">
+            </div>
         </div>
+
+        <!-- Row 3: Status, Category, Language & Director -->
         <div class="form-row">
-            <select name="category" class="form-control">
-                <option value="now_showing" {% if movie.category == 'now_showing' %}selected{% endif %}>Now Showing</option>
-                <option value="premiere" {% if movie.category == 'premiere' %}selected{% endif %}>Premiere Screening</option>
-                <option value="imax" {% if movie.category == 'imax' %}selected{% endif %}>IMAX Experience</option>
-            </select>
-            <select name="status" class="form-control">
-                <option value="Now Showing" {% if movie.status == 'Now Showing' %}selected{% endif %}>Now Showing</option>
-                <option value="Coming Soon" {% if movie.status == 'Coming Soon' %}selected{% endif %}>Coming Soon</option>
-                <option value="Inactive" {% if movie.status == 'Inactive' %}selected{% endif %}>Inactive</option>
-            </select>
-            <input type="url" name="trailer_url" class="form-control" value="{{ movie.trailer_url or '' }}" placeholder="Trailer URL">
-            <input type="text" name="language" class="form-control" value="{{ movie.language or '' }}" placeholder="Language">
+            <div class="form-group">
+                <label class="form-label">Release Status</label>
+                <select name="status" class="form-control">
+                    <option value="Now Showing" {% if movie.status == 'Now Showing' %}selected{% endif %}>Now Showing</option>
+                    <option value="Coming Soon" {% if movie.status == 'Coming Soon' %}selected{% endif %}>Coming Soon</option>
+                    <option value="Inactive" {% if movie.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-control">
+                    <option value="now_showing" {% if movie.category == 'now_showing' %}selected{% endif %}>Now Showing</option>
+                    <option value="premiere" {% if movie.category == 'premiere' %}selected{% endif %}>Premiere Screening</option>
+                    <option value="imax" {% if movie.category == 'imax' %}selected{% endif %}>IMAX Experience</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Language</label>
+                <input type="text" name="language" class="form-control" value="{{ movie.language or '' }}" placeholder="Language (e.g. English, Hindi)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Director</label>
+                <input type="text" name="director" class="form-control" value="{{ movie.director or '' }}" placeholder="Director">
+            </div>
         </div>
+
+        <!-- Row 4: Cast & Backdrop URL -->
         <div class="form-row">
-            <input type="text" name="cast" class="form-control" value="{{ movie.cast or '' }}" placeholder="Cast">
-            <input type="text" name="director" class="form-control" value="{{ movie.director or '' }}" placeholder="Director">
+            <div class="form-group">
+                <label class="form-label">Cast</label>
+                <input type="text" name="cast" class="form-control" value="{{ movie.cast or '' }}" placeholder="Cast (e.g. Timothée Chalamet, Zendaya)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Backdrop Image URL</label>
+                <input type="url" name="backdrop" class="form-control" value="{{ movie.backdrop or '' }}" placeholder="Backdrop Image URL">
+            </div>
         </div>
+
+        <!-- Row 5: Full-Width Synopsis / Description -->
         <div class="form-row">
-            <textarea name="description" class="form-control" rows="5" placeholder="Synopsis / Description" style="grid-column: 1 / -1; resize: vertical;" required>{{ movie.description }}</textarea>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">Synopsis / Description *</label>
+                <textarea name="description" class="form-control" rows="5" placeholder="Synopsis / Description" style="width: 100%; resize: vertical;" required>{{ movie.description }}</textarea>
+            </div>
         </div>
-        <div style="display: flex; gap: 12px; align-items: center;">
-            <button type="submit" class="btn-gold" style="padding: 10px 20px;">Save Changes</button>
-            <a href="{{ url_for('staff_movies') }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">Cancel</a>
+
+        <!-- Action Row -->
+        <div style="display: flex; gap: 14px; align-items: center; margin-top: 24px; flex-wrap: wrap;">
+            <button type="submit" class="btn-gold" style="height: 44px; padding: 0 28px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 8px;">
+                Save Changes
+            </button>
+            <a href="{{ url_for('staff_movies') }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border-subtle); transition: all 0.2s ease;">
+                Cancel
+            </a>
         </div>
     </form>
 </div>
