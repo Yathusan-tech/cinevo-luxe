@@ -14,12 +14,13 @@
         body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
         .top-nav { background: rgba(7, 9, 14, 0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-container); height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(16px, 4vw, 54px); position: sticky; top: 0; z-index: 100; }
         .nav-left { display: flex; align-items: center; gap: 32px; }
-        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
-        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: left; margin: 0; padding: 0; white-space: nowrap; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: center; margin: 0; padding: 0; white-space: nowrap; }
         .brand-name span { color: var(--gold-primary); }
-        .brand-tagline { font-size: 8.5px; color: var(--text-sub); font-weight: 700; margin-top: 3px; text-transform: uppercase; line-height: 1; opacity: 0.85; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; padding: 0; }
-        .brand-tagline span { display: inline-block; line-height: 1; }
-        .brand-tagline .tagline-space { width: 4px; display: inline-block; }
+        .brand-tagline { font-size: 0.6rem; color: #E2E8F0; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.25em; line-height: 1; display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; box-sizing: border-box; padding: 0; }
+        .brand-tagline span { display: inline-block; line-height: 1; letter-spacing: 0.25em; }
+        .brand-tagline span:last-child { letter-spacing: 0; }
+        .brand-tagline .tagline-space { width: 6px; display: inline-block; letter-spacing: 0; }
         .nav-menu { display: flex; align-items: center; gap: 6px; }
         .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 0 16px; height: 38px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; position: relative; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; line-height: 1; border: 1px solid transparent; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border-color: rgba(255, 255, 255, 0.08); }

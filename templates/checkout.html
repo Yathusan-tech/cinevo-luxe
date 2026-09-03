@@ -41,8 +41,13 @@
             top: 0;
             z-index: 100;
         }
-        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.6px; color: var(--text-main); line-height: 1; text-decoration: none; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: center; margin: 0; padding: 0; white-space: nowrap; text-decoration: none; }
         .brand-name span { color: var(--gold-primary); }
+        .brand-tagline { font-size: 0.6rem; color: #E2E8F0; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.25em; line-height: 1; display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; box-sizing: border-box; padding: 0; }
+        .brand-tagline span { display: inline-block; line-height: 1; letter-spacing: 0.25em; }
+        .brand-tagline span:last-child { letter-spacing: 0; }
+        .brand-tagline .tagline-space { width: 6px; display: inline-block; letter-spacing: 0; }
 
         .checkout-wrapper {
             max-width: 960px;
@@ -175,8 +180,9 @@
 <body>
 
 <nav class="top-nav">
-    <a href="{{ url_for('home') }}" class="brand-name">
-        CINEVO <span>LUXE</span>
+    <a href="{{ url_for('home') }}" class="brand-logo">
+        <span class="brand-name">CINEVO <span>LUXE</span></span>
+        <span class="brand-tagline" aria-label="EXECUTIVE CINEMA"><span>E</span><span>X</span><span>E</span><span>C</span><span>U</span><span>T</span><span>I</span><span>V</span><span>E</span><span class="tagline-space">&nbsp;</span><span>C</span><span>I</span><span>N</span><span>E</span><span>M</span><span>A</span></span>
     </a>
     {% if showtime %}
     <a href="{{ url_for('seat_selection', showtime_id=showtime.id) }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">&larr; Change Seats</a>
@@ -299,26 +305,25 @@
 
                     </div>
 
-                    <div style="background: rgba(255,255,255,0.02); padding: clamp(14px, 3vw, 18px); border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 14px;">
-                        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center;">
-                            <div style="background: #fff; padding: 10px; border-radius: 10px; flex-shrink: 0; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                    <div style="background: rgba(255,255,255,0.02); padding: clamp(16px, 3.5vw, 24px); border-radius: 12px; border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 14px;">
+                        <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+                            <div style="background: #fff; padding: 12px; border-radius: 12px; flex-shrink: 0; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,0.5);">
                                 <!-- UPI Payment QR Generator -->
                                 <img id="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=upi%3A%2F%2Fpay%3Fpa%3Dcinevoluxe%40upi%26pn%3DCINEVO%2520LUXE%26am%3D{{ final_amount }}%26cu%3DINR%26tn%3DCINEVO%2520LUXE%2520Reservation" alt="UPI Payment QR Code" style="width: 110px; height: 110px; display: block; margin: 0 auto;">
-                                <div style="font-size: 9px; font-weight: 800; color: #111; margin-top: 4px; letter-spacing: 0.5px;">SCAN TO PAY</div>
+                                <div style="font-size: 9px; font-weight: 800; color: #111; margin-top: 6px; letter-spacing: 0.5px;">SCAN TO PAY</div>
                             </div>
-                            <div style="flex: 1; min-width: 160px;">
-                                <div style="font-size: 11px; text-transform: uppercase; color: var(--gold-primary); font-weight: 700; margin-bottom: 2px;">Payment Method: UPI</div>
-                                <div id="qr-amount-text" style="font-weight: 800; color: #fff; margin-bottom: 4px; font-size: 18px;">Total Due: ₹{{ final_amount | round | int }}</div>
-                                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px; word-break: break-all;">
-                                    UPI ID: <span style="color: #fff; font-family: monospace; font-weight: 600;">cinevoluxe@upi</span>
+                            <div style="flex: 1; min-width: 200px;">
+                                <div style="font-size: 0.75rem; text-transform: uppercase; color: #D4AF37; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px;">PAYMENT METHOD: UPI</div>
+                                <div id="qr-amount-text" style="font-weight: 700; color: #FFFFFF; margin-bottom: 14px; font-size: 1.4rem;">Total Due: <span style="color: #E5C158; font-weight: 700;">₹{{ final_amount | round | int }}</span></div>
+                                <div style="font-size: 13px; color: #A0AEC0; margin-bottom: 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px;">
+                                    <span>UPI ID:</span>
+                                    <span style="background: rgba(212, 175, 55, 0.1); border: 1px solid #D4AF37; color: #F6AD55; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-family: monospace; font-size: 13px;">cinevoluxe@upi</span>
                                 </div>
-                                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">Google Pay</span>
-                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">PhonePe</span>
-                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">Paytm</span>
-                                    <span style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: #eee;">Any UPI App</span>
-                                </div>
-                                <div style="font-size: 11px; color: #a1a1aa; font-style: italic;">
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;">
+                                    <span style="background: #1A202C; border: 1px solid #4A5568; color: #E2E8F0; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;">Google Pay</span>
+                                    <span style="background: #1A202C; border: 1px solid #4A5568; color: #E2E8F0; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;">PhonePe</span>
+                                    <span style="background: #1A202C; border: 1px solid #4A5568; color: #E2E8F0; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;">Paytm</span>
+                                    <span style="background: #1A202C; border: 1px solid #4A5568; color: #E2E8F0; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;">Any UPI App</span>
                                 </div>
                             </div>
                         </div>

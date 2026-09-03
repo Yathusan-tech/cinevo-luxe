@@ -11,7 +11,10 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar-cinevo">
-        <a href="{{ url_for('home') }}" class="navbar-brand">CINEVO<span>LUXE</span></a>
+        <a href="{{ url_for('home') }}" class="brand-logo">
+            <span class="brand-name">CINEVO <span>LUXE</span></span>
+            <span class="brand-tagline" aria-label="EXECUTIVE CINEMA"><span>E</span><span>X</span><span>E</span><span>C</span><span>U</span><span>T</span><span>I</span><span>V</span><span>E</span><span class="tagline-space">&nbsp;</span><span>C</span><span>I</span><span>N</span><span>E</span><span>M</span><span>A</span></span>
+        </a>
         <div class="nav-links">
             <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a>
             <a href="{{ url_for('movies') }}" class="{% if request.endpoint == 'movies' %}active{% endif %}">Explore Movies</a>

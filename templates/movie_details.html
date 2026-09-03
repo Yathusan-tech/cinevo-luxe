@@ -42,9 +42,13 @@
             top: 0;
             z-index: 100;
         }
-        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; text-align: left; line-height: 1; }
-        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: left; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: center; margin: 0; padding: 0; white-space: nowrap; }
         .brand-name span { color: var(--gold-primary); }
+        .brand-tagline { font-size: 0.6rem; color: #E2E8F0; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.25em; line-height: 1; display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; box-sizing: border-box; padding: 0; }
+        .brand-tagline span { display: inline-block; line-height: 1; letter-spacing: 0.25em; }
+        .brand-tagline span:last-child { letter-spacing: 0; }
+        .brand-tagline .tagline-space { width: 6px; display: inline-block; letter-spacing: 0; }
         .nav-links { display: flex; align-items: center; gap: 4px; }
         .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
@@ -283,6 +287,7 @@
     <div class="nav-left">
         <a href="{{ url_for('home') }}" class="brand-logo">
             <span class="brand-name">CINEVO <span>LUXE</span></span>
+            <span class="brand-tagline" aria-label="EXECUTIVE CINEMA"><span>E</span><span>X</span><span>E</span><span>C</span><span>U</span><span>T</span><span>I</span><span>V</span><span>E</span><span class="tagline-space">&nbsp;</span><span>C</span><span>I</span><span>N</span><span>E</span><span>M</span><span>A</span></span>
         </a>
         <div class="nav-menu">
             <a href="{{ url_for('home') }}" class="nav-item">Home</a>

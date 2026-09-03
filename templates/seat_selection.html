@@ -41,9 +41,13 @@
             top: 0;
             z-index: 100;
         }
-        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; justify-content: center; line-height: 1; }
-        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.6px; color: var(--text-main); line-height: 1; }
+        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
+        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: center; margin: 0; padding: 0; white-space: nowrap; }
         .brand-name span { color: var(--gold-primary); }
+        .brand-tagline { font-size: 0.6rem; color: #E2E8F0; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.25em; line-height: 1; display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; box-sizing: border-box; padding: 0; }
+        .brand-tagline span { display: inline-block; line-height: 1; letter-spacing: 0.25em; }
+        .brand-tagline span:last-child { letter-spacing: 0; }
+        .brand-tagline .tagline-space { width: 6px; display: inline-block; letter-spacing: 0; }
 
         .booking-wrapper {
             max-width: 1200px;
@@ -285,6 +289,7 @@
 <nav class="top-nav">
     <a href="{{ url_for('home') }}" class="brand-logo">
         <span class="brand-name">CINEVO <span>LUXE</span></span>
+        <span class="brand-tagline" aria-label="EXECUTIVE CINEMA"><span>E</span><span>X</span><span>E</span><span>C</span><span>U</span><span>T</span><span>I</span><span>V</span><span>E</span><span class="tagline-space">&nbsp;</span><span>C</span><span>I</span><span>N</span><span>E</span><span>M</span><span>A</span></span>
     </a>
     <a href="{{ url_for('movies') }}" style="color: var(--text-sub); text-decoration: none; font-size: 13px; font-weight: 600;">&larr; Back to Catalog</a>
 </nav>
