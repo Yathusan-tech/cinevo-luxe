@@ -84,10 +84,14 @@ def create_app():
         except Exception:
             pass
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-        "DATABASE_URL",
-        f"sqlite:///{db_path}"
-    )
+    db_url = os.environ.get("DATABASE_URL")
+    if db_url:
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+        app.config["SQLALCHEMY_DATABASE_URI"] = db_url
+    else:
+        clean_db_path = db_path.replace("\\", "/")
+        app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{clean_db_path}"
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -1053,11 +1057,27 @@ def is_weekday_evening(showtime):
     return False
 
 
+# Authoritative Server-Side Food Menu Pricing (Prevents Client Price Manipulation)
+AUTHORITATIVE_FOOD_MENU = {
+    "Small Popcorn": 120.0,
+    "Large Popcorn": 180.0,
+    "Jumbo Popcorn": 240.0,
+    "Classic Cheese Pizza": 299.0,
+    "Premium Veggie Pizza": 349.0,
+    "Coca-Cola": 100.0,
+    "Pepsi": 100.0,
+    "Red Bull": 160.0,
+    "Gourmet Sandwich": 220.0,
+    "French Fries": 160.0,
+}
+
+
 def calculate_checkout_pricing(showtime, selected_seats, food_dict, applied_promo, is_first_booking):
     """
     Unified checkout price calculation.
     Consistent across GET, POST, confirmation, and booking records.
     Calculation: TICKET TOTAL + FOOD TOTAL - VALID DISCOUNT = FINAL TOTAL
+    All pricing is strictly calculated from server-side authoritative rates.
     """
     if showtime and selected_seats:
         pricing = showtime.pricing_breakdown
@@ -1074,14 +1094,27 @@ def calculate_checkout_pricing(showtime, selected_seats, food_dict, applied_prom
 
     food_total = 0.0
     food_summary = []
+    sanitized_food_dict = {}
     if isinstance(food_dict, dict):
         for name, details in food_dict.items():
-            if isinstance(details, dict):
-                qty = details.get("quantity", 0)
-                price = details.get("price", 0)
-                if qty > 0:
-                    food_total += float(qty) * float(price)
+            if name in AUTHORITATIVE_FOOD_MENU:
+                authoritative_price = AUTHORITATIVE_FOOD_MENU[name]
+                qty = 0
+                if isinstance(details, dict):
+                    try:
+                        qty = int(details.get("quantity", 0))
+                    except (ValueError, TypeError):
+                        qty = 0
+                elif isinstance(details, (int, float)):
+                    qty = int(details)
+
+                if 0 < qty <= 20:
+                    food_total += float(qty) * authoritative_price
                     food_summary.append(f"{name} x{qty}")
+                    sanitized_food_dict[name] = {
+                        "price": authoritative_price,
+                        "quantity": qty
+                    }
 
     food_total = round(food_total, 2)
     food_summary_str = " | Food: " + ", ".join(food_summary) if food_summary else ""
@@ -1123,6 +1156,7 @@ def calculate_checkout_pricing(showtime, selected_seats, food_dict, applied_prom
         "ticket_total": ticket_total,
         "food_total": food_total,
         "food_summary_str": food_summary_str,
+        "sanitized_food_dict": sanitized_food_dict,
         "discount": discount,
         "applied_promo": valid_applied_promo,
         "final_amount": final_amount
@@ -1186,6 +1220,16 @@ def checkout():
             flash("Please select at least one seat to proceed.", "error")
             return redirect(url_for("seat_selection", showtime_id=showtime_id))
 
+        # Validate seat formats (must match auditorium layout A-E, 1-8)
+        valid_seats = []
+        for seat in selected_seats:
+            if re.match(r"^[A-E][1-8]$", seat):
+                valid_seats.append(seat)
+            else:
+                flash(f"Invalid seat selection '{seat}'. Please select valid seats from the auditorium layout.", "error")
+                return redirect(url_for("seat_selection", showtime_id=showtime_id))
+        selected_seats = valid_seats
+
         # Handle Promo Code application from Checkout form
         if apply_promo_code:
             session["promo_code"] = apply_promo_code
@@ -1214,7 +1258,7 @@ def checkout():
                 seats_string=seats_string,
                 seats=selected_seats,
                 food_items_raw=food_items_raw,
-                food_dict=food_dict,
+                food_dict=totals["sanitized_food_dict"],
                 ticket_amount=totals["ticket_amount"],
                 convenience_fee=totals["convenience_fee"],
                 taxes=totals["taxes"],
@@ -1251,7 +1295,7 @@ def checkout():
                 seats_string=seats_string,
                 seats=selected_seats,
                 food_items_raw=food_items_raw,
-                food_dict=food_dict,
+                food_dict=totals["sanitized_food_dict"],
                 ticket_amount=totals["ticket_amount"],
                 convenience_fee=totals["convenience_fee"],
                 taxes=totals["taxes"],
@@ -1285,7 +1329,7 @@ def checkout():
                 seats_string=seats_string,
                 seats=selected_seats,
                 food_items_raw=food_items_raw,
-                food_dict=food_dict,
+                food_dict=totals["sanitized_food_dict"],
                 ticket_amount=totals["ticket_amount"],
                 convenience_fee=totals["convenience_fee"],
                 taxes=totals["taxes"],
@@ -1320,7 +1364,7 @@ def checkout():
                 seats_string=seats_string,
                 seats=selected_seats,
                 food_items_raw=food_items_raw,
-                food_dict=food_dict,
+                food_dict=totals["sanitized_food_dict"],
                 ticket_amount=totals["ticket_amount"],
                 convenience_fee=totals["convenience_fee"],
                 taxes=totals["taxes"],
@@ -1511,6 +1555,16 @@ def checkout():
         flash("Please select your seats before proceeding to checkout.", "error")
         return redirect(url_for("seat_selection", showtime_id=showtime_id))
 
+    # Validate seat formats (must match auditorium layout A-E, 1-8)
+    valid_seats = []
+    for seat in selected_seats:
+        if re.match(r"^[A-E][1-8]$", seat):
+            valid_seats.append(seat)
+        else:
+            flash(f"Invalid seat selection '{seat}'. Please select valid seats from the auditorium layout.", "error")
+            return redirect(url_for("seat_selection", showtime_id=showtime_id))
+    selected_seats = valid_seats
+
     is_first_booking = check_first_booking_eligibility()
     applied_promo = session.get("promo_code")
 
@@ -1538,7 +1592,7 @@ def checkout():
         convenience_fee=totals["convenience_fee"],
         taxes=totals["taxes"],
         food_total=totals["food_total"],
-        food_dict=food_dict,
+        food_dict=totals["sanitized_food_dict"],
         food_summary_str=totals["food_summary_str"],
         food_items_raw=food_items_raw,
         discount=totals["discount"],

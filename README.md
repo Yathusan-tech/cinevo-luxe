@@ -618,14 +618,24 @@ CINEVO LUXE supports automated digital ticket delivery directly to the guest's *
 
 To enable live delivery, set the following environment variables in your deployment environment or `.env` file:
 
-#### 1. Email Delivery (SMTP)
+#### 1. Email Delivery (HTTPS API for Render / SMTP)
 ```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=concierge@cinevoluxe.com
-SMTP_PASSWORD=your_secure_app_password
+# Option A: HTTPS Email API (Recommended for Render — port 443, no SMTP port blocking)
+RESEND_API_KEY=re_your_resend_api_key
+# Or Brevo / Sendinblue:
+# BREVO_API_KEY=xkeysib-your_brevo_api_key
+# Or SendGrid:
+# SENDGRID_API_KEY=SG.your_sendgrid_api_key
+
+# Sender Details (Optional / Defaults provided)
 MAIL_FROM_ADDRESS=concierge@cinevoluxe.com
 MAIL_FROM_NAME=CINEVO LUXE Concierge
+
+# Option B: Standard SMTP (For local dev or unblocked servers)
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=465
+# SMTP_USER=your_email@gmail.com
+# SMTP_PASSWORD=your_gmail_app_password
 ```
 
 #### 2. WhatsApp Delivery (Meta Cloud API / Twilio)
