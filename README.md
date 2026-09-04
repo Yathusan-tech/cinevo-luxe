@@ -1,95 +1,109 @@
 # 🎬 CINEVO LUXE
 
-### Executive Cinema & Intelligent Ticket Reservation Platform
+### Premium Cinema Ticket Booking & Reservation Management Platform
 
-**CINEVO LUXE** is a full-stack cinema ticket reservation platform built with **Python, Flask, SQLAlchemy, SQLite, HTML5, CSS3, and Vanilla JavaScript**.
+**CINEVO LUXE** is a full-stack movie ticket booking platform that I designed and developed using **Python, Flask, SQLAlchemy, SQLite, HTML5, CSS3, and Vanilla JavaScript**.
 
-The project was designed to provide a premium cinema-booking experience while demonstrating practical full-stack engineering principles including **database-driven application design, authenticated staff administration, server-side validation, secure session handling, transaction-aware booking operations, responsive UI development, and cloud deployment**.
+The project was built to simulate a real-world cinema reservation platform rather than a basic CRUD application. It combines a premium cinema-style user interface with a backend designed around **booking integrity, server-side validation, authentication, database transactions, and secure application configuration**.
 
-The platform covers the complete reservation lifecycle:
-
-**Movie Discovery → Showtime Selection → Seat Selection → Checkout → Server Validation → Booking → Digital Confirmation → Reservation Lookup**
-
-It also includes a dedicated **staff administration portal** for managing cinema content and monitoring reservations.
+🌐 **Live Demo:** https://cinevo-luxe.onrender.com
 
 ---
 
-## 🌐 Live Application
+## 📌 What is CINEVO LUXE?
 
-**[Visit CINEVO LUXE](https://cinevo-luxe.onrender.com)**
+CINEVO LUXE allows customers to discover movies, explore cinemas and showtimes, select seats, complete checkout, receive a digital booking confirmation, and retrieve their reservations.
 
----
+The platform also provides a separate **staff administration portal** for managing cinema content and monitoring reservations.
 
-# 📌 Project Overview
+### Complete booking workflow
 
-CINEVO LUXE was developed to go beyond a basic movie-ticket booking interface.
+```text
+Movie Discovery
+      ↓
+Movie Details
+      ↓
+Showtime Selection
+      ↓
+Seat Selection
+      ↓
+Checkout
+      ↓
+Server-Side Validation
+      ↓
+Booking Processing
+      ↓
+Digital Confirmation
+      ↓
+Reservation Lookup
+```
 
-The application combines a **luxury executive cinema design** with a structured backend capable of handling real booking workflows.
-
-The system separates customer-facing functionality from staff administration while maintaining a shared backend and database architecture.
-
-A major engineering principle throughout the project is:
+The central engineering principle behind the booking system is:
 
 > **The browser improves the user experience, but the server makes the final decision.**
 
-Critical information such as seat availability, duplicate seats, showtime validity, and booking prices is validated on the server rather than being trusted from client-side values.
-
-This approach helps protect the integrity of the booking workflow against manipulated browser requests and conflicting reservations.
+Critical values such as seat availability and booking prices are therefore validated by the backend instead of being blindly trusted from the browser.
 
 ---
 
-# 🎯 Project Objectives
+# 🎯 Why I Built This Project
 
-The primary objectives of CINEVO LUXE were to:
+I wanted to build more than a movie-ticket UI.
 
-* Build a complete full-stack cinema reservation workflow.
-* Create a premium and responsive cinema user interface.
-* Implement database-driven movie, cinema, showtime, and booking management.
-* Provide secure staff authentication and protected administration routes.
-* Ensure booking prices are calculated and validated server-side.
-* Prevent duplicate and conflicting seat reservations.
-* Protect sensitive application configuration using environment variables.
-* Deploy the application as a live cloud-hosted service.
-* Apply practical web application security principles throughout the system.
+The goal was to create a complete application that demonstrates how a real-world web product connects:
+
+* Frontend user experience
+* Backend application logic
+* Relational database design
+* Authentication and authorization
+* Booking workflows
+* Server-side validation
+* Transaction handling
+* Application security
+* Responsive UI
+* Cloud deployment
+* Version-controlled development
+
+This project gave me practical experience in designing and connecting these components into one working application.
 
 ---
 
-# ✨ Core Features
+# 🚀 What I Implemented
 
 ## 🎬 1. Movie Discovery
 
-Customers can explore available movies through a structured movie catalog.
+I implemented a movie discovery experience where users can:
 
-Features include:
+* Browse movies
+* Search movies
+* Filter by genre
+* Filter by category
+* View movie details
+* View featured movies
+* Access trailer information
+* Explore cinema and showtime information
 
-* Movie browsing
-* Search functionality
-* Genre filtering
-* Category filtering
-* Movie detail pages
-* Featured movie presentation
-* Trailer integration
-* Cinema and showtime information
-
-The interface is designed to provide a commercial-style movie discovery experience rather than a simple database listing.
+The interface was designed around a **premium/luxury cinema aesthetic** rather than a simple database listing.
 
 ---
 
 ## ⚡ 2. Quick Reservation
 
-The quick reservation workflow allows customers to begin booking directly by selecting:
+Users can quickly start a reservation by selecting:
 
-**Movie → Date → Cinema → Showtime**
+```text
+Movie → Date → Cinema → Showtime
+```
 
-This reduces unnecessary navigation and provides a streamlined path from movie discovery to ticket reservation.
+This reduces unnecessary navigation and creates a direct path from movie discovery to ticket booking.
 
 ---
 
 ## 📅 3. Dynamic Showtime System
 
-Showtimes are generated from application data rather than relying entirely on static pages.
+The application uses database-driven showtime information.
 
-Customers can view:
+Users can view:
 
 * Screening dates
 * Screening times
@@ -98,39 +112,39 @@ Customers can view:
 * Ticket prices
 * Available booking options
 
-The application supports premium cinema experiences such as:
+The application also supports premium cinema experiences such as:
 
 * IMAX
 * Dolby Atmos
-* Recliner / premium seating
+* Premium/Recliner seating
 
-The date interface is dynamically generated rather than relying on permanently hardcoded booking dates.
+The booking-date interface is dynamically generated instead of depending entirely on permanently hardcoded dates.
 
 ---
 
-## 🪑 4. Interactive Seat Selection
+# 🪑 4. Interactive Seat Selection
 
-Customers can visually select seats for a specific showtime.
+I implemented an interactive seat-selection workflow for individual showtimes.
 
-The interface provides:
+Customers can:
 
-* Available seat visualization
-* Occupied seat identification
-* Multiple-seat selection
-* Selection summary
-* Real-time booking amount display
+* View available seats
+* Identify occupied seats
+* Select multiple seats
+* Review their selection
+* See the booking amount update during selection
 
-However, the client interface is not treated as the source of truth.
+However, the browser is **not treated as the authority for seat availability**.
 
-Before a reservation is committed, the backend validates the submitted seats again.
+The backend validates the submitted seats again before creating a reservation.
 
 ---
 
 # 🛡️ 5. Server-Authoritative Booking
 
-One of the key engineering decisions in CINEVO LUXE is keeping the backend authoritative over critical booking information.
+One of the most important engineering decisions in CINEVO LUXE is that the **server remains authoritative over critical booking information**.
 
-The server validates:
+The backend validates:
 
 * Seat identifiers
 * Seat format
@@ -141,49 +155,63 @@ The server validates:
 * Customer booking information
 * Final booking amount
 
-For example, a customer cannot simply modify a browser-side price field and force the server to accept the manipulated amount.
+For example, a user cannot simply modify a browser-side price and expect the server to accept that manipulated value.
 
-The server calculates the authoritative booking total using trusted showtime and seat information.
+The backend calculates the authoritative booking total from trusted showtime and seat information.
 
-This follows an important application-security principle:
+### Design principle
 
-> **Never trust security-critical values simply because they came from the client.**
+```text
+Client
+  ↓
+Request
+  ↓
+Server Validation
+  ↓
+Database Checks
+  ↓
+Authoritative Calculation
+  ↓
+Booking
+```
+
+This was intentionally designed to avoid relying on client-side values for security-critical decisions.
 
 ---
 
-# 🔒 6. Anti-Double-Booking Protection
+# 🔒 6. Double-Booking Protection
 
-Seat reservation integrity is handled through backend availability checks and database transaction handling.
+I designed the booking workflow to reduce conflicting seat reservations.
 
 During booking processing, the application:
 
 1. Validates the requested showtime.
-2. Validates the submitted seat identifiers.
+2. Validates seat identifiers.
 3. Removes duplicate selections.
-4. Checks whether requested seats are already occupied.
+4. Checks existing seat occupancy.
 5. Calculates the authoritative booking price.
-6. Performs the reservation within database transaction handling.
-7. Rejects conflicting reservations instead of silently overwriting existing booking information.
+6. Performs reservation operations with database transaction handling.
+7. Rejects conflicting reservations.
 
-This design helps reduce race-condition and double-booking scenarios.
+This approach improves reservation consistency and helps reduce double-booking scenarios.
 
 ---
 
-# 💳 7. Secure Checkout
+# 💳 7. Checkout System
 
-The checkout process collects the required customer information and displays the reservation summary.
+The checkout process collects customer information and presents a complete reservation summary.
 
-The browser may submit booking information, but the final amount is recalculated and validated by the backend.
+The browser submits the required information, but the backend recalculates and validates the final booking amount.
 
-This prevents users from relying on manipulated client-side pricing values.
+This prevents client-side price manipulation from becoming the authoritative booking price.
 
 ---
 
 # 🎫 8. Digital Booking Confirmation
 
-After a successful reservation, the application generates a dedicated digital confirmation page.
+After a successful reservation, the customer receives a dedicated digital confirmation page.
 
-The confirmation can include:
+The confirmation can contain:
 
 * Unique booking reference
 * Movie
@@ -195,32 +223,30 @@ The confirmation can include:
 * Total amount
 * QR admission representation
 
-The confirmation interface follows a digital ticket / boarding-pass inspired design.
-
-The page also provides a print-friendly presentation for reservation records.
+The confirmation page uses a digital-ticket/boarding-pass inspired presentation and includes a print-friendly experience.
 
 ---
 
 # 🔎 9. Reservation Lookup
 
-Customers can retrieve reservation information through the application's secure booking lookup workflow.
+I implemented a reservation lookup workflow rather than exposing an unrestricted list of customer bookings.
 
-The lookup process is designed to avoid exposing an unrestricted list of customer bookings.
+Customers can retrieve reservation information using booking information together with customer verification details.
 
-Reservation retrieval uses booking information and customer verification details rather than publicly displaying all reservations.
+This provides a more privacy-conscious approach to reservation retrieval.
 
 ---
 
-# 👨‍💼 Staff Administration Portal
+# 👨‍💼 10. Staff Administration Portal
 
-CINEVO LUXE includes a separate authenticated administration environment for cinema operations.
+CINEVO LUXE contains a separate authenticated staff environment.
 
-### Staff functionality includes:
+Staff functionality includes:
 
-* Staff authentication
-* Protected staff dashboard
+* Staff login
+* Protected dashboard
 * Movie management
-* Adding movies
+* Movie creation
 * Showtime generation
 * Cinema management
 * Reservation monitoring
@@ -228,21 +254,19 @@ CINEVO LUXE includes a separate authenticated administration environment for cin
 * Operational statistics
 * Secure logout
 
-The staff portal is separated from the customer-facing booking experience and protected by authenticated sessions.
+The staff portal is separated from the customer-facing booking experience and protected through authenticated sessions.
 
 ---
 
-# 🔐 Security Architecture
+# 🔐 Security Engineering
 
-Security was considered as part of the application architecture rather than being added only at the deployment stage.
+Security was considered throughout the application rather than being treated only as a deployment concern.
 
 ## Authentication
 
 Staff authentication uses password hashing and verification through **Werkzeug Security**.
 
-Plaintext application passwords are not intended to be stored in the repository.
-
----
+Passwords are not intended to be stored as plaintext in the source repository.
 
 ## Session Security
 
@@ -254,26 +278,22 @@ The application uses security-focused session configuration including:
 * Protected staff routes
 * Session invalidation during logout
 
----
-
 ## CSRF Protection
 
 State-changing POST requests are protected using CSRF validation.
 
-Requests containing missing or invalid CSRF tokens are rejected by the application.
+Requests with missing or invalid CSRF tokens are rejected.
 
-This helps protect sensitive operations such as:
+This protects operations such as:
 
-* Staff authentication
+* Authentication
 * Booking processing
 * Staff management operations
 * Other state-changing requests
 
----
-
 ## Security Headers
 
-The deployed application uses security-related HTTP response headers including:
+The application uses security-related response headers including:
 
 * `X-Content-Type-Options`
 * `X-Frame-Options`
@@ -281,24 +301,20 @@ The deployed application uses security-related HTTP response headers including:
 * `Permissions-Policy`
 * `Strict-Transport-Security`
 
-Sensitive booking and staff-related pages also use restrictive cache-control headers to reduce the possibility of sensitive information remaining in browser caches.
-
----
+Sensitive booking and staff pages also use restrictive cache-control behaviour.
 
 ## Environment-Based Secrets
 
-Sensitive configuration is supplied through environment variables rather than being embedded directly in application source code.
+Sensitive configuration is supplied through environment variables rather than being embedded in application source code.
 
-Examples include:
+Example:
 
-```text
+```env
 CINEVO_SECRET_KEY=<your-secret-value>
 STAFF_ADMIN_PASS=<your-secure-password>
 ```
 
-Production secrets are intentionally excluded from the repository.
-
-> **No real passwords, API keys, secret keys, authentication tokens, or `.env` files should be committed to source control.**
+Real credentials, API keys, authentication tokens, and `.env` files are excluded from source control.
 
 ---
 
@@ -316,67 +332,70 @@ CINEVO LUXE follows a Flask-based server-rendered architecture.
               └───────────────┬───────────────┘
                               │
                               ▼
-                     Flask Application
+                       Flask Application
                               │
-          ┌───────────────────┼───────────────────┐
-          │                   │                   │
-        Routes          Authentication       Booking Logic
-          │                   │                   │
-          └───────────────────┼───────────────────┘
+              ┌───────────────┼───────────────┐
+              │               │               │
+            Routes       Authentication   Booking Logic
+              │               │               │
+              └───────────────┼───────────────┘
                               │
                               ▼
                        SQLAlchemy ORM
                               │
                               ▼
-                           SQLite
+                            SQLite
                               │
-          ┌────────────┬────────────┬────────────┐
-          │            │            │            │
-        Movies      Cinemas     Showtimes     Bookings
-                                                   
+             ┌────────────────┼────────────────┐
+             │                │                │
+          Movies          Showtimes         Bookings
+             │                │                │
+             └────────────────┼────────────────┘
                               │
                               ▼
-                            Staff
+                           Staff
 ```
 
-The architecture separates major responsibilities while keeping the customer and staff workflows connected through the same backend and database layer.
+The architecture keeps customer-facing and staff-facing workflows separated while allowing both to use the same backend and database layer.
 
 ---
 
-# 🧱 Data Model
+# 🗄️ Database Design
 
-The application uses database-backed entities for the primary cinema workflow.
+The application uses **SQLAlchemy ORM with SQLite**.
 
-Core models include:
+### Core models
 
-* **Movie** — movie information and catalog data.
-* **Cinema** — cinema and screening-location information.
-* **Showtime** — movie screening schedules and pricing.
-* **Booking** — customer reservations and booking information.
-* **StaffUser** — authenticated staff accounts.
+| Model       | Responsibility                                |
+| ----------- | --------------------------------------------- |
+| `Movie`     | Movie catalogue information                   |
+| `Cinema`    | Cinema and screening-location information     |
+| `Showtime`  | Screening schedules and ticket pricing        |
+| `Booking`   | Customer reservations and booking information |
+| `StaffUser` | Authenticated staff accounts                  |
 
-SQLAlchemy provides the ORM layer between the Flask application and SQLite database.
+The database provides persistent storage for the core cinema reservation workflow.
 
 ---
 
 # 🛠️ Technology Stack
 
-| Area                 | Technology         |
-| -------------------- | ------------------ |
-| Programming Language | Python             |
-| Backend Framework    | Flask              |
-| ORM                  | Flask-SQLAlchemy   |
-| Database             | SQLite             |
-| Authentication       | Werkzeug Security  |
-| Frontend             | HTML5              |
-| Styling              | CSS3               |
-| Client-side Logic    | Vanilla JavaScript |
-| Configuration        | python-dotenv      |
-| Version Control      | Git                |
-| Repository           | GitHub             |
-| Deployment           | Render             |
+| Layer             | Technology         |
+| ----------------- | ------------------ |
+| Language          | Python             |
+| Backend           | Flask              |
+| ORM               | Flask-SQLAlchemy   |
+| Database          | SQLite             |
+| Authentication    | Werkzeug Security  |
+| Frontend          | HTML5              |
+| Styling           | CSS3               |
+| Client-side Logic | Vanilla JavaScript |
+| Configuration     | python-dotenv      |
+| Version Control   | Git                |
+| Repository        | GitHub             |
+| Deployment        | Render             |
 
-The frontend intentionally uses **Vanilla JavaScript** rather than a large frontend framework, keeping the application lightweight and maintaining a straightforward architecture.
+I intentionally used **Vanilla JavaScript** instead of a large frontend framework to keep the application lightweight and maintain a straightforward architecture.
 
 ---
 
@@ -423,17 +442,17 @@ movie-ticket-web/
         └── login.html
 ```
 
-> The repository structure may evolve as the application continues to be developed.
+> The structure may evolve as the project continues to be developed.
 
 ---
 
 # 📧 Digital Ticket Delivery
 
-CINEVO LUXE supports optional automated digital ticket delivery through **Email and WhatsApp**.
+CINEVO LUXE supports optional automated digital ticket delivery through email and WhatsApp integrations.
 
-Notification integrations are configured through environment variables rather than hardcoded credentials.
+Configuration is handled through environment variables rather than hardcoded credentials.
 
-Supported configuration can include:
+Possible integrations include:
 
 ### Email
 
@@ -456,15 +475,15 @@ WHATSAPP_API_TOKEN=your_meta_access_token
 WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
 ```
 
-These are **example placeholders only**.
+These values are **placeholders only**.
 
-If notification credentials are not configured, the application can still provide the on-screen digital booking confirmation and QR representation without blocking the booking workflow.
+If notification credentials are not configured, the application can still provide the on-screen digital booking confirmation and QR representation.
 
 ---
 
-# 🧪 Testing & Security Verification
+# 🧪 Testing & Validation
 
-The application has been tested across both customer and staff workflows.
+The application has been tested across customer and staff workflows.
 
 ## Customer Workflow
 
@@ -490,9 +509,9 @@ Confirmation
 Reservation Lookup
 ```
 
-## Booking Integrity Tests
+## Booking Integrity Scenarios
 
-Testing includes scenarios such as:
+Testing includes:
 
 * Valid seat selection
 * Multiple-seat selection
@@ -503,40 +522,38 @@ Testing includes scenarios such as:
 * Missing CSRF tokens
 * Invalid booking information
 * Conflicting reservation attempts
-* Unique booking reference generation
+* Unique booking-reference generation
 
-## Staff Security Tests
+## Staff Security Scenarios
 
 The staff portal is tested to verify that:
 
-* Unauthenticated users cannot access protected staff pages.
-* Valid authentication permits authorized access.
-* Invalid credentials are rejected.
-* Missing CSRF tokens are rejected for protected POST requests.
-* Logout invalidates the authenticated session.
-* Protected pages remain inaccessible after logout.
-* Staff functionality is separated from the customer interface.
+* Unauthenticated users cannot access protected pages
+* Valid authentication permits authorized access
+* Invalid credentials are rejected
+* Missing CSRF tokens are rejected for protected POST requests
+* Logout invalidates the authenticated session
+* Protected pages remain inaccessible after logout
+* Staff functionality remains separated from the customer interface
 
 ---
 
-# 🚀 Getting Started
+# 🚀 Running Locally
 
 ## Prerequisites
-
-Install:
 
 * Python 3.10+
 * pip
 * Git
 
-## Clone the Repository
+## 1. Clone the repository
 
 ```bash
 git clone https://github.com/Yathusan-tech/cinevo-luxe.git
 cd cinevo-luxe
 ```
 
-## Create a Virtual Environment
+## 2. Create a virtual environment
 
 ### Windows
 
@@ -552,32 +569,30 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-## Install Dependencies
+## 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Configure Environment Variables
+## 4. Configure environment variables
 
 Create a local `.env` file based on `.env.example`.
-
-Example:
 
 ```env
 CINEVO_SECRET_KEY=<your-secret-value>
 STAFF_ADMIN_PASS=<your-secure-password>
 ```
 
-Never commit the real `.env` file or real credentials.
+**Never commit the real `.env` file or production credentials.**
 
-## Run the Application
+## 5. Start the application
 
 ```bash
 python app.py
 ```
 
-Then open:
+Open:
 
 ```text
 http://127.0.0.1:5000
@@ -587,55 +602,70 @@ http://127.0.0.1:5000
 
 # 🌐 Deployment
 
-CINEVO LUXE is deployed as a live web application using **Render**.
+The application is deployed using **Render**.
 
-### Production Environment
+### Production application
 
-```text
 https://cinevo-luxe.onrender.com
-```
 
-The project uses Git and GitHub for version control and source management, with the deployed application connected to the repository.
-
-Production configuration and secrets are maintained through environment variables rather than source-controlled files.
+The project uses Git and GitHub for source control, while production configuration and sensitive values are maintained through environment variables.
 
 ---
 
-# 💡 Engineering Highlights
-
-CINEVO LUXE demonstrates practical experience across several areas of full-stack development.
+# 💡 Key Engineering Highlights
 
 ### Full-Stack Development
 
-Designed and implemented a complete application connecting frontend interfaces, backend routes, database operations, authentication, and deployment.
+Designed and connected a complete frontend, backend, database, authentication, booking workflow, and deployment environment.
 
 ### Backend Engineering
 
-Built Flask routes and application logic for movies, cinemas, showtimes, bookings, checkout, confirmation, reservation lookup, and staff administration.
+Implemented Flask routes and application logic covering:
 
-### Database Integration
+```text
+Movies
+Cinemas
+Showtimes
+Seat Selection
+Checkout
+Bookings
+Confirmation
+Reservation Lookup
+Staff Administration
+```
 
-Implemented a relational database architecture using SQLAlchemy and SQLite for persistent application data.
+### Booking Integrity
 
-### Secure Booking Architecture
+Designed the booking workflow so that critical information is validated on the server instead of relying on browser-controlled values.
 
-Designed the booking process so critical values such as seat availability and final pricing are validated server-side.
+### Database Engineering
+
+Used SQLAlchemy ORM and SQLite to implement persistent database-backed cinema and reservation functionality.
 
 ### Authentication & Authorization
 
-Implemented protected staff routes, password hashing, authenticated sessions, CSRF protection, and secure logout behavior.
+Implemented protected staff routes, password hashing, authenticated sessions, CSRF protection, and secure logout behaviour.
 
 ### Transaction-Aware Reservations
 
-Applied database transaction handling and seat-availability checks to improve reservation consistency and reduce conflicting bookings.
-
-### Responsive UI Engineering
-
-Developed a premium responsive cinema interface using HTML, CSS, and Vanilla JavaScript.
+Used database transaction handling and seat availability checks to improve reservation consistency.
 
 ### Security Engineering
 
-Applied practical protections including environment-based secrets, security headers, secure cookies, CSRF validation, controlled error handling, sensitive-page cache protection, and server-side validation.
+Applied practical security controls including:
+
+* Environment-based secrets
+* CSRF validation
+* Secure cookies
+* Security headers
+* Server-side validation
+* Controlled error handling
+* Sensitive-page cache protection
+* Authentication and authorization controls
+
+### Responsive UI Engineering
+
+Created a premium cinema interface using HTML, CSS, and Vanilla JavaScript with responsive layouts and interactive booking components.
 
 ### Cloud Deployment
 
@@ -643,21 +673,21 @@ Configured the application for production deployment using Render and environmen
 
 ### Version-Controlled Development
 
-Maintained the project using Git and GitHub, allowing application changes to be tracked, reviewed, and deployed systematically.
+Maintained the application with Git and GitHub, allowing development changes to be tracked and deployed systematically.
 
 ---
 
 # 📸 Screenshots
 
-Recommended screenshots for demonstrating the project include:
+Recommended screenshots for the project portfolio:
 
 ### Customer Experience
 
 * Homepage
-* Movie catalog
+* Movie catalogue
 * Movie details
 * Showtime selection
-* Interactive seat selection
+* Seat selection
 * Checkout
 * Booking confirmation
 * Reservation lookup
@@ -670,29 +700,45 @@ Recommended screenshots for demonstrating the project include:
 * Showtime management
 * Reservation management
 
-Screenshots provide recruiters and technical reviewers with an immediate understanding of the application's interface and functionality.
+Screenshots demonstrate both the visual design and the functional depth of the application.
 
 ---
 
 # 📊 Project Status
 
-### 🟢 Active Development / Live Demonstration
+### 🟢 Live & Actively Developed
 
 CINEVO LUXE currently provides a complete cinema reservation workflow together with a protected staff administration environment.
 
-The project demonstrates practical implementation across:
+The project demonstrates practical experience across:
 
-**Frontend Development · Backend Development · Database Integration · Authentication · Booking Systems · Application Security · Responsive UI · Git · GitHub · Cloud Deployment**
+**Frontend Development · Backend Development · Database Integration · Authentication · Booking Systems · Server-Side Validation · Application Security · Responsive UI · Git · GitHub · Cloud Deployment**
 
 ---
 
-# 🎬 Project
+# 🎓 What This Project Demonstrates
 
-**CINEVO LUXE** demonstrates the development of a production-oriented full-stack web application combining premium user experience with reliable backend functionality.
+CINEVO LUXE demonstrates my ability to work across the complete lifecycle of a web application:
 
-The project focuses on practical implementation of:
+```text
+                    CINEVO LUXE
+                         │
+       ┌─────────────────┼─────────────────┐
+       │                 │                 │
+   Frontend           Backend           Database
+       │                 │                 │
+       └─────────────────┼─────────────────┘
+                         │
+                  Security & Auth
+                         │
+                  Booking Integrity
+                         │
+                    Deployment
+                         │
+                    Git / GitHub
+```
 
-**Web Application Architecture · Database-Driven Workflows · Authentication · Booking Integrity · Server-Side Validation · Application Security · Responsive UI · Version Control · Cloud Deployment**
+Rather than focusing only on the visual interface, I designed the application around the engineering concerns that appear in real-world systems: **validation, data integrity, authentication, authorization, secure configuration, reservation consistency, and maintainable application structure**.
 
 ---
 
@@ -704,7 +750,7 @@ This project is intended for **educational, portfolio, and demonstration purpose
 
 # 🔐 Security Notice
 
-**Never commit sensitive information to this repository.**
+Never commit sensitive information to this repository.
 
 This includes:
 
@@ -716,6 +762,17 @@ This includes:
 * `.env` files
 * Private deployment configuration
 
-Use environment variables and secure deployment configuration for sensitive values.
+Sensitive configuration should always be supplied through secure environment variables or deployment configuration.
 
-**Security is treated as an application requirement, not as an afterthought.**
+> **Security is treated as an application requirement, not an afterthought.**
+
+---
+
+## 👨‍💻 Project
+
+**CINEVO LUXE**
+Premium Cinema Ticket Booking & Reservation Management Platform
+
+Built with **Python · Flask · SQLAlchemy · SQLite · HTML · CSS · JavaScript**
+
+🌐 **Live Demo:** https://cinevo-luxe.onrender.com
