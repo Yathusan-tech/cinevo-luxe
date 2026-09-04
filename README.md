@@ -666,9 +666,8 @@ The project demonstrates practical experience across:
 
 ---
 
-# 👨‍💻 Author
+# 👨💻 Project
 
-### Yathusan
 
 **CINEVO LUXE** was developed as a full-stack software engineering project with a focus on combining premium user experience with reliable backend functionality.
 
