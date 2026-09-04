@@ -112,6 +112,20 @@ def create_app():
         csrf_token=get_csrf_token
     )
 
+    @app.context_processor
+    def inject_nav_data():
+        try:
+            active_movies = Movie.query.filter_by(status="Now Showing").all()
+            if not active_movies:
+                active_movies = Movie.query.all()
+            active_cinemas = Cinema.query.filter_by(status="Active").all()
+            if not active_cinemas:
+                active_cinemas = Cinema.query.all()
+        except Exception:
+            active_movies = []
+            active_cinemas = []
+        return dict(nav_movies=active_movies, nav_cinemas=active_cinemas)
+
     # CSRF Protection Middleware for LIVE POST Forms
     @app.before_request
     def csrf_protect():

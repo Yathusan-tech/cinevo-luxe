@@ -29,31 +29,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-        .top-nav {
-            background: rgba(7, 9, 14, 0.92);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-container);
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 clamp(16px, 4vw, 54px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .brand-logo { text-decoration: none; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: max-content; line-height: 1; transition: opacity 0.2s; padding: 0; margin: 0; flex-shrink: 0; }
-        .brand-name { font-size: 19px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-main); line-height: 1; display: block; text-align: center; margin: 0; padding: 0; white-space: nowrap; }
-        .brand-name span { color: var(--gold-primary); }
-        .brand-tagline { font-size: 0.6rem; color: #E2E8F0; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.25em; line-height: 1; display: flex; justify-content: center; align-items: center; text-align: center; width: 100%; box-sizing: border-box; padding: 0; }
-        .brand-tagline span { display: inline-block; line-height: 1; letter-spacing: 0.25em; }
-        .brand-tagline span:last-child { letter-spacing: 0; }
-        .brand-tagline .tagline-space { width: 6px; display: inline-block; letter-spacing: 0; }
-        .nav-links { display: flex; align-items: center; gap: 4px; }
-        .nav-item { text-decoration: none; color: var(--text-sub); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-main); }
-        .nav-item.active { color: var(--gold-light); background: rgba(229, 193, 88, 0.08); }
-
         /* Hero Backdrop */
         .movie-backdrop {
             position: relative;
@@ -82,6 +57,7 @@
         }
         .movie-poster-card {
             width: 220px;
+            max-width: 220px;
             height: 320px;
             border-radius: 12px;
             overflow: hidden;
@@ -90,7 +66,13 @@
             flex-shrink: 0;
             background: #000;
         }
-        .movie-poster-card img { width: 100%; height: 100%; object-fit: cover; }
+        .movie-poster-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
+        }
 
         .movie-info-header { flex: 1; }
         .meta-tag {
@@ -247,7 +229,7 @@
             .nav-menu { display: none; }
             .movie-backdrop { padding: 30px 24px; min-height: auto; }
             .backdrop-content { flex-direction: column; align-items: center; text-align: center; gap: 24px; }
-            .movie-poster-card { width: clamp(140px, 32vw, 180px); aspect-ratio: 2 / 3; height: auto; }
+            .movie-poster-card { width: 170px !important; max-width: 170px !important; height: 255px !important; aspect-ratio: 2 / 3 !important; align-self: center !important; }
             .movie-info-header { text-align: center; }
             .movie-title { font-size: clamp(24px, 4.5vw, 32px); }
             .movie-synopsis { margin-left: auto; margin-right: auto; }
@@ -261,7 +243,7 @@
             .top-nav { padding: 0 16px; height: 64px; }
             .nav-right > a.btn-gold { display: none; }
             .movie-backdrop { padding: 24px 16px; }
-            .movie-poster-card { width: 140px; }
+            .movie-poster-card { width: 150px !important; max-width: 150px !important; height: 225px !important; aspect-ratio: 2 / 3 !important; }
             .movie-title { font-size: 22px; }
             .meta-tag { padding: 3px 8px; font-size: 10px; margin-bottom: 6px; }
             .details-container { padding: 24px 16px; }
@@ -273,7 +255,7 @@
             .top-nav { padding: 0 10px; height: 60px; }
             .brand-name { font-size: 17px; letter-spacing: 1px; }
             .movie-backdrop { padding: 18px 12px; }
-            .movie-poster-card { width: 125px; }
+            .movie-poster-card { width: 130px !important; max-width: 130px !important; height: 195px !important; aspect-ratio: 2 / 3 !important; }
             .movie-title { font-size: 20px; }
             .details-container { padding: 18px 12px; }
             .time-pill { padding: 6px 10px; }
@@ -297,8 +279,37 @@
             <a href="{{ url_for('offers') }}" class="nav-item">Offers</a>
         </div>
     </div>
-    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
-        <a href="{{ url_for('manage_booking') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">Manage Booking</a>
+    <div class="nav-right">
+        <!-- Search -->
+        <div class="search-container">
+            <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                    type="text"
+                    id="movieSearch"
+                    placeholder="Search movies, cinemas..."
+                    oninput="handleSearchInput()"
+                    onfocus="handleSearchInput()"
+                >
+            </div>
+            <div class="search-dropdown" id="searchDropdown"></div>
+        </div>
+
+        <!-- City -->
+        <button id="city-btn" class="city-btn" onclick="openModal('cityModal')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            </svg>
+            <span id="current-city">Chennai</span>
+            ▾
+        </button>
+
+        <!-- Manage Booking -->
+        <a href="{{ url_for('manage_booking') }}" class="btn-gold nav-manage-btn">Manage Booking</a>
+
         <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
     </div>
 </nav>
@@ -402,6 +413,33 @@
     </div>
 </footer>
 
+<!-- Location Modal -->
+<div class="modal-overlay" id="cityModal" style="display: none;">
+    <div class="modal-drawer">
+        <button class="close-modal" onclick="closeModal('cityModal')">✕</button>
+        <div class="drawer-title">Select Location</div>
+        <input type="text" class="city-search" id="citySearchInput" placeholder="Search location..." onkeyup="filterCities()">
+        <div class="city-grid" id="cityGrid">
+            <div class="city-card" onclick="selectCity('Mumbai')">
+                <img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=300&auto=format&fit=crop" alt="Mumbai">
+                <span>Mumbai</span>
+            </div>
+            <div class="city-card" onclick="selectCity('Delhi-NCR')">
+                <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=300&auto=format&fit=crop" alt="Delhi">
+                <span>Delhi-NCR</span>
+            </div>
+            <div class="city-card" onclick="selectCity('Bengaluru')">
+                <img src="https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=300&auto=format&fit=crop" alt="Bengaluru">
+                <span>Bengaluru</span>
+            </div>
+            <div class="city-card" onclick="selectCity('Chennai')">
+                <img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=300&auto=format&fit=crop" alt="Chennai">
+                <span>Chennai</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Trailer Modal -->
 <div class="modal-overlay" id="trailerModal">
     <div class="trailer-modal-card">
@@ -413,6 +451,140 @@
 </div>
 
 <script>
+    /* ============================================================
+       SEARCH & NAVIGATION DATA
+       ============================================================ */
+    const availableMovies = [
+        {% for m in (nav_movies if nav_movies is defined else [movie]) %}
+            {
+                name: {{ m.name | tojson }},
+                url: "{{ url_for('movie_details', movie_id=m.id) }}",
+                type: "Movie"
+            },
+        {% endfor %}
+    ];
+
+    const availableCinemas = [
+        {% if nav_cinemas is defined and nav_cinemas %}
+            {% for c in nav_cinemas %}
+                {
+                    name: {{ c.name | tojson }},
+                    url: "{{ url_for('showtimings') }}",
+                    type: "Cinema"
+                },
+            {% endfor %}
+        {% else %}
+            { name: "Cinevo Pallas Grand", url: "{{ url_for('showtimings') }}", type: "Cinema" },
+            { name: "Cinevo IMAX Signature", url: "{{ url_for('showtimings') }}", type: "Cinema" },
+            { name: "Cinevo Royal Suite", url: "{{ url_for('showtimings') }}", type: "Cinema" },
+            { name: "Chennai Cinemas Hub", url: "{{ url_for('showtimings') }}", type: "Location" }
+        {% endif %}
+    ];
+
+    function handleSearchInput() {
+        const input = document.getElementById('movieSearch');
+        if (!input) return;
+        const query = input.value.toLowerCase().trim();
+        const dropdown = document.getElementById('searchDropdown');
+        if (!dropdown) return;
+
+        if (query.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+        }
+
+        const matches = [
+            ...availableMovies.filter(m => m.name.toLowerCase().includes(query)),
+            ...availableCinemas.filter(c => c.name.toLowerCase().includes(query))
+        ];
+
+        if (matches.length > 0) {
+            dropdown.innerHTML = `
+                <div class="search-dropdown-header">Quick Suggestions</div>
+                ${matches.map(item => `
+                    <a href="${item.url}" class="search-dropdown-item">
+                        <span>${item.name}</span>
+                        <span class="item-type">${item.type}</span>
+                    </a>
+                `).join('')}
+            `;
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.innerHTML = `
+                <div class="search-dropdown-item" style="color: var(--text-sub); cursor: default; justify-content: center; padding: 16px;">
+                    <span>No matches found</span>
+                </div>
+            `;
+            dropdown.style.display = 'block';
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        const container = document.querySelector('.search-container');
+        if (container && !container.contains(e.target)) {
+            const dropdown = document.getElementById('searchDropdown');
+            if (dropdown) dropdown.style.display = 'none';
+        }
+    });
+
+    document.getElementById('movieSearch')?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const query = this.value.trim();
+            if (query) {
+                window.location.href = "{{ url_for('movies') }}?q=" + encodeURIComponent(query);
+            }
+        }
+    });
+
+    /* ============================================================
+       MODAL HANDLING
+       ============================================================ */
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+
+    function selectCity(cityName) {
+        const citySpan = document.getElementById('current-city');
+        if (citySpan) citySpan.innerText = cityName;
+        try { localStorage.setItem('cinevo_selected_city', cityName); } catch(e) {}
+        closeModal('cityModal');
+    }
+
+    function filterCities() {
+        const input = document.getElementById('citySearchInput');
+        if (!input) return;
+        const query = input.value.toLowerCase();
+        const cards = document.querySelectorAll('#cityGrid .city-card');
+        cards.forEach(card => {
+            const name = card.querySelector('span')?.innerText.toLowerCase() || '';
+            card.style.display = name.includes(query) ? 'block' : 'none';
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            const savedCity = localStorage.getItem('cinevo_selected_city');
+            if (savedCity && document.getElementById('current-city')) {
+                document.getElementById('current-city').innerText = savedCity;
+            }
+        } catch(e) {}
+    });
+
+    /* ============================================================
+       TRAILER MODAL
+       ============================================================ */
     function convertToEmbedUrl(url) {
         try {
             const parsed = new URL(url);
@@ -481,9 +653,26 @@
     }
 
     window.addEventListener('click', function(event) {
-        const modal = document.getElementById('trailerModal');
-        if (event.target === modal) {
-            closeTrailer();
+        if (event.target.classList.contains('modal-overlay')) {
+            if (event.target.id === 'trailerModal') {
+                closeTrailer();
+            } else {
+                closeModal(event.target.id);
+            }
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                if (modal.style.display === 'flex') {
+                    if (modal.id === 'trailerModal') {
+                        closeTrailer();
+                    } else {
+                        closeModal(modal.id);
+                    }
+                }
+            });
         }
     });
 

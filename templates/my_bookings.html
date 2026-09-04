@@ -218,8 +218,37 @@
             <a href="{{ url_for('offers') }}" class="nav-item">Offers</a>
         </div>
     </div>
-    <div class="nav-right" style="display: flex; align-items: center; gap: 12px;">
-        <a href="{{ url_for('manage_booking') }}" class="btn-gold" style="padding: 8px 16px; font-size: 12px;">Manage Booking</a>
+    <div class="nav-right">
+        <!-- Search -->
+        <div class="search-container">
+            <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input
+                    type="text"
+                    id="movieSearch"
+                    placeholder="Search movies, cinemas..."
+                    oninput="handleSearchInput()"
+                    onfocus="handleSearchInput()"
+                >
+            </div>
+            <div class="search-dropdown" id="searchDropdown"></div>
+        </div>
+
+        <!-- City -->
+        <button id="city-btn" class="city-btn" onclick="openModal('cityModal')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            </svg>
+            <span id="current-city">Chennai</span>
+            ▾
+        </button>
+
+        <!-- Manage Booking -->
+        <a href="{{ url_for('manage_booking') }}" class="btn-gold nav-manage-btn">Manage Booking</a>
+
         <button class="mobile-nav-toggle" onclick="toggleCinevoNav()" aria-label="Open Navigation">☰</button>
     </div>
 </nav>
@@ -331,7 +360,175 @@
     </div>
 </footer>
 
+<!-- Location Modal -->
+<div class="modal-overlay" id="cityModal" style="display: none;">
+    <div class="modal-drawer">
+        <button class="close-modal" onclick="closeModal('cityModal')">✕</button>
+        <div class="drawer-title">Select Location</div>
+        <input type="text" class="city-search" id="citySearchInput" placeholder="Search location..." onkeyup="filterCities()">
+        <div class="city-grid" id="cityGrid">
+            <div class="city-card" onclick="selectCity('Mumbai')">
+                <img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=300&auto=format&fit=crop" alt="Mumbai">
+                <span>Mumbai</span>
+            </div>
+            <div class="city-card" onclick="selectCity('Delhi-NCR')">
+                <img src="https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=300&auto=format&fit=crop" alt="Delhi">
+                <span>Delhi-NCR</span>
+            </div>
+            <div class="city-card" onclick="selectCity('Bengaluru')">
+                <img src="https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=300&auto=format&fit=crop" alt="Bengaluru">
+                <span>Bengaluru</span>
+            </div>
+            <div class="city-card" onclick="selectCity('Chennai')">
+                <img src="https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=300&auto=format&fit=crop" alt="Chennai">
+                <span>Chennai</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+const availableMovies = [
+    {% for m in (nav_movies if nav_movies is defined else (movies if movies is defined else [])) %}
+        {
+            name: {{ m.name | tojson }},
+            url: "{{ url_for('movie_details', movie_id=m.id) }}",
+            type: "Movie"
+        },
+    {% endfor %}
+];
+
+const availableCinemas = [
+    {% if nav_cinemas is defined and nav_cinemas %}
+        {% for c in nav_cinemas %}
+            {
+                name: {{ c.name | tojson }},
+                url: "{{ url_for('showtimings') }}",
+                type: "Cinema"
+            },
+        {% endfor %}
+    {% else %}
+        { name: "Cinevo Pallas Grand", url: "{{ url_for('showtimings') }}", type: "Cinema" },
+        { name: "Cinevo IMAX Signature", url: "{{ url_for('showtimings') }}", type: "Cinema" },
+        { name: "Cinevo Royal Suite", url: "{{ url_for('showtimings') }}", type: "Cinema" },
+        { name: "Chennai Cinemas Hub", url: "{{ url_for('showtimings') }}", type: "Location" }
+    {% endif %}
+];
+
+function handleSearchInput() {
+    const input = document.getElementById('movieSearch');
+    if (!input) return;
+    const query = input.value.toLowerCase().trim();
+    const dropdown = document.getElementById('searchDropdown');
+    if (!dropdown) return;
+
+    if (query.length === 0) {
+        dropdown.style.display = 'none';
+        return;
+    }
+
+    const matches = [
+        ...availableMovies.filter(m => m.name.toLowerCase().includes(query)),
+        ...availableCinemas.filter(c => c.name.toLowerCase().includes(query))
+    ];
+
+    if (matches.length > 0) {
+        dropdown.innerHTML = `
+            <div class="search-dropdown-header">Quick Suggestions</div>
+            ${matches.map(item => `
+                <a href="${item.url}" class="search-dropdown-item">
+                    <span>${item.name}</span>
+                    <span class="item-type">${item.type}</span>
+                </a>
+            `).join('')}
+        `;
+        dropdown.style.display = 'block';
+    } else {
+        dropdown.innerHTML = `
+            <div class="search-dropdown-item" style="color: var(--text-sub); cursor: default; justify-content: center; padding: 16px;">
+                <span>No matches found</span>
+            </div>
+        `;
+        dropdown.style.display = 'block';
+    }
+}
+
+document.addEventListener('click', function(e) {
+    const container = document.querySelector('.search-container');
+    if (container && !container.contains(e.target)) {
+        const dropdown = document.getElementById('searchDropdown');
+        if (dropdown) dropdown.style.display = 'none';
+    }
+});
+
+document.getElementById('movieSearch')?.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const query = this.value.trim();
+        if (query) {
+            window.location.href = "{{ url_for('movies') }}?q=" + encodeURIComponent(query);
+        }
+    }
+});
+
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function selectCity(cityName) {
+    const citySpan = document.getElementById('current-city');
+    if (citySpan) citySpan.innerText = cityName;
+    try { localStorage.setItem('cinevo_selected_city', cityName); } catch(e) {}
+    closeModal('cityModal');
+}
+
+function filterCities() {
+    const input = document.getElementById('citySearchInput');
+    if (!input) return;
+    const query = input.value.toLowerCase();
+    const cards = document.querySelectorAll('#cityGrid .city-card');
+    cards.forEach(card => {
+        const name = card.querySelector('span')?.innerText.toLowerCase() || '';
+        card.style.display = name.includes(query) ? 'block' : 'none';
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const savedCity = localStorage.getItem('cinevo_selected_city');
+        if (savedCity && document.getElementById('current-city')) {
+            document.getElementById('current-city').innerText = savedCity;
+        }
+    } catch(e) {}
+});
+
+window.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal-overlay')) {
+        closeModal(event.target.id);
+    }
+});
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            if (modal.style.display === 'flex') {
+                closeModal(modal.id);
+            }
+        });
+    }
+});
+
 function toggleCinevoNav() {
     var drawer = document.getElementById('cinevoNavDrawer');
     var overlay = document.getElementById('cinevoDrawerOverlay');
