@@ -23,7 +23,8 @@ from flask import (
     url_for,
     session,
     flash,
-    abort
+    abort,
+    send_from_directory
 )
 
 try:
@@ -168,7 +169,6 @@ def create_app():
                 pass
 
         seed_initial_data()
-
     @app.after_request
     def add_security_headers(response):
         response.headers["X-Content-Type-Options"] = "nosniff"
@@ -176,11 +176,24 @@ def create_app():
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
         response.headers["Strict-Transport-Security"] = "max-age=31536000"
+
+        # Prevent caching of sensitive transactional/staff pages
+        sensitive_paths = (
+            "/manage-booking",
+            "/confirmation/",
+            "/checkout",
+            "/seat-selection/",
+            "/staff/",
+        )
+
+        if request.path.startswith(sensitive_paths):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+
         return response
 
     return app
-
-
 # ============================================================
 # INITIAL DATA
 # ============================================================
@@ -569,6 +582,14 @@ def customer_logout():
 # ============================================================
 # CUSTOMER HOME
 # ============================================================
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(
+        app.static_folder,
+        "favicon.svg",
+        mimetype="image/svg+xml"
+    )
 
 @app.route("/")
 def home():
