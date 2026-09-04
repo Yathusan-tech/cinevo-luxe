@@ -676,103 +676,37 @@ Configured the application for production deployment using Render and environmen
 Maintained the application with Git and GitHub, allowing development changes to be tracked and deployed systematically.
 
 ---
+# 📸 Screenshots
 
 # 📸 Screenshots
 
-Recommended screenshots for the project portfolio:
+The following screenshots showcase the main customer booking journey and the staff administration experience.
 
-### Customer Experience
+## Customer Experience
 
-* Homepage
-* Movie catalogue
-* Movie details
-* Showtime selection
-* Seat selection
-* Checkout
-* Booking confirmation
-* Reservation lookup
+### 🏠 Homepage
+![CINEVO LUXE Homepage](screenshots/home.jpg)
 
-### Staff Experience
+### 🎬 Movie Catalog
+![Movie Catalog](screenshots/catalog.jpg)
 
-* Staff login
-* Staff dashboard
-* Movie management
-* Showtime management
-* Reservation management
+### 🎞️ Movie Details
+![Movie Details](screenshots/moviedetail.jpg)
 
-Screenshots demonstrate both the visual design and the functional depth of the application.
+### 💺 Interactive Seat Selection
+![Interactive Seat Selection](screenshots/seatselection.jpg)
 
----
+### 💳 Checkout
+![Checkout](screenshots/checkout.jpg)
 
-# 📊 Project Status
+### 🎟️ Booking Confirmation
+![Digital Booking Confirmation](screenshots/checkoutdetails.jpg)
 
-### 🟢 Live & Actively Developed
+## Staff Experience
 
-CINEVO LUXE currently provides a complete cinema reservation workflow together with a protected staff administration environment.
+### 👨‍💼 Staff Dashboard
+![Staff Dashboard](screenshots/staffdashboard.jpg)
 
-The project demonstrates practical experience across:
-
-**Frontend Development · Backend Development · Database Integration · Authentication · Booking Systems · Server-Side Validation · Application Security · Responsive UI · Git · GitHub · Cloud Deployment**
+These screenshots demonstrate the complete flow from movie discovery and seat selection through checkout and booking confirmation, along with the administrative management interface.
 
 ---
-
-# 🎓 What This Project Demonstrates
-
-CINEVO LUXE demonstrates my ability to work across the complete lifecycle of a web application:
-
-```text
-                    CINEVO LUXE
-                         │
-       ┌─────────────────┼─────────────────┐
-       │                 │                 │
-   Frontend           Backend           Database
-       │                 │                 │
-       └─────────────────┼─────────────────┘
-                         │
-                  Security & Auth
-                         │
-                  Booking Integrity
-                         │
-                    Deployment
-                         │
-                    Git / GitHub
-```
-
-Rather than focusing only on the visual interface, I designed the application around the engineering concerns that appear in real-world systems: **validation, data integrity, authentication, authorization, secure configuration, reservation consistency, and maintainable application structure**.
-
----
-
-# 📄 License
-
-This project is intended for **educational, portfolio, and demonstration purposes**.
-
----
-
-# 🔐 Security Notice
-
-Never commit sensitive information to this repository.
-
-This includes:
-
-* Passwords
-* API keys
-* Secret keys
-* Database credentials
-* Authentication tokens
-* `.env` files
-* Private deployment configuration
-
-Sensitive configuration should always be supplied through secure environment variables or deployment configuration.
-
-> **Security is treated as an application requirement, not an afterthought.**
-
----
-
-## 👨‍💻 Project
-
-**CINEVO LUXE**
-Premium Cinema Ticket Booking & Reservation Management Platform
-
-Built with **Python · Flask · SQLAlchemy · SQLite · HTML · CSS · JavaScript**
-
-🌐 **Live Demo:** https://cinevo-luxe.onrender.com
