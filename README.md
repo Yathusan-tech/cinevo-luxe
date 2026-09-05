@@ -20,21 +20,22 @@ The project also includes a **protected staff administration portal** for managi
 
 # ⚡ Project at a Glance
 
-| Area                     | Implementation                                                 |
-| ------------------------ | -------------------------------------------------------------- |
-| **Application Type**     | Full-Stack Web Application                                     |
-| **Backend**              | Python + Flask                                                 |
-| **ORM / Database Layer** | Flask-SQLAlchemy / SQLAlchemy                                  |
-| **Database**             | SQLite                                                         |
-| **Frontend**             | HTML5 + CSS3 + JavaScript                                      |
-| **Authentication**       | Staff authentication with password hashing                     |
-| **Authorization**        | Protected staff/admin routes                                   |
-| **Security**             | CSRF protection, validation, security headers, secure sessions |
-| **Booking System**       | Showtime-based seat reservation                                |
-| **Pricing**              | Server-authoritative pricing                                   |
-| **Deployment**           | Render                                                         |
-| **Source Control**       | Git + GitHub                                                   |
-| **Status**               | Live and actively developed                                    |
+| Area | Implementation |
+|---|---|
+| **Application Type** | Full-Stack Cinema Booking Platform |
+| **Backend** | Python + Flask |
+| **ORM / Data Layer** | Flask-SQLAlchemy + SQLAlchemy |
+| **Database** | SQLite |
+| **Frontend** | HTML5 + CSS3 + JavaScript |
+| **Authentication** | Staff authentication + password hashing |
+| **Authorization** | Protected staff/admin routes |
+| **Booking System** | Showtime-based seat reservation + availability validation |
+| **Pricing** | Server-authoritative price calculation |
+| **Security** | CSRF protection + input validation + security headers + secure sessions |
+| **Data Integrity** | Transaction-aware booking operations + double-booking protection |
+| **Deployment** | Render |
+| **Source Control** | Git + GitHub |
+| **Status** | Live and actively developed |
 
 ---
 
