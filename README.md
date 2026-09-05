@@ -749,6 +749,35 @@ and
 That distinction strongly influenced the way I designed the backend.
 
 ---
+## 🏗️ System Architecture
+
+```text
+                         CINEVO LUXE
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+              ▼               ▼               ▼
+          Frontend         Backend         Database
+              │               │               │
+              │               ▼               │
+              │        Business Logic        │
+              │               │               │
+              │       ┌───────┼───────┐       │
+              │       │       │       │       │
+              ▼       ▼       ▼       ▼       ▼
+            UI/UX  Validation  Auth  Persistence
+                      │         │
+                      └────┬────┘
+                           │
+                           ▼
+                    Booking Integrity
+                           │
+                           ▼
+                        Security
+                           │
+                           ▼
+                      Deployment
+
 
 ## What This Project Demonstrates
 
