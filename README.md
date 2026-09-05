@@ -115,14 +115,14 @@ The application follows a layered architecture where each layer has a specific r
 ```text
 
 ┌──────────────────────────────────────────────────────────────┐
-│                         CINEVO LUXE                           │
+│                       CINEVO LUXE                            │
 └──────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌──────────────────────────────────────────────────────────────┐
 │                         FRONTEND                             │
 │                                                              │
-│              HTML5  │  CSS3  │  JavaScript                  │
+│              HTML5  │  CSS3  │  JavaScript                   │
 │                                                              │
 │  Movie UI → Showtimes → Seats → Checkout → Confirmation      │
 └──────────────────────────────────────────────────────────────┘
@@ -135,10 +135,10 @@ The application follows a layered architecture where each layer has a specific r
 │                                                              │
 │  Routes │ Business Logic │ Validation │ Authentication       │
 │                                                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
-│  │ Customer     │  │ Booking      │  │ Staff/Admin      │  │
-│  │ Routes       │  │ Logic        │  │ Routes           │  │
-│  └──────────────┘  └──────────────┘  └──────────────────┘  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐    │
+│  │ Customer     │  │ Booking      │  │ Staff/Admin      │    │
+│  │ Routes       │  │ Logic        │  │ Routes           │    │
+│  └──────────────┘  └──────────────┘  └──────────────────┘    │
 │                                                              │
 │  Security Controls                                           │
 │  ├── CSRF Validation                                         │
@@ -163,7 +163,7 @@ The application follows a layered architecture where each layer has a specific r
 ┌──────────────────────────────────────────────────────────────┐
 │                           SQLite                             │
 │                                                              │
-│       Persistent movies, showtimes, bookings & staff data   │
+│       Persistent movies, showtimes, bookings & staff data    │
 └──────────────────────────────────────────────────────────────┘
 
 ```
