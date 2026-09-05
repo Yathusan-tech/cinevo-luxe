@@ -113,6 +113,7 @@ The result is a single application containing both a **customer booking system**
 The application follows a layered architecture where each layer has a specific responsibility.
 
 ```text
+
 ┌──────────────────────────────────────────────────────────────┐
 │                         CINEVO LUXE                           │
 └──────────────────────────────────────────────────────────────┘
@@ -123,31 +124,32 @@ The application follows a layered architecture where each layer has a specific r
 │                                                              │
 │              HTML5  │  CSS3  │  JavaScript                  │
 │                                                              │
-│  Movie UI → Showtimes → Seats → Checkout → Confirmation     │
-└──────────────────────────────┬───────────────────────────────┘
-                               │ HTTP Requests
-                               ▼
+│  Movie UI → Showtimes → Seats → Checkout → Confirmation      │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              │ HTTP Requests
+                              ▼
 ┌──────────────────────────────────────────────────────────────┐
-│                       FLASK APPLICATION                       │
+│                    FLASK APPLICATION                         │
 │                         app.py                               │
 │                                                              │
 │  Routes │ Business Logic │ Validation │ Authentication       │
 │                                                              │
-│  ┌──────────────┐ ┌──────────────┐ ┌────────────────────┐   │
-│  │ Customer     │ │ Booking      │ │ Staff/Admin        │   │
-│  │ Routes       │ │ Logic        │ │ Routes             │   │
-│  └──────────────┘ └──────────────┘ └────────────────────┘   │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐  │
+│  │ Customer     │  │ Booking      │  │ Staff/Admin      │  │
+│  │ Routes       │  │ Logic        │  │ Routes           │  │
+│  └──────────────┘  └──────────────┘  └──────────────────┘  │
 │                                                              │
-│  Security Controls                                            │
-│  ├── CSRF Validation                                          │
-│  ├── Input Validation                                         │
-│  ├── Authentication                                           │
-│  ├── Authorization                                            │
-│  ├── Session Security                                         │
-│  └── Security Headers                                         │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-                               ▼
+│  Security Controls                                           │
+│  ├── CSRF Validation                                         │
+│  ├── Input Validation                                        │
+│  ├── Authentication                                          │
+│  ├── Authorization                                           │
+│  ├── Session Security                                        │
+│  └── Security Headers                                        │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
 ┌──────────────────────────────────────────────────────────────┐
 │                    DATA / ORM LAYER                          │
 │                         models.py                            │
@@ -155,14 +157,15 @@ The application follows a layered architecture where each layer has a specific r
 │              Flask-SQLAlchemy / SQLAlchemy                   │
 │                                                              │
 │  Movie │ Cinema │ Showtime │ Booking │ StaffUser             │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-                               ▼
-┌──────────────────────────────────────────────────────────────┐
-│                         SQLite                               │
-│                                                              │
-│       Persistent movies, showtimes, bookings & staff data    │
 └──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│                           SQLite                             │
+│                                                              │
+│       Persistent movies, showtimes, bookings & staff data   │
+└──────────────────────────────────────────────────────────────┘
+
 ```
 
 ### Architecture responsibility
