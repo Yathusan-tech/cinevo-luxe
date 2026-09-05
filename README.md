@@ -750,44 +750,15 @@ That distinction strongly influenced the way I designed the backend.
 
 ---
 
-# 🎓 What This Project Demonstrates
+## What This Project Demonstrates
 
-CINEVO LUXE demonstrates my ability to work across the complete lifecycle of a web application:
-
-```text
-                    CINEVO LUXE
-                         │
-          ┌──────────────┼──────────────┐
-          │              │              │
-          ▼              ▼              ▼
-      Frontend        Backend        Database
-          │              │              │
-          │              ▼              │
-          │        Business Logic        │
-          │              │              │
-          │        ┌─────┴─────┐         │
-          │        │           │         │
-          ▼        ▼           ▼         ▼
-       UI/UX   Validation   Auth      Persistence
-                   │           │
-                   └─────┬─────┘
-                         │
-                         ▼
-                  Booking Integrity
-                         │
-                         ▼
-                      Security
-                         │
-                         ▼
-                    Deployment```
-
-This project demonstrates practical exposure to:
+CINEVO LUXE demonstrates practical experience in:
 
 **Frontend Development · Backend Development · Database Integration · Authentication · Authorization · Security Engineering · Booking Systems · Server-Side Validation · Git · GitHub · Cloud Deployment**
 
 ---
 
-# 🟢 Project Status
+## 🟢 Project Status
 
 **Live and actively developed.**
 
@@ -813,7 +784,7 @@ The project continues to be improved with a focus on:
 
 ---
 
-# 🔮 Future Improvements
+## 🔮 Future Improvements
 
 Possible future improvements include:
 
@@ -826,17 +797,17 @@ Possible future improvements include:
 * Additional notification systems
 * Expanded reservation management
 
-These improvements would extend the existing architecture rather than replacing the current booking system.
+These improvements would extend the existing architecture rather than replace the current booking system.
 
 ---
 
-# 📄 License
+## 📄 License
 
 This project is intended for educational, portfolio, and demonstration purposes.
 
 ---
 
-# 🔐 Security Notice
+## 🔐 Security Notice
 
 Sensitive information must never be committed to the repository.
 
@@ -858,9 +829,9 @@ No web application can honestly be guaranteed to be completely vulnerability-fre
 
 ---
 
-# 👨‍💻 Project
+## 👨‍💻 Project
 
-## CINEVO LUXE
+### CINEVO LUXE
 
 **Premium Cinema Ticket Booking & Reservation Management Platform**
 
@@ -869,10 +840,7 @@ Built with:
 **Python · Flask · SQLAlchemy · SQLite · HTML · CSS · JavaScript**
 
 🌐 **Live Demo:**
-[https://cinevo-luxe.onrender.com](https://cinevo-luxe.onrender.com)
+https://cinevo-luxe.onrender.com
 
 💻 **Source Code:**
-[https://github.com/Yathusan-tech/cinevo-luxe](https://github.com/Yathusan-tech/cinevo-luxe)
-
----
->>>>>>> origin/master
+https://github.com/Yathusan-tech/cinevo-luxe
