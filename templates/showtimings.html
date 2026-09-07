@@ -266,6 +266,7 @@
     <div class="showtimes-container">
         {% if showtimes %}
             {% for st in showtimes %}
+                {% if st.movie and st.movie.status == 'Now Showing' %}
                 <div class="showtime-card">
                     <img src="{{ st.movie.poster }}" alt="{{ st.movie.title }}" class="movie-thumb">
                     <div class="showtime-details">
@@ -281,6 +282,7 @@
                         </a>
                     </div>
                 </div>
+                {% endif %}
             {% endfor %}
         {% else %}
             <div style="text-align: center; padding: 70px 20px; background: var(--bg-surface); border-radius: 14px; border: 1px solid var(--border-container);">

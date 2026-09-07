@@ -1012,9 +1012,10 @@ def showtimings():
     if not cinemas:
         cinemas = Cinema.query.all()
 
-    # Query showtimes for the selected date only
-    showtimes = Showtime.query.filter(
-        Showtime.date == selected_date
+    # Query showtimes for the selected date only, strictly matching active 'Now Showing' movies
+    showtimes = Showtime.query.join(Movie).filter(
+        Showtime.date == selected_date,
+        Movie.status == "Now Showing"
     ).order_by(
         Showtime.time.asc()
     ).all()

@@ -1136,21 +1136,27 @@
             .vip-banner-overlay {
                 background: linear-gradient(
                     180deg,
-                    rgba(7, 9, 14, 0.94) 0%,
-                    rgba(7, 9, 14, 0.88) 45%,
-                    rgba(7, 9, 14, 0.65) 100%
+                    rgba(7, 9, 14, 0.80) 0%,
+                    rgba(7, 9, 14, 0.45) 35%,
+                    rgba(7, 9, 14, 0.30) 60%,
+                    rgba(7, 9, 14, 0.82) 100%
                 );
             }
             .vip-lounge-card {
-                padding: 26px 20px;
-                min-height: auto;
+                padding: 28px 20px;
+                min-height: 310px;
+                background-position: center 30%;
+                background-size: cover;
             }
             .vip-header-title {
                 font-size: 19px;
+                text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
             }
             .vip-header-sub {
                 font-size: 13px;
                 margin-bottom: 16px;
+                color: #cbd5e1;
+                text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
             }
             .vip-features-capsule {
                 flex-wrap: wrap;
@@ -1163,26 +1169,70 @@
         }
 
         @media (max-width: 520px) {
+            .vip-lounge-card {
+                padding: 24px 16px;
+                min-height: 320px;
+                background-position: center 32%;
+                background-size: cover;
+            }
             .vip-features-capsule {
-                flex-direction: column;
-                align-items: stretch;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 8px;
+                background: transparent;
+                border: none;
+                backdrop-filter: none;
                 width: 100%;
             }
             .vip-feature-col {
-                border-right: none;
-                border-bottom: 1px solid rgba(229, 193, 88, 0.2);
-                padding: 10px 14px;
-                justify-content: flex-start;
-                font-size: 11px;
+                background: rgba(10, 12, 18, 0.68);
+                border: 1px solid rgba(229, 193, 88, 0.35);
+                border-radius: 6px;
+                backdrop-filter: blur(8px);
+                padding: 7px 12px;
+                font-size: 10.5px;
+                letter-spacing: 0.4px;
+                justify-content: center;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             }
             .vip-feature-col:last-child {
-                border-bottom: none;
+                border-right: 1px solid rgba(229, 193, 88, 0.35);
             }
             .vip-explore-btn {
                 width: 100%;
                 justify-content: center;
                 padding: 13px 20px;
                 box-sizing: border-box;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .vip-lounge-card {
+                padding: 20px 12px;
+                min-height: 300px;
+                background-position: center 30%;
+            }
+            .vip-header-title {
+                font-size: 17px;
+            }
+            .vip-header-sub {
+                font-size: 12px;
+                margin-bottom: 12px;
+            }
+            .vip-features-capsule {
+                gap: 6px;
+            }
+            .vip-feature-col {
+                padding: 6px 9px;
+                font-size: 9.5px;
+            }
+            .vip-explore-btn {
+                padding: 11px 14px;
+                font-size: 11.5px;
             }
         }
 
@@ -2786,7 +2836,7 @@
 
     <!-- VIP LOUNGE -->
     <div class="vip-card-wrapper">
-        <div class="vip-lounge-card" style="background-image: url('{{ url_for('static', filename='images/vip_lounge.jpg') }}'); background-size: cover; background-position: center right; background-repeat: no-repeat; min-height: 290px;">
+        <div class="vip-lounge-card" style="background-image: url('{{ url_for('static', filename='images/vip_lounge.jpg') }}');">
             <div class="vip-banner-overlay"></div>
             <div class="vip-banner-content">
                 <div class="vip-header-title">
