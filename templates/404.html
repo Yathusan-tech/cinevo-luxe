@@ -32,9 +32,9 @@
 </head>
 <body>
     <div class="error-box">
-        <div class="error-code">404</div>
-        <div class="error-title">Screening Not Found</div>
-        <p class="error-desc">The executive screening or page you are searching for is no longer in projection or the URL is invalid.</p>
+        <div class="error-code">{{ error_code or 404 }}</div>
+        <div class="error-title">{{ error_title or 'Screening Not Found' }}</div>
+        <p class="error-desc">{{ error_desc or 'The executive screening or page you are searching for is no longer in projection or the URL is invalid.' }}</p>
         <a href="{{ url_for('home') }}" class="btn-gold" style="padding: 12px 28px;">Return to Cinevo Homepage</a>
     </div>
 </body>

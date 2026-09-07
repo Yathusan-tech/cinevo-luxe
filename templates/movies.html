@@ -35,10 +35,10 @@
         .filter-tab:hover { color: #fff; border-color: rgba(255, 255, 255, 0.2); }
         .filter-tab.active { background: var(--gold-grad); color: #07090e; border-color: transparent; }
         .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 24px; }
-        .movie-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-container); overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; min-width: 0; }
-        .movie-card:hover { transform: translateY(-5px); border-color: rgba(229, 193, 88, 0.4); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7); }
+        .movie-card { text-decoration: none; color: inherit; display: flex; flex-direction: column; border-radius: 12px; background: var(--bg-card); border: 1px solid rgba(229, 193, 88, 0.35); overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; min-width: 0; }
+        .movie-card:hover { transform: translateY(-5px); border-color: rgba(229, 193, 88, 0.6); box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(229, 193, 88, 0.15); }
         .poster-box { width: 100%; aspect-ratio: 2 / 3; overflow: hidden; position: relative; background: #000; }
-        .poster-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
+        .poster-box img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.35s ease; }
         .movie-card:hover .poster-box img { transform: scale(1.04); }
         .poster-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 9, 14, 0) 40%, rgba(7, 9, 14, 0.85) 100%); opacity: 0; display: flex; align-items: flex-end; padding: 16px; transition: opacity 0.25s ease; }
         .movie-card:hover .poster-overlay { opacity: 1; }

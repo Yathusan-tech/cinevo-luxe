@@ -256,7 +256,7 @@
         {% for tab_date in date_tabs %}
             {% set is_active = (tab_date == selected_date) %}
             <a href="{{ url_for('showtimings', date=tab_date.strftime('%Y-%m-%d')) }}" class="date-tab-card {% if is_active %}active{% endif %}">
-                <div class="day-name">{{ tab_date.strftime('%a') }}</div>
+                <div class="day-name">{% if loop.index == 1 %}Today{% elif loop.index == 2 %}Tomorrow{% else %}{{ tab_date.strftime('%a') }}{% endif %}</div>
                 <div class="day-num">{{ tab_date.strftime('%d %b') }}</div>
             </a>
         {% endfor %}

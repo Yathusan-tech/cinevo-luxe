@@ -12,6 +12,7 @@
 <body>
     <h2>Add Movie</h2>
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="text" name="name" placeholder="Movie Name" required>
         <input type="text" name="genre" placeholder="Genre">
         <input type="text" name="duration" placeholder="Duration (e.g. 2h 30m)">

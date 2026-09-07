@@ -226,6 +226,7 @@
     <div class="section-box">
         <div class="section-title">Schedule New Title & Screenings</div>
         <form action="{{ url_for('staff_add_movie') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-row">
                 <input type="text" name="title" class="form-control" placeholder="Movie Title *" required>
                 <input type="text" name="genre" class="form-control" placeholder="Genre (e.g. Action / Sci-Fi) *" required>
@@ -276,6 +277,7 @@
                         <td><span style="text-transform: uppercase; font-size: 11px; color: var(--text-sub);">{{ m.category }}</span></td>
                         <td>
                             <form action="{{ url_for('staff_delete_movie', movie_id=m.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Remove movie and its showtimes?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn-delete">Delete</button>
                             </form>
                         </td>

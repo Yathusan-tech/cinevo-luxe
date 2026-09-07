@@ -251,10 +251,22 @@
             .site-footer { padding: 30px 24px; flex-direction: column; gap: 20px; text-align: center; }
         }
 
+        .swipe-hint {
+            display: none;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold-primary);
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
         @media (max-width: 768px) {
             .seat-row { gap: 8px; }
-            .seat-btn { width: 32px; height: 32px; font-size: 11px; }
+            .seat-btn { width: 32px; height: 32px; min-width: 32px; min-height: 32px; font-size: 11px; }
             .row-identifier { width: 20px; font-size: 11px; }
+            .swipe-hint { display: block; }
         }
 
         @media (max-width: 480px) {
@@ -262,25 +274,27 @@
             .brand-name { font-size: 20px; }
             .booking-wrapper { width: 100%; padding: 0 14px; margin: 16px auto; }
             .screening-bar { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
-            .auditorium-box { padding: 20px 10px; border-radius: 12px; }
+            .auditorium-box { padding: 20px 8px; border-radius: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
             .reservation-summary-card { padding: 18px 14px; border-radius: 12px; }
             .seat-row { gap: 6px; }
-            .seat-btn { width: 28px; height: 28px; font-size: 10px; border-radius: 4px; }
+            .seat-btn { width: 30px; height: 30px; min-width: 30px; min-height: 30px; font-size: 10px; border-radius: 6px; touch-action: manipulation; }
             .row-identifier { width: 18px; font-size: 10px; }
             .legend-row { gap: 12px; font-size: 11px; }
             .modal-card { width: 94% !important; padding: 18px 14px !important; }
             .site-footer { padding: 28px 16px; }
+            .btn-proceed { min-height: 46px; font-size: 13px; }
         }
 
         @media (max-width: 360px) {
             .top-nav { padding: 0 10px; height: 60px; }
             .brand-name { font-size: 17px; letter-spacing: 1px; }
-            .booking-wrapper { padding: 0 10px; }
-            .auditorium-box { padding: 16px 6px; }
-            .seat-row { gap: 4px; }
-            .seat-btn { width: 25px; height: 25px; font-size: 9px; }
-            .row-identifier { width: 14px; font-size: 9px; }
+            .booking-wrapper { padding: 0 8px; }
+            .auditorium-box { padding: 16px 4px; }
+            .seat-row { gap: 5px; }
+            .seat-btn { width: 28px; height: 28px; min-width: 28px; min-height: 28px; font-size: 9.5px; border-radius: 5px; touch-action: manipulation; }
+            .row-identifier { width: 16px; font-size: 9.5px; }
             .legend-row { gap: 8px; font-size: 10px; }
+            .btn-proceed { min-height: 44px; font-size: 12px; }
         }
     </style>
 </head>
@@ -325,6 +339,7 @@
 
         <!-- Auditorium Seat Selector -->
         <div class="auditorium-box">
+            <div class="swipe-hint">↔ Swipe horizontally to view all seats</div>
             <div id="seat-alert-msg" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 20px;"></div>
             <div class="screen-curve"></div>
             <div class="screen-text">Executive Laser Screen This Way</div>

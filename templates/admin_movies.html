@@ -364,6 +364,7 @@
                                 style="flex: 1; margin: 0;"
                                 onsubmit="return confirmDelete('{{ movie.name | e }}');"
                             >
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                                 <button
                                     type="submit"

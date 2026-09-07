@@ -18,6 +18,7 @@
         action="{{ url_for('staff_edit_movie', movie_id=movie.id) }}"
         method="POST"
     >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <!-- Row 1 -->
 

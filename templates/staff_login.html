@@ -131,6 +131,7 @@
     {% endwith %}
 
     <form method="POST" action="{{ url_for('staff_login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="form-group">
             <label class="form-label" for="username">Staff Username</label>
             <input type="text" id="username" name="username" class="form-input" placeholder="Enter staff username" required autocomplete="username">

@@ -5,7 +5,9 @@ __pycache__/
 
 # Environment variables
 .env
+.env.*
 .env.local
+!.env.example
 
 # Virtual environments
 .venv/
@@ -15,6 +17,8 @@ ENV/
 
 # Backup directories
 backup_original/
+backup_checkpoint/
+backup_checkpoint*/
 
 # Operating System Files
 .DS_Store
@@ -23,18 +27,23 @@ Thumbs.db
 # Backup Python files
 *_backup.py
 app_backup*.py
+models_backup*.py
 
 # Local database files
 database.db
+*.db
+*.sqlite
+*.sqlite3
 instance/*.db
-
-# Backup Python files
-models_backup*.py
+instance/*.sqlite
+instance/*.sqlite3
 
 # Local booking/customer data
 static/bookings.json
 data/bookings.json
 
-# Backup and test templates
+# Scratch, test files, and logs
+scratch/
+*.log
 templates/*backup*
 templates/test.py

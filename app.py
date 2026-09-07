@@ -54,10 +54,25 @@ def create_app():
     app = Flask(__name__)
 
     # --------------------------------------------------------
-    # CONFIGURATION
+    # CONFIGURATION & SECRET KEY HARDENING
     # --------------------------------------------------------
 
-    app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
+    # Prioritize CINEVO_SECRET_KEY, with legacy SECRET_KEY as fallback
+    secret_key = os.environ.get("CINEVO_SECRET_KEY") or os.environ.get("SECRET_KEY")
+    is_debug_mode = os.environ.get("DEBUG", "False").lower() in ["true", "1", "t", "dev", "development"]
+    is_prod_env = os.environ.get("FLASK_ENV") == "production" or os.environ.get("CINEVO_ENV") == "production" or (not is_debug_mode and os.environ.get("REQUIRE_PRODUCTION_SECRETS") == "1")
+
+    if not secret_key:
+        if is_prod_env:
+            raise RuntimeError(
+                "CRITICAL SECURITY CONFIGURATION ERROR: 'CINEVO_SECRET_KEY' environment variable "
+                "must be configured in production environments. Please set CINEVO_SECRET_KEY."
+            )
+        # Secure, non-predictable development-only fallback generated with CSPRNG
+        secret_key = secrets.token_hex(32)
+        logging.warning("CINEVO_SECRET_KEY was not set in environment. Generated an ephemeral development-only secret key for this session.")
+
+    app.config["SECRET_KEY"] = secret_key
     app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "False").lower() in ["true", "1", "t"]
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
@@ -183,13 +198,43 @@ def create_app():
                 pass
 
         seed_initial_data()
+
+    @app.before_request
+    def auto_sync_showtimes():
+        sync_dynamic_showtimes()
+
+    @app.context_processor
+    def inject_dynamic_dates():
+        today_date = date.today()
+        return {
+            "get_dynamic_dates": get_dynamic_dates,
+            "rolling_dates": get_dynamic_dates(today_date),
+            "today": today_date,
+            "timedelta": timedelta
+        }
+
     @app.after_request
     def add_security_headers(response):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "SAMEORIGIN"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
-        response.headers["Strict-Transport-Security"] = "max-age=31536000"
+        
+        # Enforce HSTS when request is secure or configured
+        if request.is_secure or app.config.get("SESSION_COOKIE_SECURE"):
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+
+        # Content-Security-Policy: Compatible with existing inline styles, scripts, Google Fonts, and YouTube trailers
+        csp = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; "
+            "font-src 'self' https://fonts.gstatic.com data:; "
+            "img-src 'self' data: https: blob:; "
+            "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; "
+            "connect-src 'self';"
+        )
+        response.headers["Content-Security-Policy"] = csp
 
         # Prevent caching of sensitive transactional/staff pages
         sensitive_paths = (
@@ -208,6 +253,111 @@ def create_app():
         return response
 
     return app
+
+
+# ============================================================
+# DYNAMIC ROLLING SHOWTIMES
+# ============================================================
+
+def get_dynamic_dates(reference_date=None):
+    """
+    Returns the authoritative 4-day rolling window of dates:
+    1. Today
+    2. Tomorrow
+    3. Day After Tomorrow
+    4. The Following Day
+    """
+    base_date = reference_date or date.today()
+    return [base_date + timedelta(days=i) for i in range(4)]
+
+
+_last_showtime_sync_date = None
+
+def sync_dynamic_showtimes(reference_date=None, force=False, movie=None):
+    """
+    Safely and idempotently synchronizes showtimes for the rolling 4-day window.
+    
+    Guarantees:
+    - Runs automatically on application startup, calendar day roll, or when staff adds/updates movies.
+    - Idempotent: checks existing showtimes before adding so no duplicates are created.
+    - Strictly preserves historical bookings and their showtime records.
+    - Ensures every active movie and cinema has valid showtimes for each of the 4 rolling dates.
+    """
+    global _last_showtime_sync_date
+    today_date = reference_date or date.today()
+
+    # Fast return if already synchronized today and not forced
+    if not force and reference_date is None and _last_showtime_sync_date == today_date and movie is None:
+        return
+
+    rolling_dates = get_dynamic_dates(today_date)
+
+    active_movies = Movie.query.filter_by(status="Now Showing").all()
+    if not active_movies:
+        active_movies = Movie.query.all()
+
+    if movie and movie not in active_movies:
+        active_movies.append(movie)
+
+    active_cinemas = Cinema.query.filter_by(status="Active").all()
+    if not active_cinemas:
+        active_cinemas = Cinema.query.all()
+
+    if not active_movies or not active_cinemas:
+        return
+
+    times_list = [
+        "10:30 AM",
+        "02:15 PM",
+        "06:45 PM",
+        "09:30 PM"
+    ]
+
+    existing_records = set(
+        db.session.query(
+            Showtime.movie_id,
+            Showtime.cinema_id,
+            Showtime.date,
+            Showtime.time
+        ).filter(
+            Showtime.date.in_(rolling_dates)
+        ).all()
+    )
+
+    new_showtimes = []
+
+    for current_date in rolling_dates:
+        for movie in active_movies:
+            for cinema in active_cinemas:
+                if "IMAX" in cinema.name:
+                    price = 350.0
+                elif "Royal" in cinema.name:
+                    price = 450.0
+                else:
+                    price = 250.0
+
+                for show_time in times_list:
+                    key = (movie.id, cinema.id, current_date, show_time)
+                    if key not in existing_records:
+                        new_showtimes.append(
+                            Showtime(
+                                movie_id=movie.id,
+                                cinema_id=cinema.id,
+                                date=current_date,
+                                time=show_time,
+                                base_price=price
+                            )
+                        )
+                        existing_records.add(key)
+
+    if new_showtimes:
+        db.session.add_all(new_showtimes)
+        db.session.commit()
+
+    if reference_date is None:
+        _last_showtime_sync_date = today_date
+
+
 # ============================================================
 # INITIAL DATA
 # ============================================================
@@ -427,64 +577,16 @@ def seed_initial_data():
         db.session.commit()
 
     # --------------------------------------------------------
-    # SHOWTIMES
+    # SHOWTIMES (DYNAMIC 4-DAY ROLLING SCHEDULE)
     # --------------------------------------------------------
 
-    if not Showtime.query.first():
+    sync_dynamic_showtimes()
 
-        all_movies = Movie.query.all()
-        all_cinemas = Cinema.query.all()
+    # --------------------------------------------------------
+    # SAMPLE BOOKING (ONLY IF NO BOOKINGS EXIST)
+    # --------------------------------------------------------
 
-        times_list = [
-            "10:30 AM",
-            "02:15 PM",
-            "06:45 PM",
-            "09:30 PM"
-        ]
-
-        today = date.today()
-
-        showtimes_to_add = []
-
-        for day_offset in range(7):
-
-            current_date = today + timedelta(days=day_offset)
-
-            for movie in all_movies:
-
-                for cinema in all_cinemas:
-
-                    selected_times = (
-                        times_list
-                        if (movie.id + cinema.id + day_offset) % 2 == 0
-                        else times_list[:2]
-                    )
-
-                    if "IMAX" in cinema.name:
-                        price = 350.0
-                    elif "Royal" in cinema.name:
-                        price = 450.0
-                    else:
-                        price = 250.0
-
-                    for show_time in selected_times:
-
-                        showtimes_to_add.append(
-                            Showtime(
-                                movie_id=movie.id,
-                                cinema_id=cinema.id,
-                                date=current_date,
-                                time=show_time,
-                                base_price=price
-                            )
-                        )
-
-        db.session.add_all(showtimes_to_add)
-        db.session.commit()
-
-        # ----------------------------------------------------
-        # SAMPLE BOOKING
-        # ----------------------------------------------------
+    if not Booking.query.first():
 
         first_show = Showtime.query.first()
 
@@ -533,6 +635,42 @@ def seed_initial_data():
 # ============================================================
 
 app = create_app()
+
+
+# ============================================================
+# SAFE IN-MEMORY RATE LIMITING (SLIDING WINDOW)
+# ============================================================
+
+_rate_limit_records = {}
+
+def is_rate_limited(endpoint_name, max_requests=10, window_seconds=300, ip=None):
+    """
+    In-memory sliding window rate limiter.
+    Keyed by endpoint and client IP.
+    Protects sensitive authentication and lookup routes against brute force.
+    Returns True if limit is exceeded, False if request is allowed.
+    """
+    if ip:
+        client_ip = ip
+    else:
+        try:
+            client_ip = request.headers.get("X-Forwarded-For", request.remote_addr or "127.0.0.1")
+            if client_ip and "," in client_ip:
+                client_ip = client_ip.split(",")[0].strip()
+        except Exception:
+            client_ip = "127.0.0.1"
+    
+    import time
+    key = f"{endpoint_name}:{client_ip}"
+    now = time.time()
+    timestamps = _rate_limit_records.get(key, [])
+    valid_timestamps = [ts for ts in timestamps if (now - ts) < window_seconds]
+    if len(valid_timestamps) >= max_requests:
+        _rate_limit_records[key] = valid_timestamps
+        return True
+    valid_timestamps.append(now)
+    _rate_limit_records[key] = valid_timestamps
+    return False
 
 
 # ============================================================
@@ -608,9 +746,13 @@ def favicon():
 @app.route("/")
 def home():
 
-    movies = Movie.query.filter_by(
+    all_movies = Movie.query.filter_by(
         status="Now Showing"
-    ).all()
+    ).order_by(Movie.rating.desc(), Movie.id.desc()).all()
+
+    avatar_list = [m for m in all_movies if m.id == 6 or "avatar" in m.title.lower()]
+    other_movies = [m for m in all_movies if m not in avatar_list]
+    movies = avatar_list + other_movies
 
     cinemas = Cinema.query.filter_by(
         status="Active"
@@ -710,12 +852,17 @@ def movie_details(movie_id):
     ).strip()
 
     today = date.today()
+    rolling_dates = get_dynamic_dates(today)
     target_date = None
 
     if date_param.lower() == "today":
         target_date = today
     elif date_param.lower() == "tomorrow":
         target_date = today + timedelta(days=1)
+    elif date_param.lower() in ("day_after", "day after", "day after tomorrow", "day-after-tomorrow"):
+        target_date = today + timedelta(days=2)
+    elif date_param.lower() in ("following_day", "following day", "the following day"):
+        target_date = today + timedelta(days=3)
     elif date_param:
         try:
             target_date = datetime.strptime(
@@ -724,6 +871,10 @@ def movie_details(movie_id):
             ).date()
         except ValueError:
             target_date = None
+
+    # Enforce strictly no past dates
+    if target_date and target_date < today:
+        target_date = today
 
     target_cinema_id = None
 
@@ -754,11 +905,12 @@ def movie_details(movie_id):
             if cinema_match:
                 target_cinema_id = cinema_match.id
 
-    # Quick Reserve direct redirect
+    # Quick Reserve direct redirect (strictly within rolling window, no past fallbacks)
     if (
         target_date
         and target_cinema_id
         and timing_param
+        and target_date in rolling_dates
     ):
         matching_showtime = Showtime.query.filter(
             Showtime.movie_id == movie.id,
@@ -769,26 +921,7 @@ def movie_details(movie_id):
             )
         ).first()
 
-        if not matching_showtime:
-            # Fallback to cinema + timing or cinema match
-            matching_showtime = Showtime.query.filter(
-                Showtime.movie_id == movie.id,
-                Showtime.cinema_id == target_cinema_id,
-                Showtime.time.ilike(f"%{timing_param}%")
-            ).first()
-
-        if not matching_showtime:
-            matching_showtime = Showtime.query.filter(
-                Showtime.movie_id == movie.id,
-                Showtime.cinema_id == target_cinema_id
-            ).first()
-
-        if not matching_showtime:
-            matching_showtime = Showtime.query.filter(
-                Showtime.movie_id == movie.id
-            ).first()
-
-        if matching_showtime:
+        if matching_showtime and matching_showtime.date >= today:
             return redirect(
                 url_for(
                     "seat_selection",
@@ -796,41 +929,20 @@ def movie_details(movie_id):
                 )
             )
 
-    # 1. If target_date is explicitly requested in URL
-    if target_date:
+    # Query showtimes strictly within the 4-day rolling window
+    if target_date and target_date in rolling_dates:
         showtimes = Showtime.query.filter(
             Showtime.movie_id == movie.id,
             Showtime.date == target_date
         ).order_by(
             Showtime.time.asc()
         ).all()
-        if not showtimes:
-            showtimes = Showtime.query.filter(
-                Showtime.movie_id == movie.id,
-                Showtime.date >= target_date
-            ).order_by(
-                Showtime.date.asc(),
-                Showtime.time.asc()
-            ).all()
     else:
-        showtimes = []
-
-    # 2. Query future/upcoming showtimes
-    if not showtimes:
         showtimes = Showtime.query.filter(
             Showtime.movie_id == movie.id,
-            Showtime.date >= today
+            Showtime.date.in_(rolling_dates)
         ).order_by(
             Showtime.date.asc(),
-            Showtime.time.asc()
-        ).all()
-
-    # 3. If no future showtimes found in database, retrieve all existing showtimes for this movie
-    if not showtimes:
-        showtimes = Showtime.query.filter(
-            Showtime.movie_id == movie.id
-        ).order_by(
-            Showtime.date.desc(),
             Showtime.time.asc()
         ).all()
 
@@ -861,7 +973,9 @@ def movie_details(movie_id):
         all_showtimes=showtimes,
         preselected_date=date_param,
         preselected_cinema=cinema_param,
-        preselected_timing=timing_param
+        preselected_timing=timing_param,
+        today=today,
+        timedelta=timedelta
     )
 
 
@@ -873,6 +987,7 @@ def movie_details(movie_id):
 def showtimings():
 
     today = date.today()
+    date_tabs = get_dynamic_dates(today)
 
     selected_date_string = request.args.get(
         "date",
@@ -887,62 +1002,30 @@ def showtimings():
     except ValueError:
         selected_date = today
 
+    # Strictly enforce that selected_date is one of the 4 rolling dates
+    if selected_date not in date_tabs:
+        selected_date = today
+
     cinemas = Cinema.query.filter_by(
         status="Active"
     ).all()
     if not cinemas:
         cinemas = Cinema.query.all()
 
-    # Query showtimes for the selected date
+    # Query showtimes for the selected date only
     showtimes = Showtime.query.filter(
         Showtime.date == selected_date
     ).order_by(
         Showtime.time.asc()
     ).all()
 
-    # If no showtimes for today and no date explicitly requested in URL:
-    if not showtimes and not request.args.get("date"):
-        upcoming = Showtime.query.filter(
-            Showtime.date >= today
-        ).order_by(
-            Showtime.date.asc(),
-            Showtime.time.asc()
-        ).all()
-        if upcoming:
-            showtimes = upcoming
-            selected_date = upcoming[0].date
-        else:
-            all_st = Showtime.query.order_by(
-                Showtime.date.desc(),
-                Showtime.time.asc()
-            ).all()
-            if all_st:
-                showtimes = all_st
-                selected_date = all_st[0].date
-    elif not showtimes and request.args.get("date"):
-        closest = Showtime.query.filter(
-            Showtime.date >= selected_date
-        ).order_by(
-            Showtime.date.asc(),
-            Showtime.time.asc()
-        ).all()
-        if closest:
-            showtimes = closest
-            selected_date = closest[0].date
-
-    date_tabs = [
-        today + timedelta(days=i)
-        for i in range(7)
-    ]
-    if selected_date and selected_date not in date_tabs:
-        date_tabs = [selected_date] + [d for d in date_tabs if d != selected_date][:6]
-
     return render_template(
         "showtimings.html",
         cinemas=cinemas,
         showtimes=showtimes,
         selected_date=selected_date,
-        date_tabs=date_tabs
+        date_tabs=date_tabs,
+        today=today
     )
 
 
@@ -961,17 +1044,18 @@ def cinemas():
 
     today = date.today()
 
+    # Query today's featured screenings for all active cinemas
     showtimes = Showtime.query.filter(
-        Showtime.date >= today
+        Showtime.date == today
+    ).order_by(
+        Showtime.time.asc()
     ).all()
-
-    if not showtimes:
-        showtimes = Showtime.query.all()
 
     return render_template(
         "cinemas.html",
         cinemas=all_cinemas,
-        showtimes=showtimes
+        showtimes=showtimes,
+        today=today
     )
 
 
@@ -1028,6 +1112,15 @@ def seat_selection(showtime_id):
 
         return redirect(
             url_for("movies")
+        )
+
+    if showtime.date < date.today():
+        flash(
+            "This screening has concluded. Please choose an upcoming showtime.",
+            "error"
+        )
+        return redirect(
+            url_for("movie_details", movie_id=showtime.movie_id)
         )
 
     booked_seats = showtime.booked_seat_numbers
@@ -1232,7 +1325,9 @@ def checkout():
             seats_list = request.form.getlist("seats")
             seats_raw = ", ".join(seats_list)
 
-        customer_name = request.form.get("customer_name", "").strip()
+        # Sanitize customer name against XSS, script tags, control characters, and limit length
+        raw_name = request.form.get("customer_name", "").strip()
+        customer_name = re.sub(r'[<>"\'%;()&+\\]', '', raw_name)[:60].strip()
         email = request.form.get("email", "").strip().lower()
         phone = request.form.get("phone", "").strip()
         confirm_booking = request.form.get("confirm_booking", "").strip()
@@ -1252,6 +1347,10 @@ def checkout():
         showtime = Showtime.query.get(showtime_id)
         if not showtime:
             flash("Showtime not found. Please select your movie and seats first.", "error")
+            return redirect(url_for("movies"))
+
+        if showtime.date < date.today():
+            flash("This screening has concluded. Please choose an upcoming showtime.", "error")
             return redirect(url_for("movies"))
 
         selected_seats = list(dict.fromkeys([
@@ -1319,7 +1418,7 @@ def checkout():
         # ----------------------------------------------------
         # FINAL PAYMENT CONFIRMATION (from checkout.html form)
         # ----------------------------------------------------
-        if not customer_name or not email or not phone:
+        if not customer_name or len(customer_name) < 2 or not email or not phone:
             flash("Please provide your full name, email address, and contact number to complete your reservation.", "error")
             is_first_booking = check_first_booking_eligibility(email=email or None, phone=phone or None)
             claimed_offers = session.get("claimed_offers", [])
@@ -1587,6 +1686,10 @@ def checkout():
     showtime = Showtime.query.get(showtime_id)
     if not showtime:
         flash("Showtime not found. Please select your movie and seats first.", "error")
+        return redirect(url_for("movies"))
+
+    if showtime.date < date.today():
+        flash("This screening has concluded. Please choose an upcoming showtime.", "error")
         return redirect(url_for("movies"))
 
     selected_seats = list(dict.fromkeys([
@@ -2483,6 +2586,11 @@ GENERIC_RECOVERY_ERROR = "We couldn't find a booking matching those details. Ple
 @app.route("/manage-booking", methods=["GET", "POST"])
 def manage_booking():
     if request.method == "POST":
+        # Rate limit booking verification attempts: max 20 per 2 minutes per IP
+        if is_rate_limited("manage_booking", max_requests=20, window_seconds=120):
+            flash("Too many verification attempts. For your security, please wait a moment before trying again.", "error")
+            return render_template("manage_booking.html", view_mode="form"), 429
+
         raw_ref = request.form.get("booking_ref", "").strip()
         raw_email = request.form.get("email", "").strip()
 
@@ -2548,6 +2656,11 @@ def manage_booking():
 @app.route("/manage-booking/recover", methods=["GET", "POST"])
 def recover_booking_reference():
     if request.method == "POST":
+        # Rate limit recovery attempts: max 10 per 5 minutes per IP
+        if is_rate_limited("recover_booking", max_requests=10, window_seconds=300):
+            flash("Too many recovery attempts. For your security, please wait 5 minutes before trying again.", "error")
+            return render_template("manage_booking.html", view_mode="recover"), 429
+
         raw_email = request.form.get("recover_email", "").strip().lower()
         raw_phone = request.form.get("recover_phone", "").strip()
         clean_phone_digits, _ = normalize_phone_e164(raw_phone)
@@ -2609,6 +2722,10 @@ def staff_login():
         )
 
     if request.method == "POST":
+        # Rate limit staff login attempts: max 10 per 5 minutes per IP
+        if is_rate_limited("staff_login", max_requests=10, window_seconds=300):
+            flash("Too many failed login attempts. For security, please wait 5 minutes before trying again.", "error")
+            return render_template("staff/login.html"), 429
 
         username = request.form.get(
             "username",
@@ -3098,51 +3215,13 @@ def staff_add_movie():
             new_movie
         )
 
-        db.session.flush()
-
-        # --------------------------------------------------------
-        # AUTO CREATE SHOWTIMES
-        # --------------------------------------------------------
-
-        cinemas = Cinema.query.filter_by(
-            status="Active"
-        ).all()
-
-        today = date.today()
-
-        times_list = [
-            "10:30 AM",
-            "02:15 PM",
-            "06:45 PM",
-            "09:30 PM"
-        ]
-
-        for day_offset in range(7):
-            current_date = (
-                today
-                + timedelta(days=day_offset)
-            )
-
-            for cinema in cinemas:
-                if "IMAX" in cinema.name:
-                    price = 350.0
-                elif "Royal" in cinema.name:
-                    price = 450.0
-                else:
-                    price = 250.0
-
-                for show_time in times_list[:2]:
-                    db.session.add(
-                        Showtime(
-                            movie_id=new_movie.id,
-                            cinema_id=cinema.id,
-                            date=current_date,
-                            time=show_time,
-                            base_price=price
-                        )
-                    )
-
         db.session.commit()
+
+        # --------------------------------------------------------
+        # AUTO CREATE SHOWTIMES (DYNAMIC 4-DAY ROLLING WINDOW)
+        # --------------------------------------------------------
+
+        sync_dynamic_showtimes(force=True, movie=new_movie)
 
         flash(
             f"Movie '{title}' added and scheduled successfully!",
@@ -3352,6 +3431,9 @@ def staff_update_movie(movie_id):
             movie.status = status
 
         db.session.commit()
+
+        if movie.status == "Now Showing":
+            sync_dynamic_showtimes(force=True, movie=movie)
 
         flash(
             f"Movie '{movie.title}' updated successfully!",
@@ -3770,17 +3852,41 @@ def staff_bookings():
 # ERROR HANDLERS
 # ============================================================
 
+@app.errorhandler(400)
+def bad_request_error(error):
+    desc = getattr(error, "description", "The verification token has expired or is invalid. Please refresh and try again.")
+    return render_template("404.html", error_code=400, error_title="Request Verification Error", error_desc=desc), 400
+
+
+@app.errorhandler(403)
+def forbidden_error(error):
+    return render_template("404.html", error_code=403, error_title="Access Restricted", error_desc="You do not have administrative authorization to access this screening resource."), 403
+
+
 @app.errorhandler(404)
 def page_not_found(error):
-
     return render_template(
-        "404.html"
+        "404.html",
+        error_code=404,
+        error_title="Screening Not Found",
+        error_desc="The executive screening or page you are searching for is no longer in projection or the URL is invalid."
     ), 404
+
+
+@app.errorhandler(429)
+def too_many_requests_error(error):
+    return render_template(
+        "404.html",
+        error_code=429,
+        error_title="Rate Limit Exceeded",
+        error_desc="Too many requests were received from this connection. For your security, please wait a moment before trying again."
+    ), 429
 
 
 @app.errorhandler(500)
 def server_error(error):
-
+    # Log internal error safely without exposing stack traces to client
+    logging.error(f"Internal server error occurred: {error}")
     return render_template(
         "500.html"
     ), 500

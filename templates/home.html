@@ -409,16 +409,37 @@
            HERO
            ============================================================ */
 
-        .hero-section {
+        .hero-card-wrapper {
+            width: 100%;
+            padding: 0 clamp(16px, 3.5vw, 48px);
+            margin-top: 24px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .hero-card-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            border: 1px solid rgba(229, 193, 88, 0.45);
+            border-radius: 16px;
+            background-color: #07090e;
+            box-shadow: 0 0 25px rgba(229, 193, 88, 0.12), 0 20px 40px rgba(0, 0, 0, 0.85);
             position: relative;
-            min-height: 520px;
-            padding: 56px clamp(16px, 4vw, 54px) 82px;
+            overflow: hidden;
+            min-height: 480px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-size: cover;
-            background-position: center right;
-            border-bottom: 1px solid var(--border-container);
+            padding: 42px clamp(24px, 4vw, 54px);
+            box-sizing: border-box;
+        }
+
+        .hero-section {
+            position: relative;
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .hero-overlay {
@@ -427,11 +448,13 @@
             background: linear-gradient(
                 90deg,
                 #07090e 0%,
-                #07090e 52%,
-                rgba(7, 9, 14, 0.78) 75%,
-                rgba(7, 9, 14, 0.28) 100%
+                #07090e 38%,
+                rgba(7, 9, 14, 0.92) 55%,
+                rgba(7, 9, 14, 0.65) 75%,
+                rgba(7, 9, 14, 0.22) 100%
             );
             z-index: 1;
+            pointer-events: none;
         }
 
         .hero-left {
@@ -440,27 +463,33 @@
             position: relative;
         }
 
-        .hero-badge {
+        .hero-badge,
+        .hero-exclusive-badge {
             display: inline-flex;
             align-items: center;
-            background: rgba(229, 193, 88, 0.1);
-            border: 1px solid rgba(229, 193, 88, 0.35);
+            gap: 6px;
+            background: rgba(229, 193, 88, 0.08);
+            border: 1px solid rgba(229, 193, 88, 0.45);
             color: var(--gold-primary);
             font-size: 11px;
             font-weight: 800;
             padding: 6px 14px;
             border-radius: 6px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             letter-spacing: 1.2px;
             text-transform: uppercase;
         }
 
+        .gold-title-part {
+            color: var(--gold-primary) !important;
+        }
+
         .hero-title {
-            font-size: clamp(32px, 4.2vw, 48px);
+            font-size: clamp(30px, 4vw, 46px);
             font-weight: 800;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             letter-spacing: -0.3px;
-            line-height: 1.22;
+            line-height: 1.2;
             color: #ffffff;
             text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
         }
@@ -469,7 +498,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
@@ -491,10 +520,10 @@
         }
 
         .hero-desc {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--text-sub);
-            line-height: 1.7;
-            margin-bottom: 22px;
+            line-height: 1.65;
+            margin-bottom: 20px;
             max-width: 580px;
         }
 
@@ -502,7 +531,7 @@
             font-size: 12px;
             color: var(--text-sub);
             line-height: 1.6;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
         }
 
         .hero-cta-btn {
@@ -510,6 +539,14 @@
             font-size: 13px;
             font-weight: 800;
             letter-spacing: 0.8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-cta-btn .cta-arrow {
+            font-size: 16px;
+            line-height: 1;
         }
 
         .hero-right {
@@ -521,16 +558,18 @@
             flex-shrink: 0;
         }
 
-        .hero-poster-card {
-            width: 240px !important;
-            max-width: 240px !important;
-            height: 360px !important;
+        .hero-poster-card,
+        .hero-movie-thumbnail,
+        #posterCarouselContainer {
+            width: 180px !important;
+            max-width: 180px !important;
+            height: 270px !important;
             aspect-ratio: 2 / 3 !important;
-            border-radius: 16px !important;
+            border-radius: 12px !important;
             overflow: hidden !important;
             position: relative;
-            border: 1px solid var(--border-container);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(229, 193, 88, 0.45) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 15px rgba(229, 193, 88, 0.15) !important;
             background: #0f131c;
             flex-shrink: 0 !important;
             transition:
@@ -539,89 +578,75 @@
                 border-color 0.3s ease;
         }
 
-        .hero-poster-card:hover {
-            transform: translateY(-6px) scale(1.01);
-            box-shadow: 0 26px 50px rgba(0, 0, 0, 0.95);
-            border-color: rgba(255, 255, 255, 0.2);
+        .hero-poster-card:hover,
+        .hero-movie-thumbnail:hover,
+        #posterCarouselContainer:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85), 0 0 24px rgba(229, 193, 88, 0.35) !important;
+            border-color: rgba(229, 193, 88, 0.7) !important;
         }
 
         .hero-poster-slide {
             position: absolute;
             inset: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            border-radius: 16px !important;
+            width: 100% !important;
+            height: 100% !important;
+            overflow: hidden !important;
+            border-radius: 12px !important;
         }
 
         .hero-poster-card img,
-        .hero-poster-slide img {
+        .hero-poster-slide img,
+        .hero-movie-poster,
+        #posterCarouselContainer img {
             width: 100% !important;
             height: 100% !important;
             aspect-ratio: 2 / 3 !important;
             object-fit: cover !important;
             object-position: center !important;
             display: block !important;
-            border-radius: 16px !important;
+            border-radius: 12px !important;
             transition: transform 0.4s ease;
         }
 
         .hero-poster-card:hover img,
-        .hero-poster-slide:hover img {
+        .hero-poster-slide:hover img,
+        .hero-movie-thumbnail:hover img {
             transform: scale(1.03);
         }
 
-        /* Attack on Titan Hero Thumbnail Size Alignment */
-        #posterCarouselContainer.is-aot,
-        #posterCarouselContainer:has(#posterSlide0[style*="opacity: 1"]) {
-            width: 175px !important;
-            max-width: 175px !important;
-            height: 260px !important;
-            aspect-ratio: 2 / 3 !important;
-            border-radius: 12px !important;
-            border: 1px solid rgba(229, 193, 88, 0.35) !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 20px 40px rgba(0, 0, 0, 0.7) !important;
-        }
-
-        #posterCarouselContainer.is-aot #posterSlide0,
-        #posterCarouselContainer:has(#posterSlide0[style*="opacity: 1"]) #posterSlide0,
-        #posterSlide0 {
-            border-radius: 12px !important;
-        }
-
-        #posterCarouselContainer.is-aot #posterSlide0 img,
-        #posterCarouselContainer:has(#posterSlide0[style*="opacity: 1"]) #posterSlide0 img,
-        #posterSlide0 img {
-            border-radius: 12px !important;
-            object-fit: cover !important;
-            object-position: center !important;
-        }
-
-        .play-btn {
+        .play-btn,
+        .trailer-play-button {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 52px;
-            height: 52px;
-            background: var(--gold-grad);
+            width: 60px;
+            height: 60px;
+            background: rgba(7, 9, 14, 0.82);
+            border: 2.5px solid var(--gold-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #07090e;
-            border: none;
+            color: var(--gold-primary);
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 18px rgba(229, 193, 88, 0.35);
             transition:
                 transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-                background 0.25s ease;
+                background 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
             z-index: 5;
+            padding: 0;
         }
 
-        .play-btn:hover {
-            transform: translate(-50%, -50%) scale(1.12);
-            background: var(--gold-grad-hover);
+        .play-btn:hover,
+        .trailer-play-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: rgba(15, 19, 28, 0.95);
+            border-color: #f7e099;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.8), 0 0 26px rgba(229, 193, 88, 0.6);
         }
 
         /* ============================================================
@@ -630,7 +655,7 @@
 
         .quick-book-container {
             padding: 0 clamp(16px, 4vw, 54px);
-            margin-top: -34px;
+            margin-top: 14px;
             position: relative;
             z-index: 10;
             max-width: 1400px;
@@ -825,7 +850,7 @@
             flex-direction: column;
             border-radius: 12px;
             background: var(--bg-card);
-            border: 1px solid var(--border-container);
+            border: 1px solid rgba(229, 193, 88, 0.35);
             overflow: hidden;
             width: 100%;
             transition:
@@ -836,8 +861,8 @@
 
         .movie-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(229, 193, 88, 0.4);
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6);
+            border-color: rgba(229, 193, 88, 0.6);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.7), 0 0 20px rgba(229, 193, 88, 0.15);
         }
 
         .poster-box {
@@ -852,6 +877,8 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
+            display: block;
             transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -960,87 +987,203 @@
            VIP LOUNGE
            ============================================================ */
 
-        .vip-banner-block {
-            background: linear-gradient(
-                135deg,
-                rgba(15, 19, 28, 0.92) 0%,
-                rgba(26, 21, 10, 0.88) 100%
-            );
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 20px;
-            padding: 32px 40px;
-            margin-bottom: 0;
-            box-shadow:
-                0 20px 40px rgba(0, 0, 0, 0.6),
-                inset 0 1px 0 rgba(229, 193, 88, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 40px;
-            position: relative;
-            overflow: hidden;
+        .vip-card-wrapper {
+            width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0;
+            margin-top: 10px;
+            margin-bottom: 36px;
+            box-sizing: border-box;
         }
 
-        .vip-banner-left {
-            flex: 1;
+        .vip-lounge-card {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            border: 1px solid rgba(229, 193, 88, 0.45);
+            border-radius: 16px;
+            background-color: #07090e;
+            background-image: url('/static/images/vip_lounge.jpg');
+            background-size: cover;
+            background-position: center right;
+            background-repeat: no-repeat;
+            box-shadow: 0 0 25px rgba(229, 193, 88, 0.12), 0 20px 40px rgba(0, 0, 0, 0.85);
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            justify-content: space-between;
+            min-height: 290px;
+            padding: 34px clamp(20px, 3.5vw, 50px);
+            box-sizing: border-box;
         }
 
-        .vip-titles h2 {
-            font-size: 24px;
+        .vip-banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(7, 9, 14, 0.94) 0%,
+                rgba(7, 9, 14, 0.84) 38%,
+                rgba(7, 9, 14, 0.42) 62%,
+                rgba(7, 9, 14, 0.12) 82%,
+                rgba(7, 9, 14, 0.0) 100%
+            );
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .vip-banner-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .vip-header-title {
+            font-size: 22px;
             font-weight: 800;
-            letter-spacing: -0.3px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .vip-titles p {
-            font-size: 14px;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-
-        .vip-benefit-row {
-            display: inline-flex;
-            align-items: center;
-            gap: 16px;
-            background: rgba(229, 193, 88, 0.08);
-            border: 1px solid rgba(229, 193, 88, 0.25);
-            border-radius: 8px;
-            padding: 10px 18px;
-            font-size: 11px;
-            font-weight: 700;
             color: var(--gold-primary);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            width: fit-content;
-        }
-
-        .vip-banner-right {
             display: flex;
             align-items: center;
-            gap: 24px;
+            gap: 8px;
+            margin-bottom: 6px;
         }
 
-        .vip-preview-card {
-            width: 140px;
-            height: 200px;
-            border-radius: 10px;
+        .vip-header-sub {
+            font-size: 13.5px;
+            color: #94a3b8;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .vip-features-capsule {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(10, 12, 18, 0.75);
+            border: 1px solid rgba(229, 193, 88, 0.35);
+            border-radius: 8px;
+            backdrop-filter: blur(8px);
             overflow: hidden;
-            border: 1px solid var(--border-container);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.8);
-            position: relative;
-            background: #000;
-            flex-shrink: 0;
+            max-width: 100%;
         }
 
-        .vip-preview-card img {
+        .vip-feature-col {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-right: 1px solid rgba(229, 193, 88, 0.25);
+            color: var(--gold-primary);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .vip-feature-col:last-child {
+            border-right: none;
+        }
+
+        .vip-cta-row {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            margin-top: 24px;
+        }
+
+        .vip-btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .vip-explore-btn {
+            background: var(--gold-grad);
+            color: #07090e;
+            padding: 12px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 16px rgba(184, 142, 40, 0.35);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .vip-explore-btn:hover {
+            background: var(--gold-grad-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(244, 223, 155, 0.45);
+            color: #07090e;
+        }
+
+        @media (max-width: 768px) {
+            .vip-banner-overlay {
+                background: linear-gradient(
+                    180deg,
+                    rgba(7, 9, 14, 0.94) 0%,
+                    rgba(7, 9, 14, 0.88) 45%,
+                    rgba(7, 9, 14, 0.65) 100%
+                );
+            }
+            .vip-lounge-card {
+                padding: 26px 20px;
+                min-height: auto;
+            }
+            .vip-header-title {
+                font-size: 19px;
+            }
+            .vip-header-sub {
+                font-size: 13px;
+                margin-bottom: 16px;
+            }
+            .vip-features-capsule {
+                flex-wrap: wrap;
+                width: 100%;
+            }
+            .vip-feature-col {
+                padding: 9px 12px;
+                font-size: 10.5px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .vip-features-capsule {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+            .vip-feature-col {
+                border-right: none;
+                border-bottom: 1px solid rgba(229, 193, 88, 0.2);
+                padding: 10px 14px;
+                justify-content: flex-start;
+                font-size: 11px;
+            }
+            .vip-feature-col:last-child {
+                border-bottom: none;
+            }
+            .vip-explore-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 13px 20px;
+                box-sizing: border-box;
+            }
         }
 
         /* ============================================================
@@ -1517,7 +1660,7 @@
 
             .quick-book-container {
                 padding: 0 24px;
-                margin-top: -24px;
+                margin-top: 16px;
             }
 
             .main-content {
@@ -1558,10 +1701,13 @@
                 justify-content: center;
             }
 
-            .hero-poster-card {
-                width: clamp(140px, 32vw, 175px);
-                aspect-ratio: 2 / 3;
-                height: auto;
+            .hero-poster-card,
+            #posterCarouselContainer {
+                width: 175px !important;
+                max-width: 175px !important;
+                height: 260px !important;
+                aspect-ratio: 2 / 3 !important;
+                border-radius: 12px !important;
             }
 
             .hero-title {
@@ -1594,6 +1740,12 @@
             .vip-banner-right {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .vip-btn-container {
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
             }
         }
 
@@ -1701,15 +1853,18 @@
                 margin-bottom: 22px;
             }
 
-            .hero-poster-card {
-                width: 140px;
-                aspect-ratio: 2 / 3;
-                height: auto;
+            .hero-poster-card,
+            #posterCarouselContainer {
+                width: 160px !important;
+                max-width: 160px !important;
+                height: 240px !important;
+                aspect-ratio: 2 / 3 !important;
+                border-radius: 12px !important;
             }
 
             .quick-book-container {
                 padding: 0 16px;
-                margin-top: -18px;
+                margin-top: 14px;
             }
 
             .quick-book-bar {
@@ -1811,8 +1966,13 @@
                 font-size: 22px;
             }
 
-            .hero-poster-card {
-                width: 125px;
+            .hero-poster-card,
+            #posterCarouselContainer {
+                width: 140px !important;
+                max-width: 140px !important;
+                height: 210px !important;
+                aspect-ratio: 2 / 3 !important;
+                border-radius: 12px !important;
             }
 
             .meta-tag {
@@ -1835,7 +1995,7 @@
 
             .quick-book-container {
                 padding: 0 12px;
-                margin-top: -14px;
+                margin-top: 12px;
             }
 
             .city-grid {
@@ -2052,91 +2212,96 @@
 
 {% if movies and movies|length > 0 %}
 
-    {% set top_movies = movies | sort(attribute='rating', reverse=True) %}
+    {% set top_movies = movies %}
     {% set hero_movie = top_movies[0] %}
     {% set hero_image = hero_movie.backdrop or hero_movie.poster %}
 
-    <div
-        class="hero-section"
-        id="heroBanner">
+    <div class="hero-card-wrapper">
+        <div class="hero-card-container hero-section" id="heroBanner">
 
-        <div id="heroBgCurrent" style="position: absolute; inset: 0; background-image: url('{{ hero_image }}'); background-size: cover; background-position: center right; z-index: 0;"></div>
-        <div id="heroBgNext" style="position: absolute; inset: 0; background-size: cover; background-position: center right; opacity: 0; transition: opacity 0.4s ease-in-out; z-index: 0;"></div>
+            <div id="heroBgCurrent" style="position: absolute; inset: 0; background-image: url('{{ hero_image }}'); background-size: cover; background-position: center right; z-index: 0;"></div>
+            <div id="heroBgNext" style="position: absolute; inset: 0; background-size: cover; background-position: center right; opacity: 0; transition: opacity 0.4s ease-in-out; z-index: 0;"></div>
 
-        <div class="hero-overlay"></div>
+            <div class="hero-overlay"></div>
 
-        <div class="hero-left">
-            <div id="heroLeftContent" style="transition: opacity 0.4s ease-in-out;">
-                <span class="hero-badge">
-                    Exclusive Screening
-                </span>
-
-                <h1 class="hero-title" id="heroTitle">
-                    {{ hero_movie.title or hero_movie.name }}
-                </h1>
-
-                <div class="hero-meta">
-                    <span class="meta-tag gold" id="heroRating">
-                        ⭐ {{ hero_movie.rating or '9.2' }} RATING
+            <div class="hero-left">
+                <div id="heroLeftContent" style="transition: opacity 0.4s ease-in-out;">
+                    <span class="hero-exclusive-badge">
+                        👑 Exclusive Screening
                     </span>
-                    <span class="meta-tag" id="heroAge">
-                        {{ hero_movie.age_rating or 'UA 16+' }}
-                    </span>
-                    <span class="meta-tag" id="heroDuration">
-                        {{ hero_movie.duration or '2h 30m' }}
-                    </span>
-                    <span class="meta-tag" id="heroFormat">
-                        {{ hero_movie.format or 'DOLBY ATMOS' }}
-                    </span>
+
+                    <h1 class="hero-title" id="heroTitle">
+                        {% set title_parts = (hero_movie.title or hero_movie.name).split(': ', 1) %}
+                        {% if title_parts|length > 1 %}
+                            {{ title_parts[0] }}: <span class="gold-title-part">{{ title_parts[1] }}</span>
+                        {% else %}
+                            {{ hero_movie.title or hero_movie.name }}
+                        {% endif %}
+                    </h1>
+
+                    <div class="hero-meta">
+                        <span class="meta-tag gold" id="heroRating">
+                            ★ {{ hero_movie.rating or '8.1' }} RATING
+                        </span>
+                        <span class="meta-tag" id="heroAge">
+                            {{ hero_movie.age_rating or 'UA 13+' }}
+                        </span>
+                        <span class="meta-tag" id="heroDuration">
+                            {{ hero_movie.duration or '3h 12m' }}
+                        </span>
+                        <span class="meta-tag" id="heroFormat">
+                            {{ hero_movie.format or '3D HFR • DOLBY CINEMA' }}
+                        </span>
+                    </div>
+
+                    <p class="hero-desc" id="heroDesc">
+                        {{ hero_movie.description }}
+                    </p>
+
+                    <div id="heroDetails" class="hero-details-row">
+                        <strong>Genre:</strong> <span id="heroGenre">{{ hero_movie.genre or 'Sci-Fi/Fantasy' }}</span> &bull;
+                        <strong>Language:</strong> <span id="heroLanguage">{{ hero_movie.language or 'English/Tamil' }}</span> &bull;
+                        <strong>Director:</strong> <span id="heroDirector">{{ hero_movie.director or 'James Cameron' }}</span>
+                    </div>
+
+                    <a id="heroBookBtn" href="{{ url_for('movie_details', movie_id=hero_movie.id) }}" class="btn-gold hero-cta-btn">
+                        <span>
+                            Reserve Tickets ›
+                        </span>
+                    </a>
                 </div>
-
-                <p class="hero-desc" id="heroDesc">
-                    {{ hero_movie.description }}
-                </p>
-
-                <div id="heroDetails" class="hero-details-row">
-                    <strong>Genre:</strong> <span id="heroGenre">{{ hero_movie.genre or 'Action' }}</span> &bull;
-                    <strong>Language:</strong> <span id="heroLanguage">{{ hero_movie.language or 'English' }}</span> &bull;
-                    <strong>Director:</strong> <span id="heroDirector">{{ hero_movie.director or 'Unknown' }}</span>
-                </div>
-
-                <a id="heroBookBtn" href="{{ url_for('movie_details', movie_id=hero_movie.id) }}" class="btn-gold hero-cta-btn">
-                    <span>
-                        Reserve Tickets
-                    </span>
-                </a>
-            </div>
-        </div>
-
-        <div class="hero-right">
-
-            <div class="hero-poster-card is-aot" id="posterCarouselContainer" onmouseenter="pausePosterCarousel()" onmouseleave="resumePosterCarousel()">
-                {% set top_movies = movies | sort(attribute='rating', reverse=True) %}
-                {% set carousel_movies = top_movies[:5] %}
-
-                {% for m in carousel_movies %}
-                <div class="hero-poster-slide" id="posterSlide{{ loop.index0 }}" style="position: absolute; inset: 0; opacity: {% if loop.first %}1{% else %}0{% endif %}; transition: opacity 0.8s ease-in-out; z-index: {% if loop.first %}2{% else %}1{% endif %};">
-                    <img
-                        src="{{ m.poster }}"
-                        alt="{{ m.name }}"
-                        style="cursor: pointer; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; opacity: 1 !important;"
-                        data-trailer-url="{{ m.trailer_url or '' }}"
-                        onclick="openTrailer(this.dataset.trailerUrl)">
-
-                    <button
-                        class="play-btn"
-                        type="button"
-                        data-trailer-url="{{ m.trailer_url or '' }}"
-                        onclick="openTrailer(this.dataset.trailerUrl)"
-                        aria-label="Watch trailer">
-                        ▶
-                    </button>
-                </div>
-                {% endfor %}
             </div>
 
-        </div>
+            <div class="hero-right">
 
+                <div class="hero-poster-card hero-movie-thumbnail" id="posterCarouselContainer" onmouseenter="pausePosterCarousel()" onmouseleave="resumePosterCarousel()">
+                    {% for m in top_movies %}
+                    <div class="hero-poster-slide" id="posterSlide{{ loop.index0 }}" style="position: absolute; inset: 0; opacity: {% if loop.first %}1{% else %}0{% endif %}; transition: opacity 0.8s ease-in-out; z-index: {% if loop.first %}2{% else %}1{% endif %};">
+                        <img
+                            src="{{ m.poster }}"
+                            alt="{{ m.name }}"
+                            class="hero-movie-poster"
+                            style="cursor: pointer; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; opacity: 1 !important;"
+                            data-trailer-url="{{ m.trailer_url or '' }}"
+                            onclick="openTrailer(this.dataset.trailerUrl)">
+
+                        <button
+                            class="trailer-play-button play-btn"
+                            type="button"
+                            data-trailer-url="{{ m.trailer_url or '' }}"
+                            onclick="openTrailer(this.dataset.trailerUrl)"
+                            aria-label="Watch trailer">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 3px;">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </div>
     </div>
 
 {% endif %}
@@ -2182,7 +2347,13 @@
                     Select Date
                 </option>
 
-                <!-- Options will be populated by JS to use proper absolute dates -->
+                {% if rolling_dates is defined and rolling_dates %}
+                    {% for rd in rolling_dates %}
+                        <option value="{{ rd.strftime('%Y-%m-%d') }}">
+                            {% if loop.index == 1 %}Today — {{ rd.strftime('%B %d').replace(' 0', ' ') }}{% elif loop.index == 2 %}Tomorrow — {{ rd.strftime('%B %d').replace(' 0', ' ') }}{% elif loop.index == 3 %}Day After Tomorrow — {{ rd.strftime('%B %d').replace(' 0', ' ') }}{% else %}The Following Day — {{ rd.strftime('%B %d').replace(' 0', ' ') }}{% endif %}
+                        </option>
+                    {% endfor %}
+                {% endif %}
 
             </select>
 
@@ -2614,90 +2785,34 @@
 
 
     <!-- VIP LOUNGE -->
-
-    <div class="vip-banner-block">
-
-        <div class="vip-banner-left">
-
-            <div class="vip-titles">
-
-                <h2>
-                    VIP Lounge
-                </h2>
-
-                <p>
-                    Premium seating, dining and personalized service.
-                </p>
-
+    <div class="vip-card-wrapper">
+        <div class="vip-lounge-card" style="background-image: url('{{ url_for('static', filename='images/vip_lounge.jpg') }}'); background-size: cover; background-position: center right; background-repeat: no-repeat; min-height: 290px;">
+            <div class="vip-banner-overlay"></div>
+            <div class="vip-banner-content">
+                <div class="vip-header-title">
+                    👑 VIP LOUNGE
+                </div>
+                <div class="vip-header-sub">
+                    The pinnacle of luxury cinema entertainment.
+                </div>
+                <div class="vip-features-capsule">
+                    <div class="vip-feature-col">
+                        <span>🪑</span> RECLINER SEATS
+                    </div>
+                    <div class="vip-feature-col">
+                        <span>🍽</span> GOURMET DINING
+                    </div>
+                    <div class="vip-feature-col">
+                        <span>🛎</span> BUTLER SERVICE
+                    </div>
+                </div>
             </div>
-
-            <div class="vip-benefit-row">
-
-                <span>
-                    🛋 Recliner Suites
-                </span>
-
-                <span>
-                    •
-                </span>
-
-                <span>
-                    🍿 Gourmet Dining
-                </span>
-
-                <span>
-                    •
-                </span>
-
-                <span>
-                    🥂 Butler Service
-                </span>
-
-            </div>
-
-            <div>
-                <a
-                    href="{{ url_for('offers') }}"
-                    class="btn-gold"
-                    style="padding: 10px 22px; font-size: 12px;">
-
-                    Explore VIP Experience
-
+            <div class="vip-cta-row vip-btn-container">
+                <a href="{{ url_for('offers') }}" class="vip-explore-btn btn-gold">
+                    Explore VIP Experience →
                 </a>
             </div>
-
         </div>
-
-        <div class="vip-banner-right">
-
-            {% if movies and movies|length > 0 %}
-
-                <div class="vip-preview-card">
-
-                    <img
-                        src="{{ movies[0].poster }}"
-                        alt="{{ movies[0].name }}">
-
-                </div>
-
-            {% endif %}
-
-            {% if movies and movies|length > 1 %}
-
-                <div
-                    class="vip-preview-card"
-                    style="transform: translateY(12px);">
-
-                    <img
-                        src="{{ movies[1].poster }}"
-                        alt="{{ movies[1].name }}">
-
-                </div>
-
-            {% endif %}
-
-        </div>
-
     </div>
 
 
@@ -3475,6 +3590,11 @@
 
         }
 
+        if (typeof isNowShowingPaused !== 'undefined') {
+            isNowShowingPaused = true;
+            setTimeout(() => { isNowShowingPaused = false; }, 3500);
+        }
+
     }
 
 
@@ -4112,8 +4232,8 @@
 
     // Extract top movies data directly from Jinja
     const carouselData = [
-        {% set top_movies = movies | sort(attribute='rating', reverse=True) %}
-        {% set carousel_movies = top_movies[:5] %}
+        {% set top_movies = movies %}
+        {% set carousel_movies = top_movies %}
         {% for m in carousel_movies %}
         {
             title: {{ (m.title or m.name) | tojson }},
@@ -4135,60 +4255,119 @@
     const heroBgCurrent = document.getElementById('heroBgCurrent');
     const heroBgNext = document.getElementById('heroBgNext');
 
-    function startPosterCarousel() {
-        if (posterSlides.length <= 1) return;
-        posterCarouselInterval = setInterval(() => {
-            if (isPosterCarouselPaused) return;
+    function formatHeroTitle(title) {
+        if (!title) return '';
+        const idx = title.indexOf(': ');
+        if (idx !== -1) {
+            const prefix = title.substring(0, idx + 1);
+            const suffix = title.substring(idx + 2);
+            return `${prefix} <span class="gold-title-part">${suffix}</span>`;
+        }
+        return title;
+    }
 
-            const currentSlide = posterSlides[posterCarouselIndex];
-            posterCarouselIndex = (posterCarouselIndex + 1) % posterSlides.length;
-            const nextSlide = posterSlides[posterCarouselIndex];
-            const nextData = carouselData[posterCarouselIndex];
+    function updateHeroDots(activeIndex) {
+        const dots = document.querySelectorAll('.hero-dot');
+        if (!dots || dots.length === 0) return;
+        dots.forEach((dot, idx) => {
+            if (idx === activeIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
 
-            // 1. Fade out current left content and set next background
-            heroLeftContent.style.opacity = '0';
+    function goToPosterSlide(newIndex) {
+        if (!posterSlides || posterSlides.length <= 1) return;
 
+        const total = posterSlides.length;
+        const normalizedIndex = ((newIndex % total) + total) % total;
+        if (normalizedIndex === posterCarouselIndex) return;
+
+        const currentSlide = posterSlides[posterCarouselIndex];
+        posterCarouselIndex = normalizedIndex;
+        const nextSlide = posterSlides[posterCarouselIndex];
+        const nextData = carouselData[posterCarouselIndex];
+        if (!nextSlide || !nextData) return;
+
+        // 1. Fade out current left content and set next background
+        if (heroLeftContent) heroLeftContent.style.opacity = '0';
+
+        if (heroBgNext) {
             heroBgNext.style.backgroundImage = `url('${nextData.backdrop}')`;
             heroBgNext.style.opacity = '1';
+        }
 
-            // 2. Poster slide transition
-            currentSlide.style.opacity = '0';
-            currentSlide.style.zIndex = '1';
-            nextSlide.style.opacity = '1';
-            nextSlide.style.zIndex = '2';
+        // 2. Poster slide transition
+        currentSlide.style.opacity = '0';
+        currentSlide.style.zIndex = '1';
+        nextSlide.style.opacity = '1';
+        nextSlide.style.zIndex = '2';
 
-            const carouselContainer = document.getElementById('posterCarouselContainer');
-            if (carouselContainer) {
-                if (posterCarouselIndex === 0) {
-                    carouselContainer.classList.add('is-aot');
-                } else {
-                    carouselContainer.classList.remove('is-aot');
-                }
+        // 3. Update pagination dots if present
+        updateHeroDots(posterCarouselIndex);
+
+        // 4. Update left content after fade out completes
+        setTimeout(() => {
+            const titleEl = document.getElementById('heroTitle');
+            if (titleEl) titleEl.innerHTML = formatHeroTitle(nextData.title);
+            const ratingEl = document.getElementById('heroRating');
+            if (ratingEl) ratingEl.innerHTML = `★ ${nextData.rating || '8.1'} RATING`;
+            const ageEl = document.getElementById('heroAge');
+            if (ageEl) ageEl.innerText = nextData.age_rating || 'UA 13+';
+            const durEl = document.getElementById('heroDuration');
+            if (durEl) durEl.innerText = nextData.duration || '3h 12m';
+            const fmtEl = document.getElementById('heroFormat');
+            if (fmtEl) fmtEl.innerText = nextData.format || '3D HFR • DOLBY CINEMA';
+            const descEl = document.getElementById('heroDesc');
+            if (descEl) descEl.innerText = nextData.description;
+            const genreEl = document.getElementById('heroGenre');
+            if (genreEl) genreEl.innerText = nextData.genre || 'Sci-Fi/Fantasy';
+            const langEl = document.getElementById('heroLanguage');
+            if (langEl) langEl.innerText = nextData.language || 'English/Tamil';
+            const dirEl = document.getElementById('heroDirector');
+            if (dirEl) dirEl.innerText = nextData.director || 'James Cameron';
+            const bookEl = document.getElementById('heroBookBtn');
+            if (bookEl) {
+                bookEl.href = nextData.details_url;
+                bookEl.innerHTML = '<span>Reserve Tickets ›</span>';
             }
 
-            // 3. Update left content after fade out completes
-            setTimeout(() => {
-                document.getElementById('heroTitle').innerText = nextData.title;
-                document.getElementById('heroRating').innerHTML = `⭐ ${nextData.rating || '9.2'} RATING`;
-                document.getElementById('heroAge').innerText = nextData.age_rating || 'UA 16+';
-                document.getElementById('heroDuration').innerText = nextData.duration || '2h 30m';
-                document.getElementById('heroFormat').innerText = nextData.format || 'DOLBY ATMOS';
-                document.getElementById('heroDesc').innerText = nextData.description;
-                document.getElementById('heroGenre').innerText = nextData.genre || 'Action';
-                document.getElementById('heroLanguage').innerText = nextData.language || 'English';
-                document.getElementById('heroDirector').innerText = nextData.director || 'Unknown';
-                document.getElementById('heroBookBtn').href = nextData.details_url;
+            // Fade left content back in
+            if (heroLeftContent) heroLeftContent.style.opacity = '1';
 
-                // Fade left content back in
-                heroLeftContent.style.opacity = '1';
+            // Commit background transition quietly
+            if (heroBgCurrent) heroBgCurrent.style.backgroundImage = `url('${nextData.backdrop}')`;
+            if (heroBgNext) heroBgNext.style.opacity = '0';
 
-                // Commit background transition quietly
-                heroBgCurrent.style.backgroundImage = `url('${nextData.backdrop}')`;
-                heroBgNext.style.opacity = '0';
+        }, 400); // 400ms transition
 
-            }, 400); // Wait 400ms (matches CSS transition duration for left content)
+        // Restart timer smoothly after manual interaction
+        restartPosterCarouselTimer();
+    }
 
-        }, 4000); // 4 seconds
+    function stepPosterCarousel(direction) {
+        if (!posterSlides || posterSlides.length <= 1) return;
+        goToPosterSlide(posterCarouselIndex + direction);
+    }
+
+    function startPosterCarousel() {
+        if (!posterSlides || posterSlides.length <= 1) return;
+        if (posterCarouselInterval) clearInterval(posterCarouselInterval);
+
+        posterCarouselInterval = setInterval(() => {
+            if (isPosterCarouselPaused) return;
+            stepPosterCarousel(1);
+        }, 5000); // 5 seconds comfortable luxury interval
+    }
+
+    function restartPosterCarouselTimer() {
+        if (posterCarouselInterval) {
+            clearInterval(posterCarouselInterval);
+            posterCarouselInterval = null;
+        }
+        startPosterCarousel();
     }
 
     function pausePosterCarousel() {
@@ -4199,16 +4378,82 @@
         isPosterCarouselPaused = false;
     }
 
+    // Horizontal Movie Carousel Auto-Scroll (Now Showing)
+    let nowShowingAutoScrollInterval = null;
+    let isNowShowingPaused = false;
+
+    function startNowShowingAutoScroll() {
+        const container = document.getElementById('nowShowingCarousel');
+        if (!container) return;
+
+        if (nowShowingAutoScrollInterval) clearInterval(nowShowingAutoScrollInterval);
+
+        nowShowingAutoScrollInterval = setInterval(() => {
+            if (isNowShowingPaused) return;
+
+            const firstCard = container.querySelector('.movie-card');
+            if (!firstCard) return;
+
+            const cardWidth = firstCard.offsetWidth + 18;
+            const maxScroll = container.scrollWidth - container.clientWidth;
+
+            // Smooth loop when reaching the end
+            if (container.scrollLeft >= maxScroll - 15) {
+                container.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+            }
+        }, 5000); // 5 seconds comfortable luxury interval
+    }
+
+    function initCarouselListeners() {
+        const container = document.getElementById('nowShowingCarousel');
+        if (!container) return;
+
+        container.addEventListener('mouseenter', () => { isNowShowingPaused = true; });
+        container.addEventListener('mouseleave', () => { isNowShowingPaused = false; });
+        container.addEventListener('touchstart', () => { isNowShowingPaused = true; }, { passive: true });
+        container.addEventListener('touchend', () => {
+            setTimeout(() => { isNowShowingPaused = false; }, 2500);
+        }, { passive: true });
+
+        // Touch support for Hero Poster Card
+        const heroPoster = document.getElementById('posterCarouselContainer');
+        if (heroPoster) {
+            let touchStartX = 0;
+            heroPoster.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                pausePosterCarousel();
+            }, { passive: true });
+
+            heroPoster.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const diff = touchEndX - touchStartX;
+                if (diff > 40) {
+                    stepPosterCarousel(-1); // swipe right -> previous
+                } else if (diff < -40) {
+                    stepPosterCarousel(1);  // swipe left -> next
+                }
+                setTimeout(() => { resumePosterCarousel(); }, 2500);
+            }, { passive: true });
+        }
+    }
+
     // Quick Reserve Date Logic
     function initQuickReserveDates() {
         const dateSelect = document.getElementById("qbDateSelect");
         if (!dateSelect) return;
+
+        // If options are already rendered by server, don't duplicate
+        if (dateSelect.options.length > 1) return;
 
         const today = new Date();
         const tomorrow = new Date();
         tomorrow.setDate(today.getDate() + 1);
         const dayAfter = new Date();
         dayAfter.setDate(today.getDate() + 2);
+        const followingDay = new Date();
+        followingDay.setDate(today.getDate() + 3);
 
         const formatDateVal = (d) => {
             const yyyy = d.getFullYear();
@@ -4220,25 +4465,27 @@
         const formatLabel = (d, prefix) => {
             const options = { month: 'long', day: 'numeric' };
             const dateStr = d.toLocaleDateString('en-US', options);
-            return `${prefix} - ${dateStr}`;
+            return `${prefix} — ${dateStr}`;
         };
 
-        // Preserve TODAY exactly as it worked before
-        dateSelect.add(new Option(formatLabel(today, "Today"), "today"));
-
-        // Add dynamic dates for Tomorrow and Day After Tomorrow
+        dateSelect.add(new Option(formatLabel(today, "Today"), formatDateVal(today)));
         dateSelect.add(new Option(formatLabel(tomorrow, "Tomorrow"), formatDateVal(tomorrow)));
         dateSelect.add(new Option(formatLabel(dayAfter, "Day After Tomorrow"), formatDateVal(dayAfter)));
+        dateSelect.add(new Option(formatLabel(followingDay, "The Following Day"), formatDateVal(followingDay)));
     }
 
     // Start on load
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             startPosterCarousel();
+            startNowShowingAutoScroll();
+            initCarouselListeners();
             initQuickReserveDates();
         });
     } else {
         startPosterCarousel();
+        startNowShowingAutoScroll();
+        initCarouselListeners();
         initQuickReserveDates();
     }
 </script>
