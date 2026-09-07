@@ -198,6 +198,7 @@ def create_app():
                 pass
 
         seed_initial_data()
+        sync_movie_image_paths()
 
     @app.before_request
     def auto_sync_showtimes():
@@ -357,6 +358,61 @@ def sync_dynamic_showtimes(reference_date=None, force=False, movie=None):
     if reference_date is None:
         _last_showtime_sync_date = today_date
 
+
+# ============================================================
+# SAFE MOVIE IMAGE PATH SYNC
+# ============================================================
+
+def sync_movie_image_paths():
+
+    movie_images = {
+        "Avengers: Endgame": {
+            "poster": "/static/images/avengers_endgame_poster.jpg",
+            "backdrop": "/static/images/avengers_endgame_backdrop.jpg"
+        },
+        "Attack on Titan: The Last Attack": {
+            "poster": "/static/images/attack_on_titan_poster.jpg",
+            "backdrop": "/static/images/attack_on_titan_backdrop.jpg"
+        },
+        "Dhurandhar: The Revenge": {
+            "poster": "/static/images/dhurandhar_poster.jpg",
+            "backdrop": "/static/images/dhurandhar_backdrop.jpg"
+        },
+        "Inception": {
+            "poster": "/static/images/inception_poster.jpg",
+            "backdrop": "/static/images/inception_backdrop.jpg"
+        },
+        "Interstellar": {
+            "poster": "/static/images/interstellar_poster.jpg",
+            "backdrop": "/static/images/interstellar_backdrop.jpg"
+        },
+        "Avatar: The Way of Water": {
+            "poster": "/static/images/avatar_poster.jpg",
+            "backdrop": "/static/images/avatar_backdrop.jpg"
+        },
+        "Oppenheimer": {
+            "poster": "/static/images/oppenheimer_poster.jpg",
+            "backdrop": "/static/images/oppenheimer_backdrop.jpg"
+        }
+    }
+
+    changed = False
+
+    for title, images in movie_images.items():
+
+        movie = Movie.query.filter_by(title=title).first()
+
+        if movie:
+            if movie.poster != images["poster"]:
+                movie.poster = images["poster"]
+                changed = True
+
+            if movie.backdrop != images["backdrop"]:
+                movie.backdrop = images["backdrop"]
+                changed = True
+
+    if changed:
+        db.session.commit()
 
 # ============================================================
 # INITIAL DATA
