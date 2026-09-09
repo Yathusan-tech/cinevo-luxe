@@ -2983,6 +2983,10 @@ def validate_image_url(url, field_label="Poster URL", max_length=500, required=T
     if any(c in url for c in ['\n', '\r', '\t', ' ']):
         return False, "Invalid URL. Please enter a valid image URL."
 
+    # Allow local static media paths
+    if url.startswith("/static/") or url.startswith("/"):
+        return True, ""
+
     try:
         parsed = urllib.parse.urlparse(url)
     except Exception:

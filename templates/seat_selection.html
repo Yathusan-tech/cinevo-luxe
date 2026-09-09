@@ -277,12 +277,12 @@
             .auditorium-box { padding: 20px 8px; border-radius: 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
             .reservation-summary-card { padding: 18px 14px; border-radius: 12px; }
             .seat-row { gap: 6px; }
-            .seat-btn { width: 30px; height: 30px; min-width: 30px; min-height: 30px; font-size: 10px; border-radius: 6px; touch-action: manipulation; }
+            .seat-btn { width: 32px; height: 32px; min-width: 32px; min-height: 32px; font-size: 10.5px; border-radius: 6px; touch-action: manipulation; }
             .row-identifier { width: 18px; font-size: 10px; }
             .legend-row { gap: 12px; font-size: 11px; }
             .modal-card { width: 94% !important; padding: 18px 14px !important; }
             .site-footer { padding: 28px 16px; }
-            .btn-proceed { min-height: 46px; font-size: 13px; }
+            .btn-proceed { min-height: 48px; font-size: 14px; }
         }
 
         @media (max-width: 360px) {
@@ -290,11 +290,11 @@
             .brand-name { font-size: 17px; letter-spacing: 1px; }
             .booking-wrapper { padding: 0 8px; }
             .auditorium-box { padding: 16px 4px; }
-            .seat-row { gap: 5px; }
-            .seat-btn { width: 28px; height: 28px; min-width: 28px; min-height: 28px; font-size: 9.5px; border-radius: 5px; touch-action: manipulation; }
+            .seat-row { gap: 6px; }
+            .seat-btn { width: 30px; height: 30px; min-width: 30px; min-height: 30px; font-size: 10px; border-radius: 6px; touch-action: manipulation; }
             .row-identifier { width: 16px; font-size: 9.5px; }
             .legend-row { gap: 8px; font-size: 10px; }
-            .btn-proceed { min-height: 44px; font-size: 12px; }
+            .btn-proceed { min-height: 46px; font-size: 13px; }
         }
     </style>
 </head>
@@ -587,124 +587,6 @@
     </div>
 </div>
 
-<script>
-    let myFoodCart = {};
-    function openFoodModal() {
-        document.getElementById('foodModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-    function closeFoodModal() {
-        document.getElementById('foodModal').style.display = 'none';
-        document.body.style.overflow = '';
-    }
-    function addFoodItem(name, price) {
-        if (myFoodCart[name]) {
-            myFoodCart[name].quantity += 1;
-        } else {
-            myFoodCart[name] = { price: price, quantity: 1 };
-        }
-        updateFoodUI();
-    }
-    function updateFoodUI() {
-        const summary = document.getElementById('bookingFoodSummary');
-        const items = document.getElementById('bookingFoodItems');
-        const totalEl = document.getElementById('bookingFoodTotal');
-        let total = 0;
-        let html = '';
-        for (let key in myFoodCart) {
-            let itemTotal = myFoodCart[key].price * myFoodCart[key].quantity;
-            total += itemTotal;
-            html += '<div style="display: flex; justify-content: space-between; margin-bottom: 6px;">' +
-                    '<span>' + key + ' × ' + myFoodCart[key].quantity + '</span>' +
-                    '<span>₹' + itemTotal + '</span></div>';
-        }
-        if (total > 0) {
-            summary.style.display = 'block';
-            items.innerHTML = html;
-            totalEl.innerText = '₹' + total;
-        } else {
-            summary.style.display = 'none';
-        }
-    }
-    function submitWithFood() {
-        document.getElementById('input-food').value = JSON.stringify(myFoodCart);
-        document.getElementById('checkoutForm').submit();
-    }
-    function skipFood() {
-        document.getElementById('input-food').value = JSON.stringify({});
-        document.getElementById('checkoutForm').submit();
-    }
-</script>
-
-<script>
-    const TICKET_PRICE = {{ showtime.base_ticket_price }};
-    let selectedSeats = [];
-
-    const displaySeats = document.getElementById('display-seats');
-    const displayCount = document.getElementById('display-count');
-    const displayTotal = document.getElementById('display-total');
-    const inputSeats = document.getElementById('input-seats');
-    const proceedBtn = document.getElementById('proceed-btn');
-
-    let seatAlertTimeout = null;
-    function showSeatAlert(msg) {
-        const alertBox = document.getElementById('seat-alert-msg');
-        if (alertBox) {
-            alertBox.textContent = msg;
-            alertBox.style.display = 'block';
-            clearTimeout(seatAlertTimeout);
-            seatAlertTimeout = setTimeout(() => {
-                alertBox.style.display = 'none';
-            }, 4000);
-        }
-    }
-
-    function hideSeatAlert() {
-        const alertBox = document.getElementById('seat-alert-msg');
-        if (alertBox) {
-            alertBox.style.display = 'none';
-        }
-    }
-
-    function handleSeatClick(seatCode, elem, isOccupied) {
-        if (isOccupied || elem.classList.contains('occupied')) {
-            showSeatAlert("This seat is already booked. Please select another seat.");
-            return;
-        }
-        hideSeatAlert();
-        toggleSeat(seatCode, elem);
-    }
-
-    function toggleSeat(seatCode, elem) {
-        if (elem.classList.contains('occupied')) return;
-
-        if (elem.classList.contains('selected')) {
-            elem.classList.remove('selected');
-            selectedSeats = selectedSeats.filter(s => s !== seatCode);
-        } else {
-            elem.classList.add('selected');
-            selectedSeats.push(seatCode);
-        }
-
-        updateSummary();
-    }
-
-    function updateSummary() {
-        if (selectedSeats.length > 0) {
-            displaySeats.textContent = selectedSeats.join(', ');
-            displayCount.textContent = selectedSeats.length;
-            displayTotal.textContent = '₹' + (selectedSeats.length * TICKET_PRICE);
-            inputSeats.value = selectedSeats.join(',');
-            proceedBtn.disabled = false;
-        } else {
-            displaySeats.textContent = 'None';
-            displayCount.textContent = '0';
-            displayTotal.textContent = '₹0';
-            inputSeats.value = '';
-            proceedBtn.disabled = true;
-        }
-    }
-</script>
 
 <!-- Footer -->
 <footer class="site-footer">
@@ -720,6 +602,12 @@
         <a href="{{ url_for('offers') }}" class="footer-link">Offers</a>
     </div>
 </footer>
+
+<script>
+    window.CINEVO_TICKET_PRICE = {{ showtime.base_ticket_price | tojson }};
+</script>
+
+<script src="{{ url_for('static', filename='js/seat_selection.js') }}"></script>
 
 </body>
 </html>

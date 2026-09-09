@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Movie</title>
     <style>
-        body { background: #0b0d14; color: #fff; font-family: sans-serif; padding: 40px; }
-        form { max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
-        input, textarea { padding: 10px; background: #141724; border: 1px solid #333; color: #fff; border-radius: 6px; }
-        button { padding: 12px; background: #6366f1; border: none; color: #fff; border-radius: 6px; cursor: pointer; }
+        * { box-sizing: border-box; }
+        body { background: #0b0d14; color: #fff; font-family: sans-serif; padding: clamp(16px, 4vw, 40px); margin: 0; }
+        form { max-width: 480px; width: 100%; display: flex; flex-direction: column; gap: 12px; }
+        input, textarea { width: 100%; padding: 12px; background: #141724; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 16px; }
+        button { padding: 12px; background: #6366f1; border: none; color: #fff; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: bold; min-height: 44px; }
     </style>
 </head>
 <body>

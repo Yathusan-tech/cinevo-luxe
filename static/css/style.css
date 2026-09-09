@@ -446,21 +446,24 @@ img, video, iframe {
     outline: none;
     color: #fff;
     font-size: 13px;
-    width: 195px;
+    width: clamp(120px, 18vw, 195px);
     height: 100%;
+    min-width: 0;
+    transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .search-dropdown {
     position: absolute;
     top: calc(100% + 8px);
-    left: 0;
     right: 0;
-    min-width: 300px;
+    left: auto;
+    width: min(320px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
     background: var(--bg-surface);
-    border: 1px solid var(--border-container);
+    border: 1px solid var(--border-gold);
     border-radius: 10px;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
-    z-index: 150;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.95);
+    z-index: 100000;
     display: none;
     overflow: hidden;
     animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -1293,6 +1296,15 @@ body {
     .data-table-wrapper table {
         min-width: 540px;
     }
+
+    .search-box input {
+        width: clamp(90px, 16vw, 150px);
+    }
+
+    .search-dropdown {
+        width: min(300px, calc(100vw - 20px));
+        max-width: calc(100vw - 20px);
+    }
 }
 
 /* 5. Mobile Phone Specific Rules (<= 480px) */
@@ -1318,12 +1330,48 @@ body {
         width: 100%;
     }
 
+    /* Top Nav Elements on Mobile */
+    .search-box {
+        padding: 0 8px;
+        height: 34px;
+        gap: 6px;
+    }
+
+    .search-box input {
+        width: clamp(65px, 18vw, 110px);
+        font-size: 13px !important;
+    }
+
+    .search-box:focus-within input {
+        width: clamp(120px, 32vw, 170px);
+    }
+
+    .city-btn {
+        padding: 0 8px;
+        height: 34px;
+        font-size: 12px;
+        gap: 4px;
+    }
+
+    .mobile-nav-toggle {
+        min-height: 34px;
+        min-width: 34px;
+        padding: 4px 8px;
+    }
+
     /* Dialogs & Modals */
     .modal-card {
         width: 95% !important;
         max-width: 95% !important;
         padding: 18px 14px !important;
         margin: 0 auto;
+    }
+
+    /* Seat Buttons Touch Target */
+    .seat-btn {
+        min-width: 30px;
+        min-height: 30px;
+        touch-action: manipulation;
     }
 }
 
@@ -1340,5 +1388,40 @@ body {
     .btn-gold-outline {
         padding: 8px 12px;
         font-size: 11px;
+    }
+
+    .search-box {
+        padding: 0 6px;
+        height: 32px;
+        gap: 4px;
+    }
+
+    .search-box input {
+        width: clamp(50px, 15vw, 85px);
+        font-size: 12px !important;
+    }
+
+    .search-box:focus-within input {
+        width: clamp(95px, 28vw, 135px);
+    }
+
+    .city-btn {
+        padding: 0 6px;
+        height: 32px;
+        font-size: 11px;
+        gap: 3px;
+    }
+
+    .mobile-nav-toggle {
+        min-height: 32px;
+        min-width: 32px;
+        padding: 3px 6px;
+        font-size: 16px;
+    }
+
+    .seat-btn {
+        min-width: 28px;
+        min-height: 28px;
+        font-size: 9.5px;
     }
 }
