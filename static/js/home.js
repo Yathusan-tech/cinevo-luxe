@@ -376,91 +376,47 @@
        QUICK BOOKING
        ============================================================ */
 
-    function submitQuickBook() {
+        function submitQuickBook(){
 
-        let movieId =
-            document.getElementById(
-                'qbMovieSelect'
-            ).value;
+    const movieSelect = document.getElementById('qbMovieSelect');
+    const dateSelect = document.getElementById('qbDateSelect');
+    const cinemaSelect = document.getElementById('qbCinemaSelect');
+    const timingSelect = document.getElementById('qbTimingSelect');
 
-        let date =
-            document.getElementById(
-                'qbDateSelect'
-            ).value;
+    const movieId = movieSelect ? movieSelect.value : '';
+    const date = dateSelect ? dateSelect.value : '';
+    const cinema = cinemaSelect ? cinemaSelect.value : '';
+    const timing = timingSelect ? timingSelect.value : '';
 
-        let cinema =
-            document.getElementById(
-                'qbCinemaSelect'
-            ).value;
+    if (!movieId && movieId !== '0') {
 
-        let timing =
-            document.getElementById(
-                'qbTimingSelect'
-            ).value;
-
-
-        if (!movieId && movieId !== "0") {
-
-            alert(
-                'Please select a movie from the dropdown.'
-            );
-
-            return;
-
-        }
-
-
-        let targetUrl =
-            "/movie/" + movieId;
-
-        let params = [];
-
-
-        if (date) {
-
-            params.push(
-                "date=" +
-                encodeURIComponent(date)
-            );
-
-        }
-
-
-        if (cinema) {
-
-            params.push(
-                "cinema=" +
-                encodeURIComponent(cinema)
-            );
-
-        }
-
-
-        if (timing) {
-
-            params.push(
-                "timing=" +
-                encodeURIComponent(timing)
-            );
-
-        }
-
-
-        if (params.length > 0) {
-
-            targetUrl +=
-                "?" + params.join("&");
-
-        }
-
-
-        window.location.href =
-            targetUrl;
+        alert('Please select a movie from the dropdown.');
+        return;
 
     }
 
+    const url = new URL(
+        `/movie/${encodeURIComponent(movieId)}`,
+        window.location.origin
+    );
 
-    /* ============================================================
+    if (date) {
+        url.searchParams.set('date', date);
+    }
+
+    if (cinema) {
+        url.searchParams.set('cinema', cinema);
+    }
+
+    if (timing) {
+        url.searchParams.set('timing', timing);
+    }
+
+    window.location.assign(url.toString());
+
+}
+
+/* ============================================================
        SCROLL TO SHOWTIMINGS
        ============================================================ */
 
