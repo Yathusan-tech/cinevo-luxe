@@ -1130,6 +1130,19 @@ def offers():
 @app.route("/apply-offer/<promo_code>", methods=["GET", "POST"])
 def apply_offer(promo_code):
 
+    VALID_PROMO_CODES = {
+        "FIRST100",
+        "LUXE-BLACK",
+        "CHEF-PAIR",
+        "WEEKDAY20"
+    }
+
+    promo_code = (promo_code or "").strip().upper()
+
+    if promo_code not in VALID_PROMO_CODES:
+        flash("Invalid promotional offer.", "error")
+        return redirect(url_for("offers"))
+
     if promo_code == "FIRST100":
         is_first_booking = check_first_booking_eligibility()
         if not is_first_booking:
