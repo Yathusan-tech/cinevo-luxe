@@ -750,7 +750,7 @@ cinevo-luxe/
 
 ## 🏠 Homepage
 
-![CINEVO LUXE Homepage](screenshots/home.jpg)
+![CINEVO LUXE Homepage](screenshots/home.png)
 
 The main entry point to the CINEVO LUXE cinema experience.
 
@@ -758,7 +758,7 @@ The main entry point to the CINEVO LUXE cinema experience.
 
 ## 🎬 Movie Catalogue
 
-![Movie Catalog](screenshots/catalog.jpg)
+![Movie Catalogue](screenshots/movies.png)
 
 Customers can browse the available movie catalogue.
 
@@ -766,7 +766,7 @@ Customers can browse the available movie catalogue.
 
 ## 🎞️ Movie Details
 
-![Movie Details](screenshots/moviedetail.jpg)
+![Movie Details](screenshots/movie-details.png)
 
 Displays movie information and booking options.
 
@@ -774,15 +774,23 @@ Displays movie information and booking options.
 
 ## 💺 Seat Selection
 
-![Interactive Seat Selection](screenshots/seatselection.jpg)
+![Interactive Seat Selection](screenshots/seat-selection.png)
 
 Interactive interface for selecting available seats.
 
 ---
 
+## 🍿 Food Selection
+
+![Food Selection](screenshots/food-selection.png)
+
+Customers can select food and refreshments as part of their cinema booking experience.
+
+---
+
 ## 💳 Checkout
 
-![Checkout](screenshots/checkout.jpg)
+![Checkout](screenshots/checkout.png)
 
 Review reservation information before the booking is processed.
 
@@ -790,7 +798,7 @@ Review reservation information before the booking is processed.
 
 ## 🎟️ Booking Confirmation
 
-![Digital Booking Confirmation](screenshots/checkoutdetails.jpg)
+![Digital Booking Confirmation](screenshots/booking-confirmation.png)
 
 Displays the completed reservation and booking reference.
 
@@ -798,7 +806,7 @@ Displays the completed reservation and booking reference.
 
 ## 👨‍💼 Staff Dashboard
 
-![Staff Dashboard](screenshots/staffdashboard.jpg)
+![Staff Dashboard](screenshots/staff-dashboard.png)
 
 Protected administrative interface for authorized staff users.
 
