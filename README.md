@@ -2,17 +2,21 @@
 
 ### Full-Stack Cinema Ticket Booking & Reservation Platform
 
-**CINEVO LUXE** is a full-stack cinema booking platform designed to demonstrate real-world web application development, including **backend business logic, database integration, secure booking workflows, authentication, authorization, and cloud deployment**.
+**CINEVO LUXE** is a full-stack cinema booking application built with **Python, Flask, SQLAlchemy, SQLite, HTML, CSS, and JavaScript**.
 
-The application provides a complete cinema reservation experience—from browsing movies and selecting showtimes to choosing seats, processing bookings, and generating digital confirmations.
+The project implements a complete cinema reservation workflow—from discovering movies and selecting showtimes to choosing seats, validating booking data, processing reservations, and generating digital booking confirmations.
 
 It also includes a **protected staff administration portal** for managing movies, cinemas, showtimes, and booking-related operations.
 
-### 🌐 Live Application
+> **The browser provides the interface. The server enforces the rules.**
+
+---
+
+## 🌐 Live Application
 
 **[cinevo-luxe.onrender.com](https://cinevo-luxe.onrender.com)**
 
-### 💻 Source Code
+## 💻 Source Code
 
 **[GitHub Repository](https://github.com/Yathusan-tech/cinevo-luxe)**
 
@@ -20,20 +24,36 @@ It also includes a **protected staff administration portal** for managing movies
 
 # 📌 Project Overview
 
-CINEVO LUXE was built as more than a movie catalogue.
+This project was designed to demonstrate practical **full-stack software engineering**, rather than only frontend development.
 
-The main goal was to create a functional reservation system where important operations are enforced by the backend rather than relying only on browser-side controls.
+The application combines:
 
-The application separates responsibilities between:
+* 🎨 Frontend user experience
+* ⚙️ Backend business logic
+* 🗄️ Database persistence
+* 💺 Interactive seat reservation
+* 💳 Server-side price calculation
+* 🔐 Authentication and authorization
+* 🛡️ Security controls and validation
+* 👨‍💼 Protected staff administration
+* ☁️ Cloud deployment
 
-* **Frontend presentation and interaction**
-* **Flask backend business logic**
-* **Database persistence**
-* **Authentication and authorization**
-* **Server-side validation**
-* **Booking integrity controls**
+The core design principle is that important application decisions are enforced by the backend instead of trusting browser-submitted data.
 
-> **The browser provides the interface. The server enforces the rules.**
+---
+
+# 🛠️ Technology Stack
+
+| Area                 | Technologies                                                   |
+| -------------------- | -------------------------------------------------------------- |
+| **Backend**          | Python, Flask                                                  |
+| **ORM / Data Layer** | Flask-SQLAlchemy, SQLAlchemy                                   |
+| **Database**         | SQLite                                                         |
+| **Frontend**         | HTML5, CSS3, JavaScript                                        |
+| **Authentication**   | Werkzeug password hashing                                      |
+| **Security**         | CSRF protection, validation, security headers, secure sessions |
+| **Deployment**       | Render, Gunicorn                                               |
+| **Version Control**  | Git, GitHub                                                    |
 
 ---
 
@@ -42,36 +62,32 @@ The application separates responsibilities between:
 ## 🎟️ Customer Experience
 
 * Browse available movies
-* View detailed movie information
+* View movie details
 * Browse cinemas and showtimes
 * Select seats interactively
-* Validate seat availability
+* View seat availability
 * Review booking details at checkout
-* Calculate pricing on the server
+* Server-side price calculation
 * Create reservations
-* Generate unique booking references
-* View digital booking confirmations
+* Generate booking references
+* Digital booking confirmation
 * QR-based booking representation
 * Protected reservation lookup
 * Promotional and offer logic
 * Food and refreshment selection
 
----
-
 ## 👨‍💼 Staff Administration
 
-The application includes a separate staff environment protected by authentication and authorization.
+The application includes a separate staff environment protected by backend authentication and authorization.
 
 Staff functionality includes:
 
-* Secure staff login
+* Staff login
 * Protected dashboard
 * Movie management
 * Cinema management
 * Showtime management
 * Booking administration
-
-Administrative routes are protected at the backend and cannot be accessed simply by hiding or modifying frontend links.
 
 ---
 
@@ -97,10 +113,7 @@ Administrative routes are protected at the backend and cannot be accessed simply
 │ Routes • Business Logic • Validation                │
 │ Authentication • Authorization • Booking Logic      │
 │                                                     │
-│ ┌─────────────┐ ┌─────────────┐ ┌────────────────┐  │
-│ │ Customer    │ │ Booking     │ │ Staff/Admin    │  │
-│ │ Routes      │ │ Processing  │ │ Routes         │  │
-│ └─────────────┘ └─────────────┘ └────────────────┘  │
+│ Customer Routes • Booking Processing • Staff Routes │
 │                                                     │
 │ Security Controls                                   │
 │ • CSRF Protection                                   │
@@ -111,22 +124,36 @@ Administrative routes are protected at the backend and cannot be accessed simply
                            │
                            ▼
 ┌─────────────────────────────────────────────────────┐
-│                    DATA LAYER                       │
+│                     DATA LAYER                      │
 │                                                     │
-│             Flask-SQLAlchemy / SQLAlchemy           │
+│          Flask-SQLAlchemy / SQLAlchemy              │
 │                                                     │
 │ Movie • Cinema • Showtime • Booking • Staff         │
 └──────────────────────────┬──────────────────────────┘
                            │
                            ▼
-                    SQLite Database
+                     SQLite Database
 ```
+
+### Architecture Responsibilities
+
+**Frontend**
+Handles presentation, user interaction, forms, and seat-selection experience.
+
+**Flask Backend**
+Handles routing, business rules, validation, authentication, authorization, booking processing, and pricing.
+
+**SQLAlchemy**
+Provides ORM-based interaction between the application and database.
+
+**SQLite**
+Provides persistent storage for application data.
 
 ---
 
 # 🔄 Complete Booking Workflow
 
-The booking system was designed so that important user input is independently validated by the backend.
+The booking workflow is designed so that important user input is independently validated by the backend.
 
 ```text
 Browse Movie
@@ -151,10 +178,10 @@ Server-Side Validation
       └── Calculate authoritative price
       │
       ▼
-Database Transaction
+Create Booking
       │
       ▼
-Create Booking
+Store Reservation Data
       │
       ▼
 Generate Booking Reference
@@ -163,15 +190,15 @@ Generate Booking Reference
 Digital Confirmation
 ```
 
-This design ensures that the backend remains responsible for important business decisions.
+This design ensures that important business decisions remain under backend control.
 
 ---
 
 # 💺 Seat Reservation & Booking Integrity
 
-Seat selection is one of the core features of the application.
+Seat selection is one of the core features of CINEVO LUXE.
 
-The frontend provides an interactive interface for selecting seats, but the backend independently validates submitted data.
+The frontend provides an interactive seat-selection interface, while the backend independently validates submitted booking data.
 
 ### Backend validation includes:
 
@@ -182,75 +209,70 @@ The frontend provides an interactive interface for selecting seats, but the back
 * Booking consistency checks
 
 ```text
-User selects:
-
-A1, A2, A3
-
+User selects seats
         │
         ▼
-
 Backend receives request
-
         │
         ▼
-
-✓ Validate seat format
-✓ Reject duplicate seats
-✓ Verify showtime
-✓ Check availability
-
+Validate seat format
         │
         ▼
-
-Create Reservation
+Reject duplicate seats
+        │
+        ▼
+Verify showtime
+        │
+        ▼
+Check seat availability
+        │
+        ▼
+Create reservation
 ```
 
-The application does not rely solely on the visual state of the seat-selection interface.
+The application does not rely solely on the visual state of the browser when processing reservations.
 
 ---
 
 # 💳 Server-Authoritative Pricing
 
-The application does not blindly trust booking totals submitted by the browser.
+The application does not treat browser-submitted totals as the authoritative source for booking prices.
 
-Instead, the server calculates the booking amount using trusted application and database data.
+Instead, the backend calculates the booking amount using trusted showtime and seat information.
 
 ```text
 Selected Seats
-       │
-       ▼
+      │
+      ▼
 Backend Validation
-       │
-       ▼
+      │
+      ▼
 Configured Showtime Price
-       │
-       ▼
+      │
+      ▼
 Server-Side Calculation
-       │
-       ▼
+      │
+      ▼
 Authoritative Booking Total
 ```
 
-This prevents client-side values from becoming the source of truth for booking prices.
+This ensures that important pricing decisions are calculated on the server.
 
 ---
 
-# 🛡️ Double-Booking Protection
+# 🛡️ Booking Integrity
 
-A reservation system must handle the possibility of multiple users attempting to reserve the same seat.
+A reservation system must handle situations where multiple requests may attempt to reserve the same seat.
 
-CINEVO LUXE performs seat availability checks on the backend before completing a reservation.
-
-The booking process includes:
+Before completing a reservation, the application performs backend checks that include:
 
 1. Validating submitted seats
 2. Rejecting duplicate seat values
 3. Checking existing reservations
 4. Verifying seat availability
-5. Creating booking records using database operations
-6. Completing the reservation only after validation succeeds
+5. Creating booking records only after validation succeeds
 
-This helps maintain consistent reservation data and reduces the risk of duplicate bookings.
+These controls help maintain consistent reservation data and reduce the risk of duplicate bookings.
 
 ---
 
@@ -260,14 +282,14 @@ After a successful booking, the application generates a dedicated confirmation p
 
 The confirmation includes:
 
-* Unique booking reference
+* Booking reference
 * Movie information
 * Cinema information
 * Showtime details
 * Selected seats
 * Customer information
 * Booking total
-* QR representation
+* QR-based booking representation
 
 The confirmation page also supports a print-friendly experience.
 
@@ -277,7 +299,7 @@ The confirmation page also supports a print-friendly experience.
 
 Customer booking information is not exposed through an unrestricted public booking list.
 
-Instead, reservation lookup requires identifying information.
+Instead, the reservation lookup process requires identifying information.
 
 ```text
 Booking Reference
@@ -300,25 +322,19 @@ This provides a more controlled approach to accessing reservation information.
 
 # 🔐 Security Implementation
 
-Security considerations were incorporated into backend development and booking workflows.
+Security considerations were incorporated into the application's backend and booking workflows.
 
 ## Authentication
 
-Staff authentication is implemented using **Werkzeug password hashing**.
+Staff authentication uses **Werkzeug password hashing**.
 
 Passwords are handled using hashed credentials rather than plaintext password storage.
-
----
 
 ## Authorization
 
 Staff functionality is protected through backend authorization checks.
 
-Authentication and authorization are treated as separate responsibilities.
-
-Protected routes verify that the current session has appropriate access.
-
----
+Protected administrative routes verify that the current session has the required access.
 
 ## CSRF Protection
 
@@ -338,13 +354,11 @@ Token Validation
       └── Invalid → Reject
 ```
 
----
-
 ## Server-Side Validation
 
 Client input is treated as untrusted.
 
-The backend independently validates important information, including:
+The backend independently validates important data, including:
 
 * Seat selections
 * Duplicate seats
@@ -353,33 +367,17 @@ The backend independently validates important information, including:
 * Promotional conditions
 * Showtime information
 
----
-
 ## Security Headers
 
 The application includes security-focused HTTP response headers to establish a stronger browser security baseline.
-
----
 
 ## Secure Session Configuration
 
 Session configuration includes security-focused settings designed to reduce common session risks.
 
----
-
 ## Environment-Based Configuration
 
 Sensitive production configuration is supplied through environment variables rather than being stored directly in source code.
-
-```text
-Application
-     │
-     ▼
-Environment Configuration
-     │
-     ▼
-Sensitive Production Values
-```
 
 Local environment files are excluded from version control.
 
@@ -391,24 +389,6 @@ CINEVO LUXE uses:
 
 **SQLite + Flask-SQLAlchemy + SQLAlchemy**
 
-Core entities include:
-
-```text
-                     DATABASE
-
-      Movie ────────┐
-                    │
-      Cinema ─── Showtime
-                    │
-                    ▼
-                 Booking
-
-      StaffUser
-          │
-          ▼
-   Staff Authentication
-```
-
 ### Core Entities
 
 | Entity                  | Responsibility                                   |
@@ -417,94 +397,40 @@ Core entities include:
 | **Cinema**              | Represents cinema venues                         |
 | **Showtime**            | Connects movies, cinemas, schedules, and pricing |
 | **Booking**             | Stores reservation and customer information      |
-| **Seat Booking Record** | Helps track reserved seats and booking integrity |
+| **Seat Booking Record** | Tracks reserved seats for booking integrity      |
 | **Staff User**          | Supports protected staff authentication          |
 
 ---
 
 # 🧠 Key Engineering Decisions
 
-## 1. Do Not Trust the Browser
+### 1. Do Not Trust the Browser
 
 The frontend improves the user experience, but important values are validated on the backend.
 
----
-
-## 2. Server-Side Pricing
+### 2. Calculate Prices on the Server
 
 Booking prices are calculated using trusted showtime data rather than relying on browser-submitted totals.
 
----
-
-## 3. Independent Seat Validation
+### 3. Validate Seats Independently
 
 Seat selections are validated independently of the frontend interface.
 
----
+### 4. Protect Administrative Routes
 
-## 4. Protected Administrative Routes
+Staff functionality requires backend authentication and authorization.
 
-Staff functionality requires authentication and authorization.
+### 5. Protect State-Changing Requests
 
----
+Relevant state-changing requests use CSRF protection.
 
-## 5. CSRF Protection
-
-Relevant state-changing requests are protected against cross-site request forgery.
-
----
-
-## 6. Booking Integrity
+### 6. Maintain Booking Integrity
 
 Seat availability and booking consistency are checked before reservations are completed.
 
----
+### 7. Keep Sensitive Configuration Outside Source Code
 
-## 7. Environment-Based Configuration
-
-Sensitive deployment configuration is kept outside source code and managed through environment variables.
-
----
-
-# 🛠️ Technology Stack
-
-### Backend
-
-* Python
-* Flask
-* Flask-SQLAlchemy
-* SQLAlchemy
-* Werkzeug
-
-### Frontend
-
-* HTML5
-* CSS3
-* JavaScript
-* Responsive Design
-
-### Database
-
-* SQLite
-
-### Security
-
-* Password hashing
-* Authentication
-* Authorization
-* CSRF protection
-* Server-side validation
-* Server-authoritative pricing
-* Secure sessions
-* Security headers
-* Environment-based configuration
-
-### Development & Deployment
-
-* Git
-* GitHub
-* Render
-* Gunicorn
+Deployment-sensitive configuration is managed through environment variables.
 
 ---
 
@@ -565,7 +491,7 @@ The project was tested against both normal application workflows and security-se
 ### Functional Testing
 
 * Application startup
-* Core route behavior
+* Core routes
 * Movie browsing
 * Movie details
 * Cinema handling
@@ -591,7 +517,7 @@ The project was tested against both normal application workflows and security-se
 * Database integrity
 * Environment-based configuration
 
-The goal of testing was not only to verify normal functionality, but also to confirm that backend rules remain enforced when requests are modified or routes are accessed directly.
+The goal of testing was not only to verify normal functionality, but also to confirm that important backend rules remain enforced when requests are modified or routes are accessed directly.
 
 ---
 
@@ -695,7 +621,7 @@ Open the local URL displayed in the terminal.
 
 # ☁️ Deployment
 
-The application is deployed as a live web application.
+The application is deployed using **Render**.
 
 ```text
 Local Development
@@ -710,7 +636,7 @@ Local Development
     Render
        │
        ▼
- Live Production Application
+Live Application
 ```
 
 ### 🌐 Live Application
@@ -719,13 +645,13 @@ Local Development
 
 ---
 
-# 📚 What This Project Demonstrates
+# 📚 Skills Demonstrated
 
-This project demonstrates practical experience in:
+This project demonstrates practical experience with:
 
 ### Full-Stack Development
 
-Building a complete web application connecting frontend interfaces, backend services, and persistent data.
+Building a complete application that connects frontend interfaces, backend services, and persistent data.
 
 ### Backend Engineering
 
@@ -733,7 +659,7 @@ Implementing routes, business logic, validation, authentication, authorization, 
 
 ### Database Development
 
-Designing and working with relational data using SQLAlchemy and SQLite.
+Working with relational application data using SQLAlchemy and SQLite.
 
 ### Application Security
 
@@ -757,51 +683,17 @@ Handling:
 * Reservation processing
 * Server-side pricing
 * Booking references
-* Booking confirmation
+* Digital confirmation
 
-### Cloud Deployment
+### Deployment
 
-Deploying a Flask application from local development through GitHub to a publicly accessible production environment.
-
----
-
-# 🎯 Key Lessons Learned
-
-One of the most important lessons from building CINEVO LUXE was understanding that users do not always interact with an application exactly as the frontend intends.
-
-Requests can be modified, values can be manipulated, and routes can be accessed directly.
-
-This led to an important design principle used throughout the project:
-
-> **Frontend controls improve the user experience. Backend controls protect the application.**
-
-Building this project also provided practical experience with the complete development lifecycle:
-
-```text
-Design
-  ↓
-Frontend Development
-  ↓
-Backend Development
-  ↓
-Database Integration
-  ↓
-Validation & Security
-  ↓
-Testing
-  ↓
-Git & GitHub
-  ↓
-Cloud Deployment
-  ↓
-Live Application
-```
+Deploying a Flask application from local development to a publicly accessible cloud environment.
 
 ---
 
 # 🔮 Future Improvements
 
-The current architecture can be extended with:
+The architecture can be extended with:
 
 * Online payment gateway integration
 * Automated email ticket delivery
@@ -811,16 +703,6 @@ The current architecture can be extended with:
 * Production monitoring
 * Notification systems
 * Expanded reservation management
-
-These features can be added without replacing the core booking architecture.
-
----
-
-# 👨‍💻 Skills Demonstrated
-
-**Python • Flask • SQLAlchemy • SQLite • HTML5 • CSS3 • JavaScript**
-
-**Full-Stack Development • Backend Engineering • Database Design • Authentication • Authorization • Application Security • CSRF Protection • Server-Side Validation • Booking Systems • Git • GitHub • Cloud Deployment**
 
 ---
 
@@ -835,12 +717,12 @@ The project combines:
 * 🗄️ **Database persistence**
 * 💺 **Interactive seat reservation**
 * 💳 **Server-side pricing**
-* 🔐 **Authentication and security controls**
+* 🛡️ **Validation and security controls**
 * 👨‍💼 **Protected staff administration**
 * 🧪 **Functional and security-focused testing**
 * ☁️ **Cloud deployment**
 
-> **CINEVO LUXE demonstrates how a real-world web application can combine user experience, backend logic, data integrity, security controls, and cloud deployment into one complete system.**
+> **CINEVO LUXE demonstrates how a complete web application can combine user experience, backend logic, data persistence, booking workflows, security controls, and cloud deployment.**
 
 ---
 
