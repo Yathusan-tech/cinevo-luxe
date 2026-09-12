@@ -687,59 +687,83 @@ This separation allows the application to keep important business decisions on t
 
 ```text
 cinevo-luxe/
-│
-├── app.py
-├── models.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-├── .env.example
-│
-├── data/
-│   └── movies.json
-│
-├── screenshots/
-│   ├── addvenue.jpg
-│   ├── catalog.jpg
-│   ├── checkout.jpg
-│   ├── checkoutdetails.jpg
-│   ├── foodselection.jpg
-│   ├── home.jpg
-│   ├── moviedetail.jpg
-│   ├── seatselection.jpg
-│   ├── staffdashboard.jpg
-│   └── staflogin.jpg
-│
-├── static/
-│   ├── css/
-│   │   └── style.css
-│   └── favicon.svg
-│
-└── templates/
-    ├── 404.html
-    ├── 500.html
-    ├── base.html
-    ├── home.html
-    ├── movies.html
-    ├── movie_details.html
-    ├── showtimings.html
-    ├── cinemas.html
-    ├── offers.html
-    ├── bookings.html
-    ├── seat_selection.html
-    ├── checkout.html
-    ├── confirmation.html
-    ├── ...
-    │
-    └── staff/
-        ├── base_staff.html
-        ├── login.html
-        ├── dashboard.html
-        ├── movies.html
-        ├── bookings.html
-        ├── cinemas.html
-        ├── showtimes.html
-        └── ...
+|
+|-- app.py
+|-- models.py
+|-- requirements.txt
+|-- README.md
+|-- .gitignore
+|-- .env.example
+|
+|-- screenshots/
+|   |-- booking-confirmation.png
+|   |-- checkout.png
+|   |-- food-selection.png
+|   |-- home.png
+|   |-- movie-details.png
+|   |-- movies.png
+|   |-- seat-selection.png
+|   `-- staff-dashboard.png
+|
+|-- static/
+|   |-- css/
+|   |   `-- style.css
+|   |-- images/
+|   |   |-- attack_on_titan_backdrop.jpg
+|   |   |-- attack_on_titan_poster.jpg
+|   |   |-- avatar_backdrop.jpg
+|   |   |-- avatar_poster.jpg
+|   |   |-- avengers_endgame_backdrop.jpg
+|   |   |-- avengers_endgame_poster.jpg
+|   |   |-- dhurandhar_backdrop.jpg
+|   |   |-- dhurandhar_poster.jpg
+|   |   |-- inception_backdrop.jpg
+|   |   |-- inception_poster.jpg
+|   |   |-- interstellar_backdrop.jpg
+|   |   |-- interstellar_poster.jpg
+|   |   |-- oppenheimer_backdrop.jpg
+|   |   |-- oppenheimer_poster.jpg
+|   |   `-- vip_lounge.jpg
+|   |-- js/
+|   |   |-- base.js
+|   |   |-- checkout.js
+|   |   |-- cinemas.js
+|   |   |-- confirmation.js
+|   |   |-- home.js
+|   |   |-- manage_booking.js
+|   |   |-- movie_details.js
+|   |   |-- movies.js
+|   |   |-- my_bookings.js
+|   |   |-- offers.js
+|   |   |-- seat_selection.js
+|   |   `-- showtimings.js
+|   `-- favicon.svg
+|
+`-- templates/
+    |-- 404.html
+    |-- 500.html
+    |-- base.html
+    |-- checkout.html
+    |-- cinemas.html
+    |-- confirmation.html
+    |-- home.html
+    |-- manage_booking.html
+    |-- movie_details.html
+    |-- movies.html
+    |-- my_bookings.html
+    |-- offers.html
+    |-- seat_selection.html
+    |-- showtimings.html
+    `-- staff/
+        |-- base_staff.html
+        |-- bookings.html
+        |-- cinemas.html
+        |-- dashboard.html
+        |-- edit_movie.html
+        |-- edit_showtime.html
+        |-- login.html
+        |-- movies.html
+        `-- showtimes.html
 ```
 
 > Local `.env` files, virtual environments, database files, backup files, and other local artifacts are excluded from version control through `.gitignore`.
