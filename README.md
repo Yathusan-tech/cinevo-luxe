@@ -966,7 +966,7 @@ Create a local `.env` file using `.env.example` as a reference.
 Example:
 
 ```text
-SECRET_KEY=your-development-secret
+SECRET_KEY=replace_with_a_secure_random_secret
 ```
 
 Use your own secure value.
@@ -1113,7 +1113,7 @@ That led to an important design principle throughout the project:
 
 I also learned that security extends beyond application code.
 
-For example, when a development secret was discovered in Git history, simply removing it from the latest version was not enough. The secret had to be rotated and removed from the repository history.
+For example, I learned that sensitive configuration must be managed carefully throughout the development lifecycle. Environment variables, secret rotation, and proper Git history management are all important parts of maintaining application security.
 
 These experiences helped me understand practical software engineering beyond simply making an application "work."
 
@@ -1230,3 +1230,4 @@ Git → GitHub → Render → Live production application
 ---
 
 > **CINEVO LUXE was built to demonstrate how a real-world web application combines user experience, backend business logic, persistent data, security controls, and deployment into one complete system.**
+
